@@ -1,12 +1,16 @@
-const users = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Doe' },
-    { id: 3, name: 'Daniel Doe' }
-]
+import { dbpg } from "../db/db.js";
 
 export class UserModel {
     static async getAll() {
-        return users
+        const users = dbpg.query('SELECT * FROM usuarios', (err, res) => {
+            if (err) {
+                console.log(err.stack)
+            } else {
+                console.log(res.rows)
+            }
+        });
+        
+        return users;
     }
 
     static async getById({id}) {
