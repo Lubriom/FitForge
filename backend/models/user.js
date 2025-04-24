@@ -2,18 +2,22 @@ import { dbpg } from "../db/db.js";
 
 export class UserModel {
     static async getAll() {
-        const users = dbpg.query('SELECT * FROM usuarios', (err, res) => {
-            if (err) {
-                console.log(err.stack)
-            } else {
-                console.log(res.rows)
-            }
-        });
+        try {
+            const users = await dbpg.query('SELECT * FROM usuarios')
+            return users;            
+        } catch (error) {
+            console.error('Error al obtener los usuarios:', error);
+        }
         
-        return users;
     }
 
     static async getById({id}) {
-        return users.find(user => user.id == id)
+        try {
+            const user = await dbpg.query('SELECT * FROM usuarios WHERE id = $1', [id])
+            return user;
+        } catch (error) {
+            console.error('Error al obtener el usuario:', error);
+        }
+
     }
 } 

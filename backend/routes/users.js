@@ -13,6 +13,4 @@ userRouter.get("/:id", async (req, res) => {
   const user = await UserModel.getById({id});
 
   if (user) return res.json(user);
-
-  res.status(404).send("<h1>Error 404 usuarios no encontrados</h1>");
 });
