@@ -1,1 +1,26 @@
 GET http://localhost:8081/users
+
+### Obtener usuario por ID
+
+GET http://localhost:8081/users/12
+
+### Crear usuario
+POST http://localhost:8081/users
+Content-Type: application/json
+
+{
+  "nombre": "Jose",
+  "email": "jose@gmail.com",
+  "password": "123456"
+}
+
+### Modificar usuario
+PATCH http://localhost:8081/users/12
+Content-Type: application/json
+
+{
+  "nombre": "Jose"
+}
+
+### Eliminar usuario por ID
+DELETE http://localhost:8081/users/11
