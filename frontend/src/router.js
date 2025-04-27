@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 // Importar los componentes que vas a mostrar en las rutas
 import HomePage from '../src/views/HomeView.vue';
 import AboutPage from '../src/views/AboutView.vue';
+import EditPage from '../src/views/EditView.vue';
 
 const routes = [
   {
@@ -14,6 +15,11 @@ const routes = [
     path: '/about',
     name: 'About',
     component: AboutPage
+  },
+  {
+    path: '/edit/:id',
+    name: 'Edit',
+    component: EditPage
   }
 ];
 

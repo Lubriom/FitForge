@@ -2,7 +2,7 @@ GET http://localhost:8081/users
 
 ### Obtener usuario por ID
 
-GET http://localhost:8081/users/12
+GET http://localhost:8081/users/4
 
 ### Crear usuario
 POST http://localhost:8081/users

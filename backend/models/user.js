@@ -14,7 +14,7 @@ export class UserModel {
     static async getById({id}) {
         try {
             const user = await dbpg.query('SELECT * FROM usuarios WHERE id = $1', [id])
-            return user.rows;
+            return user.rows[0];
         } catch (error) {
             console.error('Error al obtener el usuario:', error);
         }

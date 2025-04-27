@@ -1,6 +1,7 @@
 import Express from "express";
 import { mainRouter } from "./routes/route.js";
 import { userRouter } from "./routes/UsersRoute.js"; 
+import { authRouter } from "./routes/AuthRoute.js"; 
 import { corsMiddleware } from "./middlewares/cors.js";
 
 const app = Express()
@@ -11,6 +12,7 @@ app.use(corsMiddleware())
 app.use(Express.json())
 
 app.use('/', mainRouter)
+app.use('/', authRouter)
 app.use('/users', userRouter)
 app.use((req, res) => {
     res.status(404).send('<h1>Error 404 not found</h1>')
