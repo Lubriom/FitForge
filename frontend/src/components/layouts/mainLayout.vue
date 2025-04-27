@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="bg-primary-500">
       <header>
         <Header />
       </header>

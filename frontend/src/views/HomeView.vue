@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col py-5 px-5">
-    <h1>Bienvenido a la Página de Inicio</h1>
+    <h1 class="text-white text-2xl">Bienvenido a la Página de Inicio</h1>
     <br />
     <div class="p4 flex justify-center">
-      <table class="table-auto border-1 rounded-2xl">
-        <tr class="bg-blue-500 text-white">
+      <table class="table-auto rounded-2xl bg-quaternary-500 col-span-2 row-span-5 text-white">
+        <tr class="bg-tertiary-500 text-white">
           <th>Nombre</th>
           <th>Email</th>
           <th>Acciones</th>

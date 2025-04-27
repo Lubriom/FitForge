@@ -1,15 +1,15 @@
 <template>
-  <div class="flex flex-col py-5 px-5">
-    <h1>Modificando el usuario: {{ nameUser }}</h1>
+  <div class="flex flex-col py-5 px-5 justify-evenly">
+    <h1 class="text-white text-2xl align-middle justify-center">Modificando el usuario: {{ nameUser }}</h1>
     <br />
-    <form @submit="modifiedUser">
+    <form @submit="modifiedUser" class="flex flex-col text-white">
       <label for="name">Name:</label>
-      <input type="text" id="name" v-model="user.nombre" class="border p-2 mb-2" />
+      <input type="text" id="name" v-model="user.nombre" class="border p-2 mb-2 bg-white rounded-2xl text-black" />
 
       <label for="email">Email:</label>
-      <input type="email" id="email" v-model="user.email" class="border p-2 mb-2" />
+      <input type="email" id="email" v-model="user.email" class="border p-2 mb-2 bg-white rounded-2xl text-black" />
 
-      <button type="submit" class="bg-blue-500 text-white p-2 rounded-md">Guardar</button>
+      <button type="submit" class="bg-tertiary-500 text-white p-2 rounded-md">Guardar</button>
     </form>
   </div>
 </template>
