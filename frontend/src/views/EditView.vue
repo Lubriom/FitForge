@@ -34,7 +34,6 @@ onMounted(async () => {
 
 
 const modifiedUser = async (event) => {
-    console.log(user.value)
   event.preventDefault();
 
   const schema = z.object({
@@ -51,13 +50,13 @@ const modifiedUser = async (event) => {
     });
     router.push("/");
 
-    alert("Usuario actualizado correctamente ✅");
+    alert("Usuario modificado con exito");
   } catch (error) {
     if (error instanceof z.ZodError) {
-      alert("Error de validación: " + error.errors[0].message);
+      alert("Error de validación:" + error.errors[0].message);
     } else {
       console.error(error);
-      alert("Error al actualizar el usuario ❌");
+      alert("Ha ocurrido un error inesperado");
     }
   }
 };

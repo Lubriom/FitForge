@@ -1,25 +1,37 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Importar los componentes que vas a mostrar en las rutas
-import HomePage from '../src/views/HomeView.vue';
-import AboutPage from '../src/views/AboutView.vue';
-import EditPage from '../src/views/EditView.vue';
+import HomeView from '../src/views/HomeView.vue';
+import AboutView from '../src/views/AboutView.vue';
+import EditView from '../src/views/EditView.vue';
+import LoginView from './views/LoginView.vue';
+import RegisterView from './views/RegisterView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage
+    component: HomeView
   },
   {
     path: '/about',
     name: 'About',
-    component: AboutPage
+    component: AboutView
   },
   {
     path: '/edit/:id',
     name: 'Edit',
-    component: EditPage
+    component: EditView
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: RegisterView
   }
 ];
 

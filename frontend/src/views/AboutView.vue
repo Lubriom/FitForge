@@ -1,4 +1,3 @@
-<!-- src/views/AboutView.vue -->
 <template>
   <div>
     <h1>Sobre nosotros</h1>
