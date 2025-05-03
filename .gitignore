@@ -141,3 +141,4 @@ eslint.config.js
 .vscode
 
 Dockerfile
+docker-compose.yaml

@@ -3,7 +3,9 @@ import { prisma } from "../config/db.js";
 export class UserModel {
   static async getAll() {
     try {
-      return await prisma.usuario.findMany();
+      return await prisma.usuario.findMany({
+         orderBy: { id: "asc" },
+      });
     } catch (error) {
       console.error("Error al obtener los usuarios:", error);
     }
@@ -11,7 +13,6 @@ export class UserModel {
 
   static async getById({ id }) {
     try {
-    
       return await prisma.usuario.findUnique({ where: { id: parseInt(id) } });
     } catch (error) {
       console.error("Error al obtener el usuario:", error);
@@ -26,28 +27,31 @@ export class UserModel {
     }
   }
 
-  static async update({ id }, { nombre, email, password }) {
+  static async update({id, data}) {
+    const { ...fieldsToUpdate } = data;
+  
+    // Elimina las claves que estén undefined o null
+    const cleanData = Object.fromEntries(
+      Object.entries(fieldsToUpdate).filter(([_, v]) => v !== undefined && v !== null)
+    );
+  
+    if (Object.keys(cleanData).length === 0) {
+      throw new Error("No se enviaron campos para actualizar");
+    }
+  
     try {
-      if (!nombre && !email && !password) {
-        throw new Error("No se enviaron campos para actualizar");
-      }
-
-      const data = {};
-      if (nombre !== undefined) data.nombre = nombre;
-      if (email !== undefined) data.email = email;
-      if (password !== undefined) data.password = password;
-
       const user = await prisma.usuario.update({
         where: { id: parseInt(id) },
-        data
+        data: cleanData
       });
-
+  
       return user;
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
       throw error;
     }
   }
+  
 
   static async delete({ id }) {
     try {

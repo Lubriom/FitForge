@@ -3,7 +3,7 @@
     <h1 class="text-white text-2xl">Iniciar Sesión</h1><br>
     <form @submit="login" class="flex flex-col text-white">
       <label for="email">Correo:</label>
-      <input type="email" id="email" v-model="user.email" class="border p-2 mb-2 bg-white rounded-2xl text-black"/>
+      <input type="email" id="email" v-model="user.correo" class="border p-2 mb-2 bg-white rounded-2xl text-black"/>
       <label for="password">Contraseña:</label>
       <input type="password" id="password" v-model="user.password" class="border p-2 mb-2 bg-white rounded-2xl text-black"/>
       <button type="submit" class="bg-tertiary-500 text-white p-2 rounded-md">Log in</button>
@@ -16,7 +16,7 @@ import { z } from "zod";
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../utils/auth";
+import { useAuthStore } from "../../utils/auth";
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -26,7 +26,7 @@ const login = async (event) => {
   event.preventDefault();
   try {
     const loginSchema = z.object({
-      email: z.string().email({ message: "Email no válido" }),
+      correo: z.string().email({ message: "Email no válido" }),
       password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
     });
 

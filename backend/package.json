@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seeder/seed.js"
   },
   "keywords": [],
   "author": "",

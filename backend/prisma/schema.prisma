@@ -8,13 +8,103 @@ datasource db {
 }
 
 model Usuario {
-  id       Int     @id @default(autoincrement())
-  nombre   String? @db.VarChar(100)
-  email    String? @unique @db.VarChar(100)
-  password String? @db.VarChar(255)
-  role     String? @db.VarChar(255)
+  id            Int              @id @default(autoincrement())
+  nombre        String?          @db.VarChar(100)
+  apellido      String?          @db.VarChar(100)
+  sapellido     String?          @db.VarChar(100)
+  correo        String?          @unique @db.VarChar(100)
+  password      String?          @db.VarChar(200)
+  role          String?          @db.VarChar(100) @default("user")
+  genero        String?          @db.VarChar(100)
+  fec_nac       DateTime?         @db.Date() 
+  created_at    DateTime         @default(now()) @db.Timestamp(6)
+  updated_at    DateTime         @updatedAt @db.Timestamp(6)
+
+  // Relaciones 1 a N
+  informacionSalud InformacionSalud[]
+  patologias      InfoPatologias[]
+  planEntrenamiento PlanEntrenamiento[]
 }
 
+
+model InformacionSalud {
+  id           Int       @id @default(autoincrement())
+  usuarioId    Int       
+  peso         Float?    @db.DoublePrecision()
+  altura       Float?    @db.DoublePrecision()
+  imc          Float?    @db.DoublePrecision()
+  fuerza       Float?    @db.DoublePrecision()
+  discapacidad String?   @db.VarChar(100)
+  fechaRegistro DateTime @default(now()) @db.Timestamp()
+
+  // Relación N a 1 con Usuario
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id])
+}
+
+model InfoPatologias {
+  id          Int      @id @default(autoincrement())
+  usuarioId   Int      @db.Integer
+  patologia   String   @db.VarChar(100)
+
+  // Relacion N a 1 con Usuario
+  usuario     Usuario @relation(fields: [usuarioId], references: [id])
+}
+
+model Ejercicio {
+  id            Int              @id @default(autoincrement())
+  nombre        String           @db.VarChar(100)
+  tipo          String?          @db.VarChar(100)
+  categoria     String?          @db.VarChar(100)
+  descanso      Int?             @db.Integer() @default(60)
+  series        Int?             @db.Integer()
+  repeticiones  Int?             @db.Integer()
+  peso          Float?           @db.DoublePrecision() @default(0)
+
+  // Relacion 1 a N
+  ejerciciosDia EjerciciosDia[]  // Relación con días de entrenamiento
+}
+
+model PlanEntrenamiento {
+  id           Int               @id @default(autoincrement())
+  nombre       String            @db.VarChar(100)
+  descripcion  String?           @db.VarChar(255)
+  objetivo     String?           @db.VarChar(100)
+  usuarioId    Int               @db.Integer()
+  fechaInicio  DateTime          @default(now())
+
+  // Relacion N a 1
+  usuario      Usuario           @relation(fields: [usuarioId], references: [id])
+  // Relacion 1 a N
+  dias         DiaEntrenamiento[]
+}
+
+model DiaEntrenamiento {
+  id          Int               @id @default(autoincrement())
+  planId      Int               @db.Integer()
+  diaNumero   Int               @db.Integer()
+  nombre      String?           @db.VarChar(100)
+
+  // Relacion N a 1
+  plan        PlanEntrenamiento @relation(fields: [planId], references: [id])
+  
+  // Relacion 1 a N
+  ejercicios  EjerciciosDia[]
+}
+
+model EjerciciosDia {
+  id            Int              @id @default(autoincrement())
+  diaId         Int              
+  ejercicioId   Int
+  series        Int?             @db.Integer()
+  repeticiones  Int?             @db.Integer()
+  peso          Float?           @db.DoublePrecision()
+
+  // Relaciones N a 1
+  dia           DiaEntrenamiento @relation(fields: [diaId], references: [id])
+  ejercicio     Ejercicio        @relation(fields: [ejercicioId], references: [id])
+}
+
+// npx prisma generate
 // npx prisma migrate reset
 // npx prisma db push <- Realiza las migraciones
-// npm run seed <- Realiza la inserción de datos
+// npm run seed <- Realiza la inserción de datosdocker

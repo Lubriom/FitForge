@@ -1,0 +1,101 @@
+[
+  {
+    "nombre": "Sentadillas",
+    "tipo": "Fuerza",
+    "categoria": "Piernas",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 0
+  },
+  {
+    "nombre": "Press banca",
+    "tipo": "Fuerza",
+    "categoria": "Pecho",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Dominadas",
+    "tipo": "Fuerza",
+    "categoria": "Espalda",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 0
+  },
+  {
+    "nombre": "Burpees",
+    "tipo": "Cardio",
+    "categoria": "Full Body",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 10,
+    "peso": 0
+  },
+  {
+    "nombre": "Curl de bíceps",
+    "tipo": "Fuerza",
+    "categoria": "Brazos",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Planchas",
+    "tipo": "Core",
+    "categoria": "Abdomen",
+    "descanso": 45,
+    "series": 3,
+    "repeticiones": 1,
+    "peso": 0
+  },
+  {
+    "nombre": "Peso muerto",
+    "tipo": "Fuerza",
+    "categoria": "Espalda",
+    "descanso": 120,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 20
+  },
+  {
+    "nombre": "Press militar",
+    "tipo": "Fuerza",
+    "categoria": "Hombros",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Zancadas",
+    "tipo": "Fuerza",
+    "categoria": "Piernas",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Remo con barra",
+    "tipo": "Fuerza",
+    "categoria": "Espalda",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Extensión de tríceps",
+    "tipo": "Fuerza",
+    "categoria": "Brazos",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 10,
+    "peso": 5
+  }
+]

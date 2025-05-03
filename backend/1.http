@@ -23,4 +23,14 @@ Content-Type: application/json
 }
 
 ### Eliminar usuario por ID
-DELETE http://localhost:8081/users/11
+DELETE http://localhost:8081/users/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Niwibm9tYnJlIjoiU2FtdWVsIiwiY29ycmVvIjoic2FtdWVsbHVuYXJAZ21haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDYyNzg4OTUsImV4cCI6MTc0NjI4NjA5NX0.ye0EXxFiyeBvsF3I0--vDyGx0Jf72H7iLsjqqxItIgk
+
+### Login 
+POST http://localhost:8081/login
+Content-Type: application/json
+
+{
+  "correo": "lunarmorer@gmail.com",
+  "password": "123321"
+}
