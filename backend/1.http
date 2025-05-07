@@ -34,3 +34,11 @@ Content-Type: application/json
   "correo": "lunarmorer@gmail.com",
   "password": "123321"
 }
+
+### Obtener info del ultimo
+GET http://localhost:8081/users/5/info/last
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tYnJlIjoiUm95IExlZSIsImNvcnJlbyI6Imx1bmFybW9yZXJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQ2NDc2NTAzLCJleHAiOjE3NDY0ODM3MDN9.8JGra_N2_o7l8j5ZFDz0LJ-LgzJjyyxj37_kba_pPmk
+
+### Obtener planes de un usuarios
+GET http://localhost:8081/trains/user/5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwibm9tYnJlIjoiUm95IExlZSIsImNvcnJlbyI6Imx1bmFybW9yZXJAZ21haWwuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzQ2NDc2NTAzLCJleHAiOjE3NDY0ODM3MDN9.8JGra_N2_o7l8j5ZFDz0LJ-LgzJjyyxj37_kba_pPmk

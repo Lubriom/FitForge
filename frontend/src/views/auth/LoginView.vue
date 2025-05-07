@@ -34,9 +34,9 @@ const login = async (event) => {
     const response = await axios.post("http://localhost:8081/login", user.value);
 
     if(response.data.token) {
-      alert(response.data.message);
       auth.login(response.data.token);
-      router.push("/");
+      alert(response.data.message);
+      router.push("/dashboard");
     }
 
   } catch (error) {

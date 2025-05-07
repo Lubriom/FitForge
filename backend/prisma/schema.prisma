@@ -38,7 +38,7 @@ model InformacionSalud {
   fechaRegistro DateTime @default(now()) @db.Timestamp()
 
   // Relación N a 1 con Usuario
-  usuario      Usuario   @relation(fields: [usuarioId], references: [id])
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
 model InfoPatologias {
@@ -47,7 +47,7 @@ model InfoPatologias {
   patologia   String   @db.VarChar(100)
 
   // Relacion N a 1 con Usuario
-  usuario     Usuario @relation(fields: [usuarioId], references: [id])
+  usuario     Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
 model Ejercicio {
@@ -73,7 +73,7 @@ model PlanEntrenamiento {
   fechaInicio  DateTime          @default(now())
 
   // Relacion N a 1
-  usuario      Usuario           @relation(fields: [usuarioId], references: [id])
+  usuario      Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   // Relacion 1 a N
   dias         DiaEntrenamiento[]
 }

@@ -3,6 +3,7 @@ import { mainRouter } from "./routes/route.js";
 import { userRouter } from "./routes/UsersRoute.js"; 
 import { authRouter } from "./routes/AuthRoute.js"; 
 import { corsMiddleware } from "./middlewares/cors.js";
+import { trainRouter } from "./routes/TrainRoute.js";
 
 const app = Express()
 const PORT = process.env.PORT ?? 8081
@@ -14,6 +15,7 @@ app.use(Express.json())
 app.use('/', mainRouter)
 app.use('/', authRouter)
 app.use('/users', userRouter)
+app.use('/trains', trainRouter)
 app.use((req, res) => {
     res.status(404).send('<h1>Error 404 not found</h1>')
 })

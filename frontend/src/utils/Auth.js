@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = ref(false);
+  const router = useRouter();
 
   // Inicializa isLoggedIn solo si el token es válido
   function initialize() {
@@ -21,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.log('Token inválido:', error);
       localStorage.removeItem('log_token');
+      router.push('/');
     }
   };
 
@@ -47,7 +50,16 @@ export const useAuthStore = defineStore('auth', () => {
     return decoded.nombre;
   }
 
-  return { isLoggedIn, login, logout, isAdmin, getName };
+  function getId() {
+    const decoded = decodedToken(localStorage.getItem('log_token'));
+    return decoded.id;
+  }
+
+  function getToken() {
+    return localStorage.getItem('log_token');
+  }
+
+  return { isLoggedIn, login, logout, isAdmin, getName, getId, getToken, isTokenValid };
 });
 
 /**
@@ -66,3 +78,16 @@ export const decodedToken = (token) => {
     return null;
   }
 };
+
+export function isTokenValid() {
+  const token = localStorage.getItem('log_token');
+  if (!token) return false;
+
+  try {
+    const decoded = decodedToken(token);
+    const now = Math.floor(Date.now() / 1000);
+    return decoded && (!decoded.exp || decoded.exp > now);
+  } catch (error) {
+    return false;
+  }
+}

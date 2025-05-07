@@ -7,7 +7,7 @@ const SECRET = process.env.JWT_SECRET ?? "miclave";
 
 export class AuthController {
   static async register(req, res) {
-    const { nombre, apellido, spaellido, correo, password, respassword } = req.body;
+    const { nombre, apellido, sapellido, correo, password, respassword } = req.body;
 
     try {
       const existingUser = await prisma.usuario.findUnique({ where: { correo } });
@@ -16,7 +16,7 @@ export class AuthController {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const user = await prisma.usuario.create({data: { nombre, apellido, spaellido, correo, password: hashedPassword} });
+      const user = await prisma.usuario.create({data: { nombre, apellido, sapellido, correo, password: hashedPassword} });
 
       const data = {
         id: user.id,

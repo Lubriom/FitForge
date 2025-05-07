@@ -13,8 +13,8 @@
           Por favor seleccione su género:
           <select v-model="form.genero" class="w-full p-2 rounded text-black bg-white" required>
             <option value="">Seleccione...</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Femenino">Femenino</option>
+            <option value="Hombre">Hombre</option>
+            <option value="Mujer">Mujer</option>
             <option value="Otro">Prefiero no especificar</option>
           </select>
         </label>
@@ -77,7 +77,7 @@
         <h3 class="text-xl">Revisión de Datos</h3>
         <h4 class="text-">¿Estos datos son correctos?</h4>
         <ul class="bg-gray-800 p-4 rounded">
-          <li><strong>Edad:</strong> {{ form.fec_nac }}</li>
+          <li><strong>Fecha de Nacimiento:</strong> {{ form.fec_nac }}</li>
           <li><strong>Género:</strong> {{ form.genero }}</li>
           <li><strong>Peso:</strong> {{ form.peso }} kg</li>
           <li><strong>Altura:</strong> {{ form.altura }} cm</li>
@@ -166,7 +166,7 @@ const handleSubmit = async (event) => {
         message: "Introduce una fecha válida y realista"
       }),
 
-      genero: z.enum(["Masculino", "Femenino", "Otro"], {
+      genero: z.enum(["Hombre", "Mujer", "Otro"], {
         errorMap: () => ({ message: "Selecciona un género válido." })
       }),
 
@@ -208,7 +208,7 @@ const handleSubmit = async (event) => {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }
     });
-    // router.push("/");
+    // router.push("/dashboard");
   } catch (error) {
     if (error instanceof z.ZodError) {
       alert("Error de validación front:" + error.errors[0].message);

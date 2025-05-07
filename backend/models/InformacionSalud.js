@@ -1,12 +1,31 @@
 import { prisma } from "../config/db.js";
 
 export class InformacionSaludModel {
-  static async getInfoByID({ usuarioId }) {
+  static async getById({ usuarioId, type }) {
     try {
-      return await prisma.informacionSalud.findFirst({
-        where: { usuarioId: parseInt(usuarioId) },
-        orderBy: { fechaRegistro: "desc" }
-      });
+      var info;
+      switch (type) {
+        case 'last':
+          info = await prisma.informacionSalud.findFirst({
+            where: { usuarioId: parseInt(usuarioId) },
+            orderBy: { id: "desc" }
+          });
+          break;
+        
+        case 'first':
+          info = await prisma.informacionSalud.findFirst({
+            where: { usuarioId: parseInt(usuarioId) },
+            orderBy: { id: "asc" }
+          });
+          break;
+
+        default:
+          info = await prisma.informacionSalud.findFirst({
+            where: { usuarioId: parseInt(usuarioId) }
+          });
+          break;
+      }
+      return info;
     } catch (error) {
       console.error("Error al obtener la informacion del usuario:", error);
     }

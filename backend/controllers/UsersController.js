@@ -68,19 +68,33 @@ export class UserController {
       patologias: req.body.patologiasSeleccionadas
     };
 
-
     try {
+
       if (dataUser) {
         await UserModel.update({ id: jwt.decode(token).id, data: dataUser });
       }
       await InformacionSaludModel.create({ usuarioId: jwt.decode(token).id, data: infoUser });
       if (patologiasUser) {
-        patologiasUser.patologias.forEach(async (patologia) => {
-          await InfoPatologiaModel.create({
-            usuarioId: jwt.decode(token).id,
-            data: patologia
-          });
-        });
+        const usuarioId = jwt.decode(token).id;
+        const nuevasPatologias = patologiasUser.patologias;
+
+        const patologiasExistentes = await InfoPatologiaModel.getById({usuarioId}); 
+        const nombresExistentes = patologiasExistentes.map((p) => p.nombre); 
+
+        for (const nombre of nuevasPatologias) {
+          if (!nombresExistentes.includes(nombre)) {
+            await InfoPatologiaModel.create({
+              usuarioId,
+              data: nombre
+            });
+          }
+        }
+
+        for (const existente of patologiasExistentes) {
+          if (!nuevasPatologias.includes(existente.nombre)) {
+            await InfoPatologiaModel.delete({ id: existente.id});
+          }
+        }
       }
       return res.status(200).send("Perfil actualizado");
     } catch (error) {

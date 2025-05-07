@@ -17,7 +17,7 @@ const infoSchema = z.object({
     message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
   }),
 
-  genero: z.enum(["Masculino", "Femenino", "Otro"], {
+  genero: z.enum(["Hombre", "Mujer", "Otro"], {
     errorMap: () => ({ message: "Selecciona un género válido." })
   }),
 
