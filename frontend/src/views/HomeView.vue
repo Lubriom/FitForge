@@ -42,7 +42,7 @@
 
 <script setup>
 import axios from "axios";
-import { useAuthStore } from "../utils/auth";
+import { useAuthStore } from "@/utils/auth";
 import { onMounted, ref } from "vue";
 
 const auth = useAuthStore();

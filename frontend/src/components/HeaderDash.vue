@@ -1,32 +1,90 @@
 <template>
-  <header class="bg-transparent text-white p-4">
-    <nav>
-      <ul class="flex space-x-4 justify-between items-center">
-        <li>
-          <router-link to="/" class="text-white p-2 rounded-full font-rr">FitForge</router-link>
-        </li>
-        <div class="flex space-x-2">
-          <router-link to="/" class="text-white bg-quaternary-500 hover:bg-quinary-500 py-2 px-5 rounded-full"
-            >Inicio</router-link
-          >
-          <router-link to="/users/stats" class="text-white bg-quaternary-500 hover:bg-quinary-500 py-2 px-5 rounded-full"
-            >Estadisticas</router-link
-          >
-          <router-link to="/dashboard" class="text-white bg-quaternary-500 hover:bg-quinary-500 py-2 px-5 rounded-full"
-            >Dashboard</router-link
-          >
+  <header
+    :class="[
+      'bg-white rounded-2xl p-3 shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)] transition-all duration-100 ease-in-out',
+      expanded ? 'w-64' : 'w-18'
+    ]"
+    class="h-full flex flex-col items-center"
+  >
+    <!-- Título y botón -->
+    <div class="flex flex-row items-center justify-between w-full">
+      <transition name="fade-slide">
+        <div v-if="expanded" class="items-center">
+          <h1 class="text-black font-bold ml-2">FitForge</h1>
         </div>
-        <div v-if="auth.isLoggedIn" class="flex space-x-2 text-black">
-          <li class="bg-quinary-500 py-2 px-5 rounded-full">{{ auth.getName() }}</li>
+      </transition>
+      <button
+        @click="expanded = !expanded"
+        :class="['text-white w-full h-10 rounded-xl flex items-center', expanded ? 'justify-end' : 'justify-center']"
+        title="Expandir"
+      >
+        <span v-if="!expanded">
+          <ChevronLeft class="text-slate-900" />
+        </span>
+        <span v-else>
+          <ChevronRight class="text-slate-900" />
+        </span>
+      </button>
+    </div>
+
+    <hr class="w-full pb-1 mx-auto border-gray-500" />
+
+    <!-- Navegación -->
+    <nav class="h-full w-full pt-1">
+      <ul class="flex flex-col justify-between h-full text-black">
+        <div class="flex flex-col gap-2">
           <li>
-            <button
-              @click="logout"
-              class="text-white bg-tertiary-500 border-1 border-tertiary-500 py-2 px-5 rounded-full"
+            <router-link
+              to="/dashboard"
+              exact-active-class="active-link"
+              class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl hover:shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
             >
-              Logout
-            </button>
+              <span><LayoutDashboard /></span>
+              <transition name="fade-slide">
+                <span v-if="expanded">Dashboard</span>
+              </transition>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              to="/settings"
+              exact-active-class="active-link"
+              class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl hover:shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+            >
+              <span><ChartNoAxesCombined /></span>
+              <transition name="fade-slide">
+                <span v-if="expanded">Estadisticas</span>
+              </transition>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              to="/settings"
+              exact-active-class="active-link"
+              class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl hover:shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+            >
+              <span><Dumbbell /></span>
+              <transition name="fade-slide">
+                <span v-if="expanded">Ejercicios</span>
+              </transition>
+            </router-link>
+          </li>
+          <li>
+            <router-link
+              v-if="auth.isAdmin()"
+              to="/settings"
+              exact-active-class="active-link"
+              class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl hover:shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+            >
+              <span><Shield /></span>
+              <transition name="fade-slide">
+                <span v-if="expanded">Administración</span>
+              </transition>
+            </router-link>
           </li>
         </div>
+
+        <hr class="w-full pb-1 mx-auto border-gray-500" />
       </ul>
     </nav>
   </header>
@@ -35,13 +93,25 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "../utils/auth.js";
+import { ChevronLeft } from "lucide-vue-next";
+import { ChevronRight } from "lucide-vue-next";
+import { LayoutDashboard } from "lucide-vue-next";
+import { Dumbbell } from "lucide-vue-next";
+import { Shield } from "lucide-vue-next";
+import { useAuthStore } from "@/utils/auth.js";
+import { ChartNoAxesCombined } from "lucide-vue-next";
+import DashboardLayout from "./layouts/dashboardLayout.vue";
 
 const auth = useAuthStore();
 const router = useRouter();
 
-const logout = () => {
-  auth.logout();
-  router.push("/");
-};
+const expanded = ref(false);
 </script>
+
+<style scoped>
+.active-link {
+  background-color: #F56E0F;
+  opacity: 100%;
+  color: white;
+}
+</style>
