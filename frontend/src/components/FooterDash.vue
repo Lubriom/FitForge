@@ -1,8 +1,8 @@
 <template>
-  <footer class="bg-gray-800 text-white p-4">
+  <footer class="flex text-black px-2">
     <div class="flex justify-center space-x-6">
-      <p>Dashboard - FitForge</p>
+      <p class="text-gray-900">Copyright © 2025 FitForge</p>
+      <router-link to="/dashboard/admin" class="hover:text-tertiary-500 text-gray-700 transition duration-300">Política de privacidad</router-link>
     </div>
-    <p class="text-center mt-4">© 2025 FitForge. Todos los derechos reservados.</p>
   </footer>
 </template>

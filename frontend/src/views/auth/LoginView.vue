@@ -1,38 +1,94 @@
 <template>
-  <div ref="formRef" class="flex flex-col py-5 px-5">
-    <h1 class="text-white self-center text-2xl">Iniciar Sesión</h1>
-    <br />
-    <form @submit="login" class="flex flex-col text-white gap-2">
-      <label for="email">Correo:</label>
-      <input type="text" id="email" v-model="user.correo" class="border p-2 mb-1 bg-white rounded-2xl text-black" />
-      <span v-if="errors.correo" class="text-red-500 text-sm mb-2">{{ errors.correo }}</span>
+  <div
+    ref="formRef"
+    class="flex flex-col py-5 px-5 w-sm bg-gray-200/20 rounded-2xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+  >
+    <div class="flex flex-col py-5 px-4 max-w-lg">
+      <h1 class="text-white self-center text-3xl font-bold mb-6">Iniciar Sesión</h1>
 
-      <label for="password">Contraseña:</label>
-      <input
-        type="password"
-        id="password"
-        v-model="user.password"
-        class="border p-2 mb-1 bg-white rounded-2xl text-black"
-      />
-      <span v-if="errors.password" class="text-red-500 text-sm mb-2">{{ errors.password }}</span>
+      <form @submit="login" class="flex flex-col text-white gap-4">
+        <!-- Email -->
+        <div class="flex flex-col">
+          <label for="email" class="mb-1 font-semibold text-sm text-white">Correo electrónico</label>
+          <input
+            type="text"
+            id="email"
+            v-model="user.correo"
+            placeholder="tucorreo@ejemplo.com"
+            class="rounded-xl px-4 py-2 bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+          />
+          <span v-if="errors.correo" class="text-red-500 text-xs mt-1">{{ errors.correo }}</span>
+        </div>
 
-      <button type="submit" class="bg-tertiary-500 text-white p-2 rounded-2xl">Iniciar Sesión</button>
-    </form>
+        <!-- Password -->
+        <div class="flex flex-col">
+          <label for="password" class="mb-1 font-semibold text-sm text-white">Contraseña</label>
+          <div class="relative">
+            <input
+              :type="isPasswordVisible ? 'text' : 'password'"
+              id="password"
+              v-model="user.password"
+              placeholder="********"
+              class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+            >
+              <span v-if="isPasswordVisible"><Eye /></span>
+              <span v-else><EyeClosed /></span>
+            </button>
+          </div>
+          <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</span>
+        </div>
 
-    <!-- Mostrar errores del backend -->
-    <span v-if="errors.serverError" class="text-red-500 text-sm mt-2">{{ errors.serverError }}</span>
+        <!-- Botón -->
+        <button
+          type="submit"
+          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colors duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2"
+        >
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <!-- Error del servidor -->
+      <span v-if="errors.serverError" class="text-red-500 text-sm mt-4 text-center">{{ errors.serverError }}</span>
+    </div>
+    <button @click="swapSides" class="cursor-pointer opacity-70 hover:opacity-100 text-white">
+      <span v-if="isLogin">¿No tienes cuenta? Regístrate</span>
+      <span v-else>¿Ya tienes cuenta? Inicia sesión</span>
+    </button>
   </div>
 </template>
 
 <script setup>
 import { z } from "zod";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import anime from "animejs";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
+import { Eye } from "lucide-vue-next";
+import { EyeClosed } from "lucide-vue-next";
+
+const isPasswordVisible = ref(false);
+
+function togglePasswordVisibility() {
+  isPasswordVisible.value = !isPasswordVisible.value;
+}
+
+
+const emit = defineEmits();
+
+function swapSides() {
+  emit("trigger-animation");
+}
+
+const isLogin = computed(() => route.name === "Login");
 
 const auth = useAuthStore();
+const route = useRoute();
 const router = useRouter();
 const user = ref({});
 

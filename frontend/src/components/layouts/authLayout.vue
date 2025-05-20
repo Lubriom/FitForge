@@ -14,18 +14,10 @@
         :style="{ transform: `translateX(${initialTranslateX})` }"
       >
         <div class="absolute inset-0 flex items-center justify-center z-30">
-          <div
-            class="flex flex-col py-5 px-5 w-md bg-gray-200/50 rounded-2xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
-          >
-            <Transition mode="out-in" @enter="enterAnimation" @leave="leaveAnimation">
+          <Transition mode="out-in" @enter="enterAnimation" @leave="leaveAnimation" @trigger-animation="swapSides" :class="{ 'animate-class': animationActive }">
+            
               <router-view :key="$route.fullPath" />
-            </Transition>
-
-            <button @click="swapSides" class="cursor-pointer opacity-70 hover:opacity-100">
-              <span v-if="isLogin">¿No tienes cuenta? Regístrate</span>
-              <span v-else>¿Ya tienes cuenta? Inicia sesión</span>
-            </button>
-          </div>
+          </Transition>
         </div>
       </div>
 
@@ -50,6 +42,8 @@ import { ref, nextTick, computed } from "vue";
 import anime from "animejs";
 import { useRouter, useRoute } from "vue-router";
 import { ArrowBigLeftDash } from "lucide-vue-next";
+
+const animationActive = ref(false);
 
 const router = useRouter();
 const route = useRoute();

@@ -16,7 +16,9 @@ model Usuario {
   password      String?          @db.VarChar(200)
   role          String?          @db.VarChar(100) @default("user")
   genero        String?          @db.VarChar(100)
-  fec_nac       DateTime?         @db.Date() 
+  fec_nac       DateTime?        @db.Date() 
+  activo        Int              @db.Integer @default(1)
+  profile_img   String?          @db.VarChar(200) @default("default.png")
   created_at    DateTime         @default(now()) @db.Timestamp(6)
   updated_at    DateTime         @updatedAt @db.Timestamp(6)
 

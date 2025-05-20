@@ -34,32 +34,56 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn.value = true;
   }
 
+  /**
+   * Función para cerrar sesión, elimina el token y cambia el estado de log
+   */
   function logout() {
     localStorage.removeItem('log_token');
     isLoggedIn.value = false;
   }
 
+  /**
+   * Función para saber si el usuario es admin
+   * @returns -> boolean - Si el usuario es admin devuelve true sino false
+   */
   function isAdmin() {
     if (!isLoggedIn.value) return false;
     const decoded = decodedToken(localStorage.getItem('log_token'));
     return decoded.role === 'admin';  
   }
 
+  /**
+   * Función para obtener el nombre del usuario
+   * @returns -> string - Nombre del usuario
+   */
   function getName() {
     const decoded = decodedToken(localStorage.getItem('log_token'));
     return decoded.nombre;
   }
 
+  /**
+   * Función para obtener el id del usuario
+   * @returns -> string - Id del usuario
+   */
   function getId() {
     const decoded = decodedToken(localStorage.getItem('log_token'));
     return decoded.id;
   }
 
+  /**
+   * Función para obtener el token
+   * @returns -> string - Token
+   */
   function getToken() {
     return localStorage.getItem('log_token');
   }
 
-  return { isLoggedIn, login, logout, isAdmin, getName, getId, getToken, isTokenValid };
+  function getImage() {
+    const decoded = decodedToken(localStorage.getItem('log_token'));
+    return decoded.profile_img;
+  }
+
+  return { isLoggedIn, login, logout, isAdmin, getName, getId, getToken, getImage, isTokenValid };
 });
 
 /**

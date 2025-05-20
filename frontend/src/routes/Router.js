@@ -9,6 +9,7 @@ import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
 import StartView from "@/views/StartView.vue";
 import DashboardRoutes from "./DashboardRoutes.js";
+import ExercisesRoutes from "./ExercisesRoutes.js";
 
 const routes = [
   {
@@ -45,7 +46,8 @@ const routes = [
     component: StartView,
     meta: { requiresAuth: true }
   },
-  ...DashboardRoutes
+  ...DashboardRoutes,
+  ...ExercisesRoutes
 ];
 
 const router = createRouter({

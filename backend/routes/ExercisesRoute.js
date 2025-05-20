@@ -4,6 +4,6 @@ import { validateToken } from "../middlewares/validateToken.js";
 import { EntrenamientoController } from "../controllers/EntrenamientoController.js";
 import { EjerciciosController } from "../controllers/EjerciciosController.js";
 
-export const trainRouter = Router();
+export const exerciseRouter = Router();
 
-trainRouter.get("/user/:id", validateId, validateToken, EntrenamientoController.getPlanesPorUsuario);
+exerciseRouter.get("/get", EjerciciosController.getAll);

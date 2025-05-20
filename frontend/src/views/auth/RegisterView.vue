@@ -1,70 +1,126 @@
 <template>
-  <div class="flex flex-col pb-5 px-5">
-    <h1 class="text-white self-center text-2xl">Registrarse</h1>
-    <br />
-    <form @submit="register" class="flex flex-col gap-2 text-white">
-      <!-- Nombre -->
-      <label for="name">Nombre:</label>
-      <input type="text" id="name" v-model="user.nombre" class="border p-2 mb-1 bg-white rounded-2xl text-black" />
-      <span v-if="errors.nombre" class="text-red-500 text-sm">{{ errors.nombre }}</span>
+  <div
+    ref="formRef"
+    class="flex flex-col py-5 px-5 w-md bg-gray-200/20 rounded-2xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+  >
+    <div class="flex flex-col pb-5 px-5 max-w-lg">
+      <h1 class="text-white self-center text-3xl font-bold mb-6">Registrarse</h1>
 
-      <!-- Apellido -->
-      <div class="flex flex-row justify-stretch gap-3">
-        <div class="flex flex-col w-full gap-2">
-          <label for="apellido">Primer Apellido:</label>
+      <form @submit="register" class="flex flex-col gap-4 text-white">
+        <!-- Nombre -->
+        <div class="flex flex-col">
+          <label for="name" class="mb-1 font-semibold text-sm text-white">Nombre</label>
           <input
             type="text"
-            id="apellido"
-            v-model="user.apellido"
-            class="border p-2 mb-1 bg-white rounded-2xl text-black w-full"
+            id="name"
+            v-model="user.nombre"
+            placeholder="Tu nombre"
+            class="rounded-xl px-4 py-2 bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
           />
-          <span v-if="errors.apellido" class="text-red-500 text-sm">{{ errors.apellido }}</span>
+          <span v-if="errors.nombre" class="text-red-500 text-xs mt-1">{{ errors.nombre }}</span>
         </div>
-        <div class="flex flex-col w-full gap-2">
-          <label for="sapellido">Segundo Apellido:</label>
+
+        <!-- Apellidos -->
+        <div class="flex flex-row justify-stretch gap-3">
+          <div class="flex flex-col gap-2">
+            <label for="apellido" class="mb-1 font-semibold text-sm text-white">Primer Apellido</label>
+            <input
+              type="text"
+              id="apellido"
+              v-model="user.apellido"
+              placeholder="Primer apellido"
+              class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+            />
+            <span v-if="errors.apellido" class="text-red-500 text-xs mt-1">{{ errors.apellido }}</span>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="sapellido" class="mb-1 font-semibold text-sm text-white">Segundo Apellido</label>
+            <input
+              type="text"
+              id="sapellido"
+              v-model="user.sapellido"
+              placeholder="Segundo apellido"
+              class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+            />
+            <span v-if="errors.sapellido" class="text-red-500 text-xs mt-1">{{ errors.sapellido }}</span>
+          </div>
+        </div>
+
+        <!-- Correo -->
+        <div class="flex flex-col">
+          <label for="email" class="mb-1 font-semibold text-sm text-white">Correo</label>
           <input
             type="text"
-            id="sapellido"
-            v-model="user.sapellido"
-            class="border p-2 mb-1 bg-white rounded-2xl text-black w-full"
+            id="email"
+            v-model="user.correo"
+            placeholder="tucorreo@ejemplo.com"
+            class="rounded-xl px-4 py-2 bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
           />
-          <span v-if="errors.sapellido" class="text-red-500 text-sm">{{ errors.sapellido }}</span>
-        </div>
-      </div>
-
-      <!-- Correo -->
-      <label for="email">Correo:</label>
-      <input type="email" id="email" v-model="user.correo" class="border p-2 mb-1 bg-white rounded-2xl text-black" />
-      <span v-if="errors.correo" class="text-red-500 text-sm">{{ errors.correo }}</span>
-
-      <!-- Contraseña -->
-      <div class="flex flex-row justify-stretch gap-3">
-        <div class="flex flex-col w-full gap-2">
-          <label for="password">Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            v-model="user.password"
-            class="border p-2 mb-1 bg-white rounded-2xl text-black w-full"
-          />
-          <span v-if="errors.password" class="text-red-500 text-sm">{{ errors.password }}</span>
+          <span v-if="errors.correo" class="text-red-500 text-xs mt-1">{{ errors.correo }}</span>
         </div>
 
-        <!-- Confirmar Contraseña -->
-        <div class="flex flex-col w-full gap-2">
-          <label for="confirmPassword">Confirmar Contraseña:</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="user.respassword"
-            class="border p-2 mb-1 bg-white rounded-2xl text-black w-full"
-          />
-          <span v-if="errors.respassword" class="text-red-500 text-sm">{{ errors.respassword }}</span>
-        </div>
-      </div>
+        <!-- Contraseña -->
+        <div class="flex flex-row justify-stretch gap-3">
+          <div class="flex flex-col w-full gap-2">
+            <label for="password" class="mb-1 font-semibold text-sm text-white">Contraseña</label>
+            <div class="relative">
+              <input
+                :type="isPasswordVisible0 ? 'text' : 'password'"
+                id="password"
+                v-model="user.password"
+                placeholder="********"
+                class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+              />
+              <button
+                type="button"
+                @click="togglePasswordVisibility"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+              >
+                <span v-if="isPasswordVisible0"><Eye /></span>
+                <span v-else><EyeClosed /></span>
+              </button>
+            </div>
+            <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</span>
+          </div>
 
-      <button type="submit" class="bg-tertiary-500 text-white p-2 rounded-2xl">Registrarse</button>
-    </form>
+          <!-- Confirmar Contraseña -->
+          <div class="flex flex-col w-full gap-2">
+            <label for="confirmPassword" class="mb-1 font-semibold text-sm text-white">Confirmar Contraseña</label>
+            <div class="relative">
+            <input
+              :type="isPasswordVisible1 ? 'text' : 'password'"
+              id="confirmPassword"
+              v-model="user.respassword"
+              placeholder="********"
+              class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+            />
+            <button
+              type="button"
+              @click="togglePasswordVisibility1"
+              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+            >
+              <span v-if="isPasswordVisible1"><Eye /></span>
+              <span v-else><EyeClosed /></span>
+            </button>
+            </div>
+            <span v-if="errors.respassword" class="text-red-500 text-xs mt-1">{{ errors.respassword }}</span>
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <button
+          type="submit"
+          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colores duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2"
+        >
+          Registrarse
+        </button>
+      </form>
+    </div>
+
+    <button @click="swapSides" class="cursor-pointer opacity-70 hover:opacity-100 text-white">
+      <span v-if="isLogin">¿No tienes cuenta? Regístrate</span>
+      <span v-else>¿Ya tienes cuenta? Inicia sesión</span>
+    </button>
   </div>
 </template>
 
@@ -74,9 +130,28 @@ import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
+import { Eye } from "lucide-vue-next";
+import { EyeClosed } from "lucide-vue-next";
 
 const router = useRouter();
 const auth = useAuthStore();
+
+const emit = defineEmits();
+function swapSides() {
+  emit("trigger-animation");
+}
+
+const isPasswordVisible0 = ref(false);
+const isPasswordVisible1 = ref(false);
+
+function togglePasswordVisibility() {
+  isPasswordVisible0.value = !isPasswordVisible0.value;
+}
+
+function togglePasswordVisibility1() {
+  isPasswordVisible1.value = !isPasswordVisible1.value;
+}
+
 const user = ref({
   nombre: "",
   apellido: "",
