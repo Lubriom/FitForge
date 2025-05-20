@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-transparent text-white p-4">
+  <header class="bg-white text-white p-4">
     <nav>
       <ul class="flex space-x-4 justify-between">
         <li>
@@ -50,7 +50,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from '../utils/auth.js';
+import { useAuthStore } from '@/utils/auth.js';
 
 const auth = useAuthStore();
 const router = useRouter();

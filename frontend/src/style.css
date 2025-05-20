@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Road+Rage&display=swap');
+@import "tailwindcss";
 
 
 @theme {
@@ -12,3 +12,12 @@
     --font-bebas: "Bebas Neue", cursive;
     --font-rr: "Road Rage", sans-serif;
 }
+
+.shadow-custom {
+    box-shadow: 15px 15px 30px rgb(25, 25, 25, 0.5),
+             -15px -15px 30px rgba(60, 60, 60, 0.5);
+}
+
+.custom-gradient {
+    background: linear-gradient(to right, rgba(0,0,0,0.1) 0%, black 10%, black 90%, rgba(0,0,0,0.1) 100%);
+  }

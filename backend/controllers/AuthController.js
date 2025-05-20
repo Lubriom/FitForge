@@ -22,6 +22,7 @@ export class AuthController {
         id: user.id,
         nombre: user.nombre,
         correo: user.correo,
+        profile_img: user.profile_img,
         role: user.role
       };
 
@@ -39,7 +40,8 @@ export class AuthController {
 
     try {
       const user = await prisma.usuario.findUnique({ where: { correo } });
-      if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+      if (!user) return res.status(404).json({ error: "Credenciales invalidas" });
+      if (!user.activo) return res.status(404).json({ error: "Credenciales invalidas" });
 
       const isPasswordValid = bcrypt.compareSync(password, user.password);
       if (!isPasswordValid) return res.status(401).json({ error: "Contraseña incorrecta" });
@@ -48,6 +50,7 @@ export class AuthController {
         id: user.id,
         nombre: user.nombre,
         correo: user.correo,
+        profile_img: user.profile_img,
         role: user.role
       };
 

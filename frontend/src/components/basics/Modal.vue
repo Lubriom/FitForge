@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="visible"
-    class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50"
+    class="fixed top-0 inset-0 bg-black/50 w-full h-full flex justify-center items-center z-50"
     @click.self="close"
   >
     <Transition
@@ -14,7 +14,7 @@
       leave-to-class="opacity-0 scale-90"
     >
       <div v-show="visible" class="bg-white p-6 rounded-2xl w-1/2 relative shadow-2xl">
-        <button class="absolute top-2 right-2 text-black text-xl bg-red-500 rounded-2xl p-2" @click="close">&times;</button>
+        <button class="absolute top-2 right-2 text-black text-xl bg-red-500 rounded-2xl p-1" @click="close"><X class="text-white"/></button>
         <component :is="component" v-bind="props" />
       </div>
     </Transition>
@@ -23,6 +23,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from "vue";
+import { X } from "lucide-vue-next";
 
 const props = defineProps({
   visible: Boolean,
