@@ -217,7 +217,7 @@ const register = async (event) => {
     }
 
     // Hacer la solicitud al backend
-    const response = await axios.post("http://localhost:8081/register", user.value);
+    const response = await axios.post("http://localhost:8081/register", user.value);x
 
     // Si la respuesta tiene un token, proceder con el login
     if (response.data.token) {

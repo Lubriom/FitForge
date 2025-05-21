@@ -48,7 +48,10 @@
         </select>
 
         <!-- Botón Filtrar -->
-        <button type="submit" class="bg-tertiary-500/90 text-white py-2 px-4 rounded-lg hover:bg-tertiary-500">
+        <button
+          type="submit"
+          class="bg-tertiary-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 cursor-pointer"
+        >
           Filtrar
         </button>
 
@@ -56,7 +59,7 @@
         <button
           type="button"
           @click="resetFiltros"
-          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400"
+          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer"
         >
           <RotateCcw />
         </button>
@@ -115,7 +118,7 @@
                   <ContactRound />
                 </router-link>
                 <router-link
-                  :to="{ name: 'Edit', params: { id: user.id } }"
+                  :to="{ name: 'DashboardAdminEdit', params: { id: user.id } }"
                   class="bg-green-500 text-white rounded-md p-2"
                 >
                   <UserPen />
@@ -123,9 +126,16 @@
                 <button
                   v-if="user.activo == 1"
                   @click="deleteUser(user.id)"
-                  class="bg-red-500 text-white rounded-md p-2"
+                  class="bg-red-500 text-white rounded-md p-2 cursor-pointer"
                 >
                   <Trash2 />
+                </button>
+                <button
+                  v-if="user.activo == 0"
+                  @click="activateUser(user.id)"
+                  class="bg-blue-500 text-white rounded-md p-2 cursor-pointer"
+                >
+                  <UserPlus />
                 </button>
               </div>
             </td>
@@ -137,11 +147,19 @@
     <div
       class="bg-gray-100 p-2 rounded-xl flex justify-between items-center shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
     >
-      <button @click="prevPage" :disabled="page <= 1" class="px-3 py-1 bg-tertiary-500 text-white rounded-xl">
+      <button
+        @click="prevPage"
+        :disabled="page <= 1"
+        class="px-3 py-1 bg-tertiary-500 text-white rounded-xl cursor-pointer"
+      >
         Anterior
       </button>
       <span>Página {{ page }} de {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="page >= totalPages" class="px-3 py-1 bg-tertiary-500 text-white rounded-xl">
+      <button
+        @click="nextPage"
+        :disabled="page >= totalPages"
+        class="px-3 py-1 bg-tertiary-500 text-white rounded-xl cursor-pointer"
+      >
         Siguiente
       </button>
     </div>
@@ -226,6 +244,7 @@ const nextPage = () => {
 // Borrar usuario
 const deleteUser = async (userId) => {
   try {
+    if (auth.getId() === userId) return alert("No puedes borrar tu propio usuario.");
     await axios.delete(`http://localhost:8081/users/delete/${userId}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("log_token")}` }
     });
@@ -234,6 +253,17 @@ const deleteUser = async (userId) => {
     console.error("Error al eliminar usuario:", err);
   }
 };
+
+const activateUser = async (userId) => {
+  try {
+    await axios.patch(`http://localhost:8081/users/update/${userId}`, { activo: 1 }, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("log_token")}` }
+    });
+    fetchUsers();
+  } catch (err) {
+    console.error("Error al activar usuario:", err);
+  }
+}
 
 // Envío manual de filtros (desde formulario)
 const emitirFiltros = () => {
@@ -277,5 +307,5 @@ watch(
 );
 
 // Iconos
-import { RotateCcw, Trash2, UserPen, ContactRound } from "lucide-vue-next";
+import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus } from "lucide-vue-next";
 </script>

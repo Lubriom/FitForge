@@ -28,5 +28,11 @@ export default [
     name: "DashboardAdmin",
     component: () => import("@/views/dashboard/AdminView.vue"),
     meta: { layout: "dashboard", requiresAuth: true }
+  },
+  {
+    path: "/dashboard/admin/edit/:id",
+    name: "DashboardAdminEdit",
+    component: () => import("@/views/dashboard/EditProfile.vue"),
+    meta: { layout: "dashboard", requiresAuth: true }
   }
 ];

@@ -11,18 +11,26 @@ export class AuthController {
 
     try {
       const existingUser = await prisma.usuario.findUnique({ where: { correo } });
-      if (existingUser) return res.status(400).json({ error: "Ya existe un usuario con este email" });
+      if (existingUser && existingUser.activo)
+        return res.status(400).json({ error: "Ya existe un usuario con este email" });
       if (password !== respassword) return res.status(400).json({ error: "Las contraseñas no coinciden" });
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const user = await prisma.usuario.create({data: { nombre, apellido, sapellido, correo, password: hashedPassword} });
+      const user = await ((async) => {
+        if (existingUser && !existingUser.activo)
+          return prisma.usuario.update({
+            where: { correo },
+            data: { nombre, apellido, sapellido, correo, password: hashedPassword, activo: 1 }
+          });
+
+        return prisma.usuario.create({ data: { nombre, apellido, sapellido, correo, password: hashedPassword } });
+      })();
 
       const data = {
         id: user.id,
         nombre: user.nombre,
         correo: user.correo,
-        profile_img: user.profile_img,
         role: user.role
       };
 
