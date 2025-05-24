@@ -197,15 +197,7 @@ const register = async (event) => {
     });
 
     // Reset errors
-    errors.value = {
-      nombre: "",
-      apellido: "",
-      sapellido: "",
-      correo: "",
-      password: "",
-      respassword: "",
-      serverError: ""
-    };
+    Object.keys(errors.value).forEach((key) => (errors.value[key] = ""));
 
     // Validación con Zod
     registerSchema.parse(user.value);

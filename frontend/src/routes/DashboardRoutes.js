@@ -18,6 +18,12 @@ export default [
     meta: { layout: "dashboard", requiresAuth: true }
   },
   {
+    path: "/dashboard/stats/",
+    name: "DashboardStats",
+    component: () => import("@/views/dashboard/SeeProfileView.vue"),
+    meta: { layout: "dashboard", requiresAuth: true }
+  },
+  {
     path: "/dashboard/settings",
     name: "DashboardSettings",
     component: () => import("@/views/dashboard/SettingsView.vue"),

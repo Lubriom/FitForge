@@ -61,6 +61,16 @@
                 <span v-if="errors.fec_nac" class="text-red-500 text-xs mt-1">{{ errors.fec_nac }}</span>
               </div>
             </div>
+            <div>
+              <label class="block text-sm font-medium">Rol</label>
+              <select v-model="form.role" class="input">
+                <option value="">Selecciona una opcion</option>
+                <option value="user">Usuario</option>
+                <option value="entrenador">Entrenador</option>
+                <option value="admin">Administrador</option>
+              </select>
+              <span v-if="errors.role" class="text-red-500 text-xs mt-1">{{ errors.role }}</span>
+            </div>
 
             <button type="submit" class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 w-full rounded-full">
               Guardar cambios
@@ -88,7 +98,7 @@
 
           <div class="flex flex-row justify-between">
             <form @submit.prevent="changePass" class="flex flex-col gap-4 w-full">
-              <div class="flex flex-row justify-evenly gap-4 mx-1">
+              <div class="flex flex-col justify-evenly gap-4 mx-1">
                 <div class="w-full">
                   <label class="block text-sm font-medium">Contraseña</label>
                   <input type="text" v-model="userPass.password" class="input" />
@@ -139,6 +149,7 @@ import z from "zod";
 import { useLayoutStore } from "@/stores/layoutStore";
 import BaseModal from "@/components/basics/Modal.vue";
 import { Trash } from "lucide-vue-next";
+import router from "../../routes/Router";
 
 const showModal = ref(false);
 const modalComponent = ref(null);
@@ -161,7 +172,8 @@ const form = ref({
   sapellido: "",
   correo: "",
   genero: "",
-  fec_nac: ""
+  fec_nac: "",
+  role: ""
 });
 
 const errors = ref({
@@ -170,7 +182,8 @@ const errors = ref({
   sapellido: "",
   correo: "",
   genero: "",
-  fec_nac: ""
+  fec_nac: "",
+  role: ""
 });
 
 onMounted(async () => {
@@ -191,7 +204,8 @@ onMounted(async () => {
       sapellido: data.sapellido || "",
       correo: data.correo || "",
       genero: data.genero || "",
-      fec_nac: data.fec_nac ? data.fec_nac.slice(0, 10) : ""
+      fec_nac: data.fec_nac ? data.fec_nac.slice(0, 10) : "",
+      role: data.role
     };
     layoutStore.setTitle("Datos de " + data.nombre + " " + data.apellido + " " + data.sapellido);
   } catch (error) {
@@ -207,70 +221,50 @@ const guardarCambios = async () => {
       const fecha = new Date(fechaStr);
       const hoy = new Date();
       const hace120Anios = new Date(hoy.getFullYear() - 120, hoy.getMonth(), hoy.getDate());
-
-      return (
-        !isNaN(fecha.getTime()) && // válida
-        fecha <= hoy && // no futura
-        fecha >= hace120Anios // no excesivamente antigua
-      );
+      return !isNaN(fecha.getTime()) && fecha <= hoy && fecha >= hace120Anios;
     };
 
-    const userUpdateSchema = z
-      .object({
-        nombre: z.string().min(1, "El nombre es requerido").optional(),
-        apellido: z.string().min(1, { message: "El primer apellido es requerido" }).optional(),
-        sapellido: z.string().min(1, { message: "El segundo apellido es requerido" }).optional(),
-        correo: z.string().email("Email no válido").optional(),
-        password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }).optional(),
-        respassword: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }).optional(),
-        fec_nac: z
-          .string()
-          .refine(validarFechaNac, {
-            message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
-          })
-          .optional(),
-        genero: z
-          .enum(["Hombre", "Mujer", "Otro"], {
-            errorMap: () => ({ message: "Selecciona un género válido." })
-          })
-          .optional(),
-        rol: z.enum(["admin", "entrenado", "user"], {
-          errorMap: () => ({ message: "Selecciona un rol valido." })
-        }).optional()
+    const userUpdateSchema = z.object({
+      nombre: z.string().min(1, "El nombre es requerido"),
+      apellido: z.string().min(1, { message: "El primer apellido es requerido" }),
+      sapellido: z.string().min(1, { message: "El segundo apellido es requerido" }),
+      correo: z.string().email("Email no válido"),
+      fec_nac: z.string().refine(validarFechaNac, {
+        message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
+      }),
+      genero: z.enum(["Hombre", "Mujer", "Otro"], {
+        errorMap: () => ({ message: "Selecciona un género válido." })
+      }),
+      role: z.enum(["admin", "entrenador", "user"], {
+        errorMap: () => ({ message: "Selecciona un rol valido." })
       })
-      .partial();
+    });
 
-    // Reset errors
-    errors.value = {
-      nombre: "",
-      apellido: "",
-      sapellido: "",
-      correo: "",
-      password: "",
-      respassword: "",
-      serverError: ""
-    };
-
-    // Validación con Zod
+    Object.keys(errors.value).forEach((key) => (errors.value[key] = ""));
     userUpdateSchema.parse(form.value);
 
-    // Llamada al backend
+    // Llamada PATCH
     const response = await axios.patch(`http://localhost:8081/users/update/${route.params.id}`, form.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
+    if (auth.getId() == route.params.id) auth.login(response.data.token); // si es estrictamente necesario
+
+    layoutStore.setTitle(`Datos de ${form.value.nombre} ${form.value.apellido} ${form.value.sapellido}`);
+
     alert("Cambios guardados correctamente.");
-    layoutStore.setTitle("Datos de " + form.value.nombre + " " + form.value.apellido + " " + form.value.sapellido);
+    window.location.reload();
+
   } catch (error) {
-    // Si el error proviene de la validación de Zod
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {
-        if (err.path[0] in errors.value) {
-          errors.value[err.path[0]] = err.message;
+        const field = err.path[0];
+        if (field && errors.value[field] !== undefined) {
+          errors.value[field] = err.message;
         }
       });
     } else {
-      errors.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
+      console.error("Error al actualizar:", error);
     }
   }
 };
@@ -292,6 +286,11 @@ const changePass = async (event) => {
   const token = auth.getToken();
 
   try {
+    if (userPass.value.password !== userPass.value.respassword) {
+      errorsPass.value.respassword = "Las contraseñas no coinciden.";
+      return;
+    }
+
     const passSchema = z.object({
       password: z
         .string()
@@ -303,11 +302,8 @@ const changePass = async (event) => {
         .nonempty("La confirmación de la contraseña es obligatoria")
     });
 
-    errorsPass.value = {
-      password: "",
-      respassword: "",
-      serverError: ""
-    };
+    Object.keys(errorsPass.value).forEach((key) => (errorsPass.value[key] = ""));
+
     passSchema.parse(userPass.value);
 
     if (userPass.value.password !== userPass.value.respassword) {
@@ -374,8 +370,14 @@ async function uploadImage() {
       }
     });
 
+    if (auth.getId() == route.params.id) auth.login(response.data.token);
+
+    layoutStore.setTitle(`Datos de ${form.value.nombre} ${form.value.apellido} ${form.value.sapellido}`);
+
     alert("Imagen subida correctamente");
+    window.location.reload();
   } catch (error) {
+    console.log(error);
     alert("Error al subir la imagen");
   }
 }

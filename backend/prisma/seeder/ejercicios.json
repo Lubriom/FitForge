@@ -1,8 +1,8 @@
 [
   {
     "nombre": "Sentadillas",
-    "tipo": "Fuerza",
-    "categoria": "Piernas",
+    "tipo": "squat",
+    "categoria": "piernas",
     "descanso": 60,
     "series": 4,
     "repeticiones": 10,
@@ -10,8 +10,8 @@
   },
   {
     "nombre": "Press banca",
-    "tipo": "Fuerza",
-    "categoria": "Pecho",
+    "tipo": "press",
+    "categoria": "pecho",
     "descanso": 90,
     "series": 4,
     "repeticiones": 10,
@@ -19,8 +19,8 @@
   },
   {
     "nombre": "Dominadas",
-    "tipo": "Fuerza",
-    "categoria": "Espalda",
+    "tipo": "pull",
+    "categoria": "espalda",
     "descanso": 90,
     "series": 4,
     "repeticiones": 10,
@@ -28,8 +28,8 @@
   },
   {
     "nombre": "Burpees",
-    "tipo": "Cardio",
-    "categoria": "Full Body",
+    "tipo": "hit",
+    "categoria": "full body",
     "descanso": 60,
     "series": 3,
     "repeticiones": 10,
@@ -37,8 +37,8 @@
   },
   {
     "nombre": "Curl de bíceps",
-    "tipo": "Fuerza",
-    "categoria": "Brazos",
+    "tipo": "pull",
+    "categoria": "brazos",
     "descanso": 60,
     "series": 3,
     "repeticiones": 10,
@@ -46,8 +46,8 @@
   },
   {
     "nombre": "Planchas",
-    "tipo": "Core",
-    "categoria": "Abdomen",
+    "tipo": "core",
+    "categoria": "abdomen",
     "descanso": 45,
     "series": 3,
     "repeticiones": 1,
@@ -55,8 +55,8 @@
   },
   {
     "nombre": "Peso muerto",
-    "tipo": "Fuerza",
-    "categoria": "Espalda",
+    "tipo": "pull",
+    "categoria": "espalda",
     "descanso": 120,
     "series": 4,
     "repeticiones": 10,
@@ -64,8 +64,8 @@
   },
   {
     "nombre": "Press militar",
-    "tipo": "Fuerza",
-    "categoria": "Hombros",
+    "tipo": "press",
+    "categoria": "hombros",
     "descanso": 90,
     "series": 4,
     "repeticiones": 10,
@@ -73,8 +73,8 @@
   },
   {
     "nombre": "Zancadas",
-    "tipo": "Fuerza",
-    "categoria": "Piernas",
+    "tipo": "lunges",
+    "categoria": "piernas",
     "descanso": 60,
     "series": 3,
     "repeticiones": 10,
@@ -82,8 +82,8 @@
   },
   {
     "nombre": "Remo con barra",
-    "tipo": "Fuerza",
-    "categoria": "Espalda",
+    "tipo": "pull",
+    "categoria": "espalda",
     "descanso": 90,
     "series": 4,
     "repeticiones": 10,
@@ -91,11 +91,227 @@
   },
   {
     "nombre": "Extensión de tríceps",
-    "tipo": "Fuerza",
-    "categoria": "Brazos",
+    "tipo": "press",
+    "categoria": "brazos",
     "descanso": 60,
     "series": 3,
     "repeticiones": 10,
     "peso": 5
-  }
+  },
+  {
+    "nombre": "Prensa de piernas",
+    "tipo": "squat",
+    "categoria": "piernas",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 50
+  },
+  {
+    "nombre": "Curl de piernas tumbado",
+    "tipo": "pull",
+    "categoria": "piernas",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 12,
+    "peso": 30
+  },
+  {
+    "nombre": "Aperturas con mancuernas",
+    "tipo": "press",
+    "categoria": "pecho",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 12,
+    "peso": 12
+  },
+  {
+    "nombre": "Flexiones de pecho",
+    "tipo": "press",
+    "categoria": "pecho",
+    "descanso": 45,
+    "series": 4,
+    "repeticiones": 15,
+    "peso": 0
+  },
+  {
+    "nombre": "Pájaros para deltoides posteriores",
+    "tipo": "pull",
+    "categoria": "hombros",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 12,
+    "peso": 8
+  },
+  {
+    "nombre": "Elevaciones laterales",
+    "tipo": "press",
+    "categoria": "hombros",
+    "descanso": 45,
+    "series": 4,
+    "repeticiones": 15,
+    "peso": 6
+  },
+  {
+    "nombre": "Press Arnold",
+    "tipo": "press",
+    "categoria": "hombros",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 10
+  },
+  {
+    "nombre": "Fondos para tríceps",
+    "tipo": "press",
+    "categoria": "brazos",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 0
+  },
+  {
+    "nombre": "Curl martillo",
+    "tipo": "pull",
+    "categoria": "brazos",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 12,
+    "peso": 10
+  },
+  {
+    "nombre": "Elevaciones de piernas colgado",
+    "tipo": "core",
+    "categoria": "abdomen",
+    "descanso": 45,
+    "series": 4,
+    "repeticiones": 15,
+    "peso": 0
+  },
+  {
+    "nombre": "Crunch abdominal",
+    "tipo": "core",
+    "categoria": "abdomen",
+    "descanso": 30,
+    "series": 3,
+    "repeticiones": 20,
+    "peso": 0
+  },
+  {
+    "nombre": "Mountain climbers",
+    "tipo": "hit",
+    "categoria": "full body",
+    "descanso": 30,
+    "series": 4,
+    "repeticiones": 30,
+    "peso": 0
+  },
+  {
+    "nombre": "Saltos pliométricos",
+    "tipo": "hit",
+    "categoria": "full body",
+    "descanso": 45,
+    "series": 3,
+    "repeticiones": 20,
+    "peso": 0
+  },
+  {
+    "nombre": "Kettlebell swings",
+    "tipo": "hit",
+    "categoria": "full body",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 15,
+    "peso": 16
+  },
+  {
+    "nombre": "Sentadillas con salto",
+    "tipo": "squat",
+    "categoria": "piernas",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 0
+  },
+  {
+    "nombre": "Flexiones con palmada",
+    "tipo": "press",
+    "categoria": "pecho",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 0
+  },
+  {
+    "nombre": "Remo invertido",
+    "tipo": "pull",
+    "categoria": "espalda",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 0
+  },
+  {
+    "nombre": "Burpees con push-up",
+    "tipo": "hit",
+    "categoria": "full body",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 10,
+    "peso": 0
+  },
+  {
+    "nombre": "Curl concentrado de bíceps",
+    "tipo": "pull",
+    "categoria": "brazos",
+    "descanso": 60,
+    "series": 3,
+    "repeticiones": 12,
+    "peso": 10
+  },
+  {
+    "nombre": "Elevación de piernas en suelo",
+    "tipo": "core",
+    "categoria": "abdomen",
+    "descanso": 45,
+    "series": 4,
+    "repeticiones": 15,
+    "peso": 0
+  },
+  {
+    "nombre": "Russian twists",
+    "tipo": "core",
+    "categoria": "abdomen",
+    "descanso": 30,
+    "series": 3,
+    "repeticiones": 20,
+    "peso": 0
+  },
+  {
+    "nombre": "Face pulls",
+    "tipo": "pull",
+    "categoria": "hombros",
+    "descanso": 60,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 8
+  },
+  {
+    "nombre": "Press inclinado con mancuernas",
+    "tipo": "press",
+    "categoria": "pecho",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 10,
+    "peso": 12
+  },
+  {
+    "nombre": "Jalones al pecho",
+    "tipo": "pull",
+    "categoria": "espalda",
+    "descanso": 90,
+    "series": 4,
+    "repeticiones": 12,
+    "peso": 15
+  }  
 ]

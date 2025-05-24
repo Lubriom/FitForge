@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full gap-3">
     <!-- Barra de listado -->
-    <div class="flex flex-row-reverse justify-between items-center gap-5">
+    <div class="flex flex-row-reverse justify-between items-center gap-4">
       <form class="flex flex-wrap gap-2 p-2 mr-2 rounded-lg">
         <div class="flex items-center gap-2">
           <label for="perPage">Mostrando: </label>
@@ -52,35 +52,38 @@
           type="submit"
           class="bg-tertiary-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 cursor-pointer"
         >
-          Filtrar
+          <span class="flex items-center gap-1"><Funnel/> Filtrar</span>
         </button>
 
         <!-- Botón Reset -->
         <button
           type="button"
           @click="resetFiltros"
-          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer"
+          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer rotate"
         >
           <RotateCcw />
         </button>
       </form>
     </div>
     <!-- Tabla de usuarios -->
-    <div class="overflow-y-auto max-h-full rounded-lg">
+    <div class="overflow-y-auto max-h-full rounded-lg pr-2">
       <table class="table-fixed bg-white rounded-lg">
         <thead class="sticky top-0">
           <tr class="bg-gray-100 text-left">
-            <th class="p-3 hover:bg-gray-200 cursor-pointer w-12">
+            <th class="p-3  cursor-pointer w-12">
               <button @click="sortBy('id')">ID</button>
             </th>
             <th class="p-3 w-1/12 text-center">Foto</th>
-            <th class="p-3 hover:bg-gray-200 cursor-pointer w-1/3">
+            <th class="p-3 w-1/4">
               <button @click="sortBy('nombre')">Nombre Completo</button>
             </th>
-            <th class="p-3 hover:bg-gray-200 cursor-pointer w-1/4">
+            <th class="p-3 w-1/4">
               <button @click="sortBy('correo')">Correo</button>
             </th>
-            <th class="p-3 hover:bg-gray-200 cursor-pointer w-1/5">
+            <th class="p-3 w-1/8 hidden md:table-cell">
+              <button @click="sortBy('role')">Rol</button>
+            </th>
+            <th class="p-3 w-1/6 hidden lg:table-cell">
               <button @click="sortBy('activo')">Activo</button>
             </th>
             <th class="p-3 w-1/2">Acciones</th>
@@ -100,7 +103,8 @@
             </td>
             <td class="p-3">{{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}</td>
             <td class="p-3">{{ user.correo }}</td>
-            <td class="">
+            <td class="p-3 hidden md:table-cell">{{ user.role }}</td>
+            <td class="p-3 hidden lg:table-cell">
               <div class="flex justify-center items-center h-full">
                 <span v-if="user.activo == 1" class="text-green-500 bg-green-300/50 rounded-2xl px-3 py-1">
                   Activo
@@ -109,31 +113,31 @@
               </div>
             </td>
 
-            <td class="">
+            <td class="pr-2">
               <div class="flex justify-start items-center gap-1.5 h-full">
                 <router-link
                   :to="{ name: 'DashboardSeeProfile', params: { id: user.id } }"
-                  class="bg-tertiary-500 text-white rounded-md p-2"
+                  class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
                 >
                   <ContactRound />
                 </router-link>
                 <router-link
                   :to="{ name: 'DashboardAdminEdit', params: { id: user.id } }"
-                  class="bg-green-500 text-white rounded-md p-2"
+                  class="bg-green-500 hover:bg-green-800 text-white rounded-md p-2"
                 >
                   <UserPen />
                 </router-link>
                 <button
-                  v-if="user.activo == 1"
+                  v-if="user.activo == 1 && auth.isAdmin()"
                   @click="deleteUser(user.id)"
-                  class="bg-red-500 text-white rounded-md p-2 cursor-pointer"
+                  class="bg-red-500 hover:bg-red-800 text-white rounded-md p-2 cursor-pointer"
                 >
                   <Trash2 />
                 </button>
                 <button
-                  v-if="user.activo == 0"
+                  v-if="user.activo == 0 && auth.isAdmin()"
                   @click="activateUser(user.id)"
-                  class="bg-blue-500 text-white rounded-md p-2 cursor-pointer"
+                  class="bg-blue-500 hover:bg-blue-800 text-white rounded-md p-2 cursor-pointer"
                 >
                   <UserPlus />
                 </button>
@@ -150,7 +154,7 @@
       <button
         @click="prevPage"
         :disabled="page <= 1"
-        class="px-3 py-1 bg-tertiary-500 text-white rounded-xl cursor-pointer"
+        class="px-3 py-1 bg-tertiary-500 hover:bg-orange-700 text-white rounded-xl cursor-pointer"
       >
         Anterior
       </button>
@@ -158,7 +162,7 @@
       <button
         @click="nextPage"
         :disabled="page >= totalPages"
-        class="px-3 py-1 bg-tertiary-500 text-white rounded-xl cursor-pointer"
+        class="px-3 py-1 bg-tertiary-500 hover:bg-orange-700 text-white rounded-xl cursor-pointer"
       >
         Siguiente
       </button>
@@ -199,7 +203,7 @@ const fetchUsers = async () => {
     }
 
     const res = await axios.get("http://localhost:8081/users/paginate", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("log_token")}` },
+      headers: { Authorization: `Bearer ${auth.getToken()}` },
       params: {
         page: page.value,
         limit: filtros.value.perPage,
@@ -246,7 +250,7 @@ const deleteUser = async (userId) => {
   try {
     if (auth.getId() === userId) return alert("No puedes borrar tu propio usuario.");
     await axios.delete(`http://localhost:8081/users/delete/${userId}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("log_token")}` }
+      headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
     fetchUsers();
   } catch (err) {
@@ -256,14 +260,18 @@ const deleteUser = async (userId) => {
 
 const activateUser = async (userId) => {
   try {
-    await axios.patch(`http://localhost:8081/users/update/${userId}`, { activo: 1 }, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("log_token")}` }
-    });
+    await axios.patch(
+      `http://localhost:8081/users/update/${userId}`,
+      { activo: 1 },
+      {
+        headers: { Authorization: `Bearer ${auth.getToken()}` }
+      }
+    );
     fetchUsers();
   } catch (err) {
     console.error("Error al activar usuario:", err);
   }
-}
+};
 
 // Envío manual de filtros (desde formulario)
 const emitirFiltros = () => {
@@ -307,5 +315,12 @@ watch(
 );
 
 // Iconos
-import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus } from "lucide-vue-next";
+import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel } from "lucide-vue-next";
 </script>
+
+<style scoped>
+.rotate:hover > *{
+  transition: all 0.5s ease-in-out;
+  transform: rotate(-360deg);
+}
+</style>

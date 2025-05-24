@@ -2,10 +2,10 @@
   <div class="flex flex-col h-full gap-3">
     <div class="flex flex-row justify-between items-center gap-3">
       <router-link
-        to="/ejercicios/nuevo"
+        :to="{ name: 'ExercisesCreate' }"
         class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
       >
-        Nuevo
+        <span class="flex items-center gap-1"><Plus /> Nuevo</span>
       </router-link>
       <form
         @submit.prevent="emitirFiltros"
@@ -22,10 +22,12 @@
         <!-- Tipo -->
         <select v-model="filtros.tipo" class="p-2 border rounded-lg">
           <option disabled value="">Filtrar por tipo</option>
-          <option value="cardio">Cardio</option>
+          <option value="pull">Pull</option>
+          <option value="press">Press</option>
+          <option value="squat">Squat</option>
+          <option value="lunges">Lunges</option>
+          <option value="hit">Hit</option>
           <option value="core">Core</option>
-          <option value="fuerza">Fuerza</option>
-          <!-- Agrega más tipos según tu modelo -->
         </select>
 
         <!-- Categoría -->
@@ -34,14 +36,18 @@
           <option value="piernas">Pierna</option>
           <option value="pecho">Pecho</option>
           <option value="espalda">Espalda</option>
+          <option value="hombros">Hombros</option>
           <option value="brazos">Brazos</option>
           <option value="abdomen">Abdomen</option>
           <option value="full body">Full Body</option>
         </select>
 
         <!-- Botón Filtrar -->
-        <button type="submit" class="bg-tertiary-500 hover:bg-orange-700 text-white py-2 px-4 rounded-lg hover:bg-tertiary-600 cursor-pointer">
-          Filtrar
+        <button
+          type="submit"
+          class="bg-tertiary-500 hover:bg-orange-700 text-white py-2 px-4 rounded-lg hover:bg-tertiary-600 cursor-pointer"
+        >
+          <span class="flex items-center gap-1"><Funnel /> Filtrar</span>
         </button>
 
         <!-- Botón Reset -->
@@ -50,55 +56,99 @@
           @click="resetFiltros"
           class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer"
         >
-          <RotateCcw />
+          <RotateCcw class="rotate" />
         </button>
       </form>
     </div>
 
+    <div class="bg-gray-200/70 px-4 p-2 rounded-2xl text-gray-700 text-sm">
+      <p>Listando {{ exercises.length }} ejercicios</p>
+    </div>
     <!-- Ejercicios -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-h-full overflow-y-auto">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-h-full pr-3 overflow-y-auto">
       <div v-for="exercise in exercises" :key="exercise.id" class="perspective" style="perspective: 1000px">
         <div
           class="relative w-full h-52 transition-transform duration-700 transform-style-preserve-3d"
           :class="{ 'rotate-y-180': flippedExercises.has(exercise.id) }"
         >
           <!-- Front Side -->
-          <div
-            class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between"
-          >
-            <div class="flex flex-row justify-between items-center">
-              <h2 class="text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
-              <button
-                @click="toggleFlip(exercise.id)"
-                class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
-              >
-                <BadgeInfo />
-              </button>
+          <div class="absolute w-full h-full backface-hidden rounded-2xl shadow-md overflow-hidden">
+            <!-- Fondo combinado con efecto de 'abrazo' -->
+            <div class="absolute bg-white inset-0">
+              <!-- Fondo base (imagen a la derecha) -->
+              <div
+                :style="{
+                  backgroundImage: `url(${getImageUrl(exercise.categoria)})`
+                }"
+                class="w-2/5 h-full bg-cover bg-no-repeat float-right"
+              ></div>
+
+              <!-- Capa superior con clip-path en curva -->
+              <div class="absolute inset-0 bg-linear-[90deg,white_60%,transparent_70%]"></div>
             </div>
-            <div class="text-gray-700 text-sm space-y-1">
-              <p><strong>Tipo:</strong> {{ exercise.tipo }}</p>
-              <p><strong>Categoría:</strong> {{ exercise.categoria }}</p>
-              <p><strong>Descanso:</strong> {{ exercise.descanso }} segundos</p>
+
+            <!-- Contenido -->
+            <div class="relative p-5 h-full flex flex-col justify-between bg-opacity-80 rounded-2xl">
+              <div class="flex flex-row justify-between items-center">
+                <h2 class="max-w-[150px] text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
+                <button
+                  @click="toggleFlip(exercise.id)"
+                  class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
+                >
+                  <BadgeInfo />
+                </button>
+              </div>
+              <div class="text-gray-700 text-sm space-y-1">
+                <p><strong>Tipo:</strong> {{ capitalizar(exercise.tipo) }}</p>
+                <p><strong>Categoría:</strong> {{ capitalizar(exercise.categoria) }}</p>
+                <p><strong>Descanso:</strong> {{ exercise.descanso }} segundos</p>
+              </div>
             </div>
           </div>
 
           <!-- Back Side -->
+
           <div
-            class="absolute w-full h-full backface-hidden bg-white rounded-2xl shadow-md p-5 flex flex-col justify-between rotate-y-180"
+            class="absolute w-full h-full backface-hidden overflow-hidden text-white rounded-2xl shadow-md rotate-y-180"
           >
-            <div class="flex flex-row justify-between items-center">
-              <h2 class="text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
-              <button
-                @click="toggleFlip(exercise.id)"
-                class="bg-gray-500 hover:bg-gray-600 text-white font-medium p-1.5 rounded-xl"
-              >
-                <Undo2 />
-              </button>
+            <!-- Fondo combinado con efecto de 'abrazo' -->
+            <div class="absolute bg-slate-800 inset-0">
+              <!-- Fondo base (imagen a la derecha) -->
+              <div
+                :style="{
+                  backgroundImage: `url(${getImageUrl(exercise.categoria)})`
+                }"
+                class="w-2/5 h-full bg-cover bg-no-repeat float-right"
+              ></div>
+
+              <!-- Capa superior con clip-path en curva -->
+              <div class="absolute inset-0 bg-linear-[90deg,#1e293b_60%,transparent_70%]"></div>
             </div>
-            <div class="text-gray-700 text-sm space-y-1">
-              <p><strong>Series:</strong> {{ exercise.series }}</p>
-              <p><strong>Repeticiones:</strong> {{ exercise.repeticiones }}</p>
-              <p><strong>Peso:</strong> {{ exercise.peso }} kg</p>
+            <!-- Contenido -->
+            <div class="relative p-5 h-full flex flex-col justify-between bg-opacity-80 rounded-2xl">
+              <div class="flex flex-row justify-between items-center">
+                <h2 class="max-w-[150px] text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
+                <button
+                  @click="toggleFlip(exercise.id)"
+                  class="bg-gray-500 hover:bg-gray-600 text-white font-medium p-1.5 rounded-xl z-15 cursor-pointer"
+                >
+                  <Undo2 />
+                </button>
+              </div>
+              <div class="flex flex-row justify-between items-center">
+                <div class="text-gray-200 text-sm space-y-1">
+                  <p><strong>Series:</strong> {{ exercise.series }}</p>
+                  <p><strong>Repeticiones:</strong> {{ exercise.repeticiones }}</p>
+                  <p><strong>Peso:</strong> {{ exercise.peso }} kg</p>
+                </div>
+                <div class="flex h-full items-end justify-end">
+                  <router-link
+                    class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
+                    :to="{ name: 'ExercisesEdit', params: { id: exercise.id } }"
+                    ><SquarePen
+                  /></router-link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -111,7 +161,12 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { BadgeInfo, Undo2, RotateCcw } from "lucide-vue-next";
+import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen } from "lucide-vue-next";
+import { computed } from "vue";
+
+function getImageUrl(categoria) {
+  return new URL(`/src/assets/imgs/exercises/${categoria}.avif`, import.meta.url).href;
+}
 
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Lista de Ejercicios");
@@ -147,7 +202,6 @@ const emitirFiltros = () => {
   });
 };
 
-
 const resetFiltros = () => {
   filtros.value = {
     nombre: "",
@@ -166,6 +220,11 @@ onMounted(async () => {
     console.error("Error al cargar los ejercicios:", error);
   }
 });
+
+const capitalizar = (texto) => {
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+};
 </script>
 
 <style scoped>
@@ -183,5 +242,10 @@ onMounted(async () => {
 
 .transform-style-preserve-3d {
   transform-style: preserve-3d;
+}
+
+.rotate:hover > *{
+  transition: all 0.5s ease-in-out;
+  transform: rotate(-360deg);
 }
 </style>

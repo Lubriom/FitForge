@@ -54,7 +54,7 @@ model InfoPatologias {
 
 model Ejercicio {
   id            Int              @id @default(autoincrement())
-  nombre        String           @db.VarChar(100)
+  nombre        String           @unique @db.VarChar(100)
   tipo          String?          @db.VarChar(100)
   categoria     String?          @db.VarChar(100)
   descanso      Int?             @db.Integer() @default(60)
@@ -97,6 +97,7 @@ model EjerciciosDia {
   id            Int              @id @default(autoincrement())
   diaId         Int              
   ejercicioId   Int
+  descanso      Int?             @db.Integer()
   series        Int?             @db.Integer()
   repeticiones  Int?             @db.Integer()
   peso          Float?           @db.DoublePrecision()

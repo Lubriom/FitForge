@@ -54,7 +54,7 @@ import { useLayoutStore } from '@/stores/layoutStore'
 
 const auth = useAuthStore();
 const layoutStore = useLayoutStore()
-layoutStore.setTitle("BIenvenido, " + auth.getName() + ' !')
+layoutStore.setTitle("Bienvenido, " + auth.getName() + ' !')
 
 const showModal = ref(false);
 const modalComponent = ref(null);

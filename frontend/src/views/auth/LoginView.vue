@@ -90,7 +90,10 @@ const isLogin = computed(() => route.name === "Login");
 const auth = useAuthStore();
 const route = useRoute();
 const router = useRouter();
-const user = ref({});
+const user = ref({
+  correo: "",
+  password: ""
+});
 
 const formRef = ref(null);
 

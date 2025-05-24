@@ -62,11 +62,7 @@ const changePass = async (event) => {
         .nonempty("La confirmación de la contraseña es obligatoria")
     });
 
-    errors.value = {
-      password: "",
-      respassword: "",
-      serverError: ""
-    };
+    Object.keys(errors.value).forEach((key) => (errors.value[key] = ""));
 
     passSchema.parse(user.value);
 

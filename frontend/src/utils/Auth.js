@@ -53,6 +53,16 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Función para saber si el usuario es un entrenador
+   * @returns -> boolean - Si el usuario es trainer devuelve true sino false
+   */
+  function isTrainer() {
+    if (!isLoggedIn.value) return false;
+    const decoded = decodedToken(localStorage.getItem('log_token'));
+    return decoded.role === 'entrenador';  
+  }
+
+  /**
    * Función para obtener el nombre del usuario
    * @returns -> string - Nombre del usuario
    */
@@ -71,6 +81,15 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /**
+   * Función para obtener el rol del usuario
+   * @returns -> string - Rol del usuario
+   */
+  function getRole() {
+    const decoded = decodedToken(localStorage.getItem('log_token'));
+    return decoded.role;
+  }
+
+  /**
    * Función para obtener el token
    * @returns -> string - Token
    */
@@ -83,7 +102,7 @@ export const useAuthStore = defineStore('auth', () => {
     return decoded.profile_img;
   }
 
-  return { isLoggedIn, login, logout, isAdmin, getName, getId, getToken, getImage, isTokenValid };
+  return { isLoggedIn, login, logout, isAdmin, isTrainer, getName, getId, getToken, getRole, getImage, isTokenValid };
 });
 
 /**

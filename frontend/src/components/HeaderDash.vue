@@ -36,7 +36,7 @@
         <div class="flex flex-col gap-2">
           <li>
             <router-link
-              to="/dashboard"
+              :to="{ name: 'Dashboard' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl"
             >
@@ -60,7 +60,7 @@
           </li>
           <li>
             <router-link
-              to="/exercises"
+              :to="{ name: 'Exercises' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl"
             >
@@ -72,7 +72,7 @@
           </li>
           <li>
             <router-link
-              to="/settings"
+              :to="{ name: 'DashboardStats' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl"
             >
@@ -85,7 +85,7 @@
           <li>
             <router-link
               v-if="auth.isAdmin()"
-              to="/dashboard/admin"
+              :to="{ name: 'DashboardAdmin' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl"
             >
@@ -119,10 +119,10 @@
                 class="absolute left-10 bottom-10 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
               >
                 <li>
-                  <a href="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Perfil</a>
+                  <router-link :to="{ name: 'DashboardProfile' }" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Perfil</router-link>
                 </li>
                 <li>
-                  <a href="/dashboard/settings" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Configuración</a>
+                  <router-link :to="{ name: 'DashboardSettings' }" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Configuración</router-link>
                 </li>
                 <li>
                   <button @click="logout" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-2xl">

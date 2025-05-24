@@ -9,36 +9,46 @@
         <main class="w-full flex flex-col rounded-2xl gap-2 overflow-hidden">
           <div class="flex justify-between items-center px-2 pb-2">
             <h1 class="text-black text-2xl font-bold">{{ layoutStore.title }}</h1>
-            <div class="relative">
-              <button
-                @click="toggleDropdown"
-                class="bg-gray-300 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
-              >
-                <img :src="imageURL" alt="Perfil" class="w-full h-full rounded-full object-cover" />
-              </button>
-
-              <transition name="fade-slide">
-                <ul
-                  v-if="dropdownOpen"
-                  class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+            <div class="flex">
+              <div class="flex justify-center items-center px-4 small:hidden"><b class="mr-2">Rol:</b> {{ capitalizar( auth.getRole() )}}</div>
+              <div class="relative">
+                <button
+                  @click="toggleDropdown"
+                  class="bg-gray-300 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
                 >
-                  <li>
-                    <router-link to="/dashboard/profile" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl"
-                      >Perfil</router-link
-                    >
-                  </li>
-                  <li>
-                    <router-link to="/dashboard/settings" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl"
-                      >Configuración</router-link
-                    >
-                  </li>
-                  <li>
-                    <button @click="logout" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-2xl cursor-pointer">
-                      Cerrar sesión
-                    </button>
-                  </li>
-                </ul>
-              </transition>
+                  <img :src="imageURL" alt="Perfil" class="w-full h-full rounded-full object-cover" />
+                </button>
+
+                <transition name="fade-slide">
+                  <ul
+                    v-if="dropdownOpen"
+                    class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                  >
+                    <li>
+                      <router-link
+                        :to="{ name: 'DashboardProfile' }"
+                        class="block px-4 py-2 hover:bg-gray-100 rounded-2xl"
+                        >Perfil</router-link
+                      >
+                    </li>
+                    <li>
+                      <router-link
+                        :to="{ name: 'DashboardSettings' }"
+                        class="block px-4 py-2 hover:bg-gray-100 rounded-2xl"
+                        >Configuración</router-link
+                      >
+                    </li>
+                    <li>
+                      <button
+                        @click="logout"
+                        class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-2xl cursor-pointer"
+                      >
+                        Cerrar sesión
+                      </button>
+                    </li>
+                  </ul>
+                </transition>
+              </div>
             </div>
           </div>
 
@@ -79,6 +89,11 @@ const logout = () => {
 function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;
 }
+
+const capitalizar = (texto) => {
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+};
 </script>
 
 <style scoped>

@@ -67,8 +67,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/utils/auth";
+import { useRouter } from "vue-router";
 import axios from "axios";
 import z from "zod";
+
+const router = useRouter();
 
 const auth = useAuthStore();
 const form = ref({
@@ -152,16 +155,7 @@ const guardarCambios = async () => {
       })
       .partial();
 
-    // Reset errors
-    errors.value = {
-      nombre: "",
-      apellido: "",
-      sapellido: "",
-      correo: "",
-      password: "",
-      respassword: "",
-      serverError: ""
-    };
+    Object.keys(errors.value).forEach((key) => (errors.value[key] = ""));
 
     // Validación con Zod
     userUpdateSchema.parse(form.value);
@@ -172,8 +166,10 @@ const guardarCambios = async () => {
     });
 
     auth.login(response.data.token);
-
+    
     alert("Cambios guardados correctamente.");
+    
+    window.location.reload();
   } catch (error) {
     // Si el error proviene de la validación de Zod
     if (error instanceof z.ZodError) {
@@ -230,6 +226,7 @@ async function uploadImage() {
 
     auth.login(response.data.token);
     alert("Imagen subida correctamente");
+    window.location.reload();
   } catch (error) {
     alert("Error al subir la imagen");
   }

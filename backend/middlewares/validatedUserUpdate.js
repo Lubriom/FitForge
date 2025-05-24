@@ -25,7 +25,7 @@ const userUpdateSchema = z.object({
   genero: z.enum(["Hombre", "Mujer", "Otro"], {
     errorMap: () => ({ message: "Selecciona un género válido." })
   }).optional(),
-  rol: z.enum(["admin", "entrenador", "user"], {
+  role: z.enum(["admin", "entrenador", "user"], {
     errorMap: () => ({ message: "Selecciona un rol valido." })
   }).optional()
 
