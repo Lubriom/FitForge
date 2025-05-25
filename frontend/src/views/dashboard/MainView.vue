@@ -94,7 +94,7 @@ onMounted(async () => {
     userInfo.value = responseInfo.data;
     userPato.value = responsePato.data;
     userRutinas.value = responseRutinas.data;
-    // console.log(userRutinas.value);
+    console.log(userRutinas.value);
   } catch (error) {
     console.error("Error al cargar los datos:", error);
   }

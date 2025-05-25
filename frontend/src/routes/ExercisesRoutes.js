@@ -16,5 +16,29 @@ export default [
         name: "ExercisesEdit",
         component: () => import('@/views/dashboard/exercises/EditView.vue'),
         meta: { layout: "dashboard", requiresAuth: true }
+    },
+    {
+        path: "/dashboard/train/get/:id",
+        name: "ExercisesTrainInfo",
+        component: () => import('@/views/dashboard/exercises/VerTrain.vue'),
+        meta: { layout: "dashboard", requiresAuth: true }
+    },
+    {
+        path: "/dashboard/train/",
+        name: "ExercisesTrain",
+        component: () => import('@/views/dashboard/exercises/RutinasView.vue'),
+        meta: { layout: "dashboard", requiresAuth: true }
+    },
+    {
+        path: "/dashboard/train/create/automatic",
+        name: "ExercisesTrainCreateAU",
+        component: () => import('@/views/dashboard/exercises/CreateAuTrainView.vue'),
+        meta: { layout: "clean", requiresAuth: true }
+    },
+    {
+        path: "/dashboard/train/create/manual",
+        name: "ExercisesTrainCreateMA",
+        component: () => import('@/views/dashboard/exercises/CreateMaTrainView.vue'),
+        meta: { layout: "clean", requiresAuth: true }
     }
 ]

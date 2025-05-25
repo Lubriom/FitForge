@@ -48,7 +48,7 @@
           </li>
           <li>
             <router-link
-              to="/settings"
+              :to="{ name: 'ExercisesTrain' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 flex items-center space-x-2 px-3 rounded-xl"
             >

@@ -11,7 +11,7 @@ export class PlanEntrenamientoModel {
           nombre,
           descripcion,
           objetivo,
-          fechaInicio: new Date(fechaInicio),
+          fechaInicio: new Date(fechaInicio)
         },
         include: {
           dias: {
@@ -23,7 +23,7 @@ export class PlanEntrenamientoModel {
           }
         }
       });
-    
+
       if (dias && dias.length > 0) {
         await prisma.ejerciciosDia.deleteMany({
           where: {
@@ -32,21 +32,21 @@ export class PlanEntrenamientoModel {
             }
           }
         });
-    
+
         await prisma.diaEntrenamiento.deleteMany({
           where: {
             planId
           }
         });
-    
+
         // Creamos los nuevos días y ejercicios
         await prisma.diaEntrenamiento.createMany({
-          data: dias.map(dia => ({
+          data: dias.map((dia) => ({
             planId,
             nombre: dia.nombre,
             diaNumero: dia.diaNumero,
             ejercicios: {
-              create: dia.ejercicios.map(ej => ({
+              create: dia.ejercicios.map((ej) => ({
                 ejercicio: { connect: { id: ej.ejercicioId } },
                 series: ej.series,
                 repeticiones: ej.repeticiones,
@@ -63,16 +63,16 @@ export class PlanEntrenamientoModel {
     }
   }
 
-  static async getById({ planId }) {
+  static async getById({ id }) {
     try {
       return await prisma.planEntrenamiento.findUnique({
-        where: { id: planId },
+        where: { id },
         include: {
           dias: {
             include: {
               ejercicios: {
                 include: {
-                  ejercicio: true // trae info del ejercicio
+                  ejercicio: true
                 }
               }
             }
@@ -81,12 +81,13 @@ export class PlanEntrenamientoModel {
       });
     } catch (error) {
       console.log("Error al obtener el plan de entrenamiento:", error);
+      return null;
     }
   }
 
-  static async getPlanUserById({usuarioId}) {
+  static async getPlanUserById({ usuarioId }) {
     return await prisma.planEntrenamiento.findMany({
-      where:  {usuarioId: usuarioId},
+      where: { usuarioId: usuarioId },
       include: {
         dias: {
           include: {
@@ -103,37 +104,45 @@ export class PlanEntrenamientoModel {
   }
 
   static async update(planId, data) {
-    const { nombre, descripcion, objetivo, fechaInicio, dias } = data;
-  
-    // Borra los días antiguos (lo que también borra los EjerciciosDia por cascada si está bien definida la BD)
-    await prisma.ejercicios.deleteMany({
+    const { nombre, descripcion, nivel, activo, objetivo, usuarioId, fechaInicio, fechaFin, dias } = data;
+
+    // Primero borramos los ejercicios antiguos asociados a los días del plan
+    await prisma.ejerciciosDia.deleteMany({
       where: {
-        diaEntrenamiento: {
+        dia: {
           planId
         }
       }
     });
-  
+
+    // Luego borramos los días antiguos del plan
     await prisma.diaEntrenamiento.deleteMany({
       where: {
         planId
       }
     });
-  
+
+    // Finalmente actualizamos el plan y creamos los días y ejercicios nuevos
     return await prisma.planEntrenamiento.update({
       where: { id: planId },
       data: {
         nombre,
         descripcion,
+        nivel,
+        activo,
         objetivo,
+        usuarioId,
         fechaInicio: new Date(fechaInicio),
+        fechaFin: new Date(fechaFin),
         dias: {
-          create: dias.map(dia => ({
-            nombre: dia.nombre,
+          create: dias.map((dia) => ({
+            nombre: dia.nombre, // si tienes este campo en DiaEntrenamiento (en el modelo que enviaste no está, podrías eliminarlo)
             diaNumero: dia.diaNumero,
+            grupoMuscular: dia.grupoMuscular,
             ejercicios: {
-              create: dia.ejercicios.map(ej => ({
+              create: dia.ejercicios.map((ej) => ({
                 ejercicio: { connect: { id: ej.ejercicioId } },
+                descanso: ej.descanso,
                 series: ej.series,
                 repeticiones: ej.repeticiones,
                 peso: ej.peso
@@ -153,5 +162,10 @@ export class PlanEntrenamientoModel {
       }
     });
   }
-  
+
+  static async delete({id}) {
+    return await prisma.planEntrenamiento.delete({
+      where: { id: id }
+    });
+  }
 }

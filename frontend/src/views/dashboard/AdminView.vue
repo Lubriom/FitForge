@@ -178,7 +178,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 
 // Stores
 const layoutStore = useLayoutStore();
-layoutStore.setTitle("Lista de usuarios");
+layoutStore.setTitle("Lista de Usuarios");
 
 const auth = useAuthStore();
 

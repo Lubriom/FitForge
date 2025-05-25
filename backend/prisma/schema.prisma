@@ -35,7 +35,7 @@ model InformacionSalud {
   peso         Float?    @db.DoublePrecision()
   altura       Float?    @db.DoublePrecision()
   imc          Float?    @db.DoublePrecision()
-  fuerza       Float?    @db.DoublePrecision()
+  rm       Float?    @db.DoublePrecision()
   discapacidad String?   @db.VarChar(100)
   fechaRegistro DateTime @default(now()) @db.Timestamp()
 
@@ -70,42 +70,49 @@ model PlanEntrenamiento {
   id           Int               @id @default(autoincrement())
   nombre       String            @db.VarChar(100)
   descripcion  String?           @db.VarChar(255)
+  nivel        String?           @db.VarChar(100)
+  activo       Boolean?          @db.Boolean
   objetivo     String?           @db.VarChar(100)
   usuarioId    Int               @db.Integer()
   fechaInicio  DateTime          @default(now())
+  fechaFin     DateTime          @db.Timestamp()
 
-  // Relacion N a 1
+  // Relación N a 1 con Usuario
   usuario      Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  // Relacion 1 a N
+
+  // Relación 1 a N con DiaEntrenamiento
   dias         DiaEntrenamiento[]
 }
 
 model DiaEntrenamiento {
-  id          Int               @id @default(autoincrement())
-  planId      Int               @db.Integer()
-  diaNumero   Int               @db.Integer()
-  nombre      String?           @db.VarChar(100)
+  id            Int               @id @default(autoincrement())
+  planId        Int               @db.Integer()
+  diaNumero     Int               @db.Integer()
+  grupoMuscular String?           @db.VarChar(100)
+  finalizado    Boolean           @db.Boolean
+  fecha         DateTime          @db.Timestamp()
 
-  // Relacion N a 1
-  plan        PlanEntrenamiento @relation(fields: [planId], references: [id])
-  
-  // Relacion 1 a N
-  ejercicios  EjerciciosDia[]
+  // Relación N a 1 con PlanEntrenamiento
+  plan          PlanEntrenamiento @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  // Relación 1 a N con EjerciciosDia
+  ejercicios    EjerciciosDia[]
 }
 
 model EjerciciosDia {
-  id            Int              @id @default(autoincrement())
-  diaId         Int              
+  id            Int               @id @default(autoincrement())
+  diaId         Int
   ejercicioId   Int
-  descanso      Int?             @db.Integer()
-  series        Int?             @db.Integer()
-  repeticiones  Int?             @db.Integer()
-  peso          Float?           @db.DoublePrecision()
+  descanso      Int?              @db.Integer()
+  series        Int?              @db.Integer()
+  repeticiones  Int?              @db.Integer()
+  peso          Float?            @db.DoublePrecision()
 
   // Relaciones N a 1
-  dia           DiaEntrenamiento @relation(fields: [diaId], references: [id])
-  ejercicio     Ejercicio        @relation(fields: [ejercicioId], references: [id])
+  dia           DiaEntrenamiento  @relation(fields: [diaId], references: [id], onDelete: Cascade)
+  ejercicio     Ejercicio         @relation(fields: [ejercicioId], references: [id])
 }
+
 
 // npx prisma generate
 // npx prisma migrate reset

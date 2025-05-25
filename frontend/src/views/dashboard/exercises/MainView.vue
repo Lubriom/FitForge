@@ -54,9 +54,9 @@
         <button
           type="button"
           @click="resetFiltros"
-          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer"
+          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer rotate"
         >
-          <RotateCcw class="rotate" />
+          <RotateCcw />
         </button>
       </form>
     </div>

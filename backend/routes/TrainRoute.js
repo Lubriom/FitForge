@@ -6,4 +6,7 @@ import { EjerciciosController } from "../controllers/EjerciciosController.js";
 
 export const trainRouter = Router();
 
-trainRouter.get("/user/:id", validateId, validateToken, EntrenamientoController.getPlanesPorUsuario);
+trainRouter.get("/user/:id", validateId, EntrenamientoController.getPlanesPorUsuario);
+trainRouter.get("/plan/:id", EntrenamientoController.getPlanById);
+trainRouter.delete("/delete/:id", validateToken, validateId, EntrenamientoController.delete);
+trainRouter.post("/autocreate", validateToken, EntrenamientoController.createAutoPlan);
