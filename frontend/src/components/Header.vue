@@ -1,13 +1,17 @@
 <template>
-  <header class="bg-white text-white p-4">
-    <nav>
-      <ul class="flex space-x-4 justify-between">
-        <li>
-          <router-link to="/" class="text-white p-2 rounded-full font-rr">FitForge</router-link>
-        </li>
-        <div class="flex space-x-2">
-          <router-link to="/" class="text-white bg-quaternary-500 hover:bg-quinary-500 py-2 px-5 rounded-full"
-            >Inicio</router-link
+  <header class="bg-black/10 text-white px-4 py-2 fixed w-full z-50">
+    <nav class="flex flex-row justify-between p-4">
+      <!-- Título y botón -->
+      <router-link to="/" class="flex flex-row items-center justify-start mb-2">
+        <img src="/logov3.svg" alt="Logo FitForge" class="w-12 h-12" />
+        <div class="flex flex-row items-center">
+          <h1 class="text-white ml-2 text-3xl" style="font-family: var(--font-bangers)">FitForge</h1>
+        </div>
+      </router-link>
+      <ul class="flex gap-4 justify-between items-center">
+        <div class="flex gap-2">
+          <router-link to="/" class="bg-tertiary-500 text-white rounded-3xl border-orange-700 hover:border-tertiary-500 hover:bg-orange-700 p-3 px-6 font-bold"
+            >INICIO</router-link
           >
           <router-link to="/about" class="text-white bg-quaternary-500 hover:bg-quinary-500 py-2 px-5 rounded-full"
             >Sobre Nosotros</router-link
@@ -20,7 +24,7 @@
           <li>
             <button
               @click="logout"
-              class="text-white bg-tertiary-500 border-1 border-tertiary-500 py-2 px-5 rounded-full"
+              class="bg-tertiary-500 text-white rounded-tl-2xl hover:bg-orange-700 p-3 px-6 font-bold"
             >
               Logout
             </button>
@@ -30,15 +34,8 @@
           <li>
             <router-link
               to="/login"
-              class="text-white bg-tertiary-500 border-1 border-tertiary-500 py-2 px-5 rounded-full"
-              >Login</router-link
-            >
-          </li>
-          <li>
-            <router-link
-              to="/register"
-              class="bg-transparent border-tertiary-500 border-1 text-tertiary-500 p-2 rounded-full"
-              >Register</router-link
+              class="bg-tertiary-500 text-white rounded-tl-2xl hover:bg-orange-700 p-3 px-6 font-bold"
+              >LOG IN</router-link
             >
           </li>
         </div>
@@ -50,7 +47,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from '@/utils/auth.js';
+import { useAuthStore } from "@/utils/auth.js";
 
 const auth = useAuthStore();
 const router = useRouter();

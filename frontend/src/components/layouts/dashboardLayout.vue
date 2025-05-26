@@ -7,14 +7,14 @@
         </div>
 
         <main class="w-full flex flex-col rounded-2xl gap-2 overflow-hidden">
-          <div class="flex justify-between items-center px-2 pb-2">
+          <div class="flex justify-between items-center px-2 pb-1">
             <h1 class="text-black text-2xl font-bold">{{ layoutStore.title }}</h1>
-            <div class="flex">
-              <div class="flex justify-center items-center px-4 small:hidden"><b class="mr-2">Rol:</b> {{ capitalizar( auth.getRole() )}}</div>
+            <div class="flex bg-tertiary-500 p-1 rounded-full shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]">
+              <div class="justify-center items-center px-4 hidden sm:flex"><b class="mr-2">Rol:</b> {{ capitalizar( auth.getRole() )}}</div>
               <div class="relative">
                 <button
                   @click="toggleDropdown"
-                  class="bg-gray-300 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+                  class="bg-gray-300 p-0.5 w-12 h-12 flex items-center justify-center rounded-full cursor-pointer shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
                 >
                   <img :src="imageURL" alt="Perfil" class="w-full h-full rounded-full object-cover" />
                 </button>

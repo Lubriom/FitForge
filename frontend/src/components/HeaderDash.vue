@@ -7,26 +7,12 @@
     class="h-full flex flex-col items-center"
   >
     <!-- Título y botón -->
-    <div class="flex flex-row items-center justify-between w-full">
-      <div v-if="expanded" class="items-center">
-        <h1 class="text-black font-bold ml-2">FitForge</h1>
+    <router-link to="/" class="flex flex-row items-center justify-start w-full mb-2">
+      <img src="/logov3.svg" alt="Logo FitForge" class="w-12 h-12" />
+      <div v-if="expanded" class="flex flex-row items-center">
+        <h1 class="text-black font-bold ml-2 text-3xl" style="font-family: var(--font-bangers)">FitForge</h1>
       </div>
-      <button
-        @click="expanded = !expanded"
-        :class="[
-          'text-white w-full h-10 rounded-xl flex items-center cursor-pointer',
-          expanded ? 'justify-end' : 'justify-center'
-        ]"
-        title="Expandir"
-      >
-        <span v-if="!expanded">
-          <ChevronLeft class="text-slate-900" />
-        </span>
-        <span v-else>
-          <ChevronRight class="text-slate-900" />
-        </span>
-      </button>
-    </div>
+    </router-link>
 
     <hr class="w-full pb-1 mx-auto border-gray-500" />
 
@@ -96,43 +82,21 @@
             </router-link>
           </li>
         </div>
-        <div class="flex flex-col">
-          <hr class="w-full pb-2 mx-auto border-gray-500" />
-          <div class="relative flex">
-            <button
-              @click="toggleDropdown"
-              class="bg-gray-300 w-12 h-12 flex items-center justify-start rounded-full cursor-pointer space-x-2 shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
-            >
-              <img alt="Imagen de perfil" :src="imageURL" class="w-full h-full rounded-full object-cover z-3" />
-              <div
-                class="absolute flex items-center bg-gray-300 w-full h-12 rounded-full"
-                :class="{ 'pl-2': !expanded, 'pl-14': expanded }"
-              >
-                <span v-if="expanded">{{ auth.getName() }}</span>
-              </div>
-            </button>
-
-            <!-- <transition name="fade-slide"> </transition> -->
-            <transition name="fade-slide">
-              <ul
-                v-if="dropdownOpen"
-                class="absolute left-10 bottom-10 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-              >
-                <li>
-                  <router-link :to="{ name: 'DashboardProfile' }" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Perfil</router-link>
-                </li>
-                <li>
-                  <router-link :to="{ name: 'DashboardSettings' }" class="block px-4 py-2 hover:bg-gray-100 rounded-2xl">Configuración</router-link>
-                </li>
-                <li>
-                  <button @click="logout" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-2xl">
-                    Cerrar sesión
-                  </button>
-                </li>
-              </ul>
-            </transition>
-          </div>
-        </div>
+        <button
+          @click="expanded = !expanded"
+          :class="[
+            'text-white bg-gray-200 hover:bg-gray-300 w-full h-10 rounded-xl flex items-center cursor-pointer',
+            expanded ? 'justify-end' : 'justify-center'
+          ]"
+          title="Expandir"
+        >
+          <span v-if="!expanded">
+            <ChevronLeft class="text-slate-900" />
+          </span>
+          <span v-else>
+            <ChevronRight class="text-slate-900" />
+          </span>
+        </button>
       </ul>
     </nav>
   </header>
@@ -148,6 +112,7 @@ import { BicepsFlexed } from "lucide-vue-next";
 import { Shield } from "lucide-vue-next";
 import { useAuthStore } from "@/utils/auth.js";
 import { ChartNoAxesCombined } from "lucide-vue-next";
+import logo from "/logov3.svg";
 
 const auth = useAuthStore();
 
