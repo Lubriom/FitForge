@@ -6,9 +6,7 @@
       <router-view></router-view>
     </main>
 
-    <footer>
-      <Footer />
-    </footer>
+    <Footer />
   </div>
 </template>
 
