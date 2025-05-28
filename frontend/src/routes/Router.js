@@ -40,12 +40,6 @@ const routes = [
     component: RegisterView,
     meta: { layout: "auth"}
   },
-  {
-    path: "/start",
-    name: "Start",
-    component: StartView,
-    meta: { requiresAuth: true }
-  },
   ...DashboardRoutes,
   ...ExercisesRoutes
 ];

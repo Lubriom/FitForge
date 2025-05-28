@@ -6,6 +6,12 @@ export default [
     meta: { layout: "dashboard", requiresAuth: true }
   },
   {
+    path: "/start",
+    name: "Start",
+    component: () => import("@/views/StartView.vue"),
+    meta: { layout: "clean", requiresAuth: true }
+  },
+  {
     path: "/dashboard/profile",
     name: "DashboardProfile",
     component: () => import("@/views/dashboard/ProfileView.vue"),

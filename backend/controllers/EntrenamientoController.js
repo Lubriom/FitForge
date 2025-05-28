@@ -6,7 +6,17 @@ import { prisma } from "../config/db.js";
 export class EntrenamientoController {
   static async createPlan(req, res) {
     try {
-      res.status(201).json(await PlanEntrenamientoModel.create(req.body));
+      const data = {
+        nombre: req.body.nombre,
+        descripcion: req.body.descripcion,
+        objetivo: req.body.objetivo,
+        nivel: req.body.nivel,
+        fechaInicio: new Date(req.body.fechaInicio),
+        fechaFin: new Date(req.body.fechaFin),
+        usuarioId: req.body.usuarioId
+      };
+
+      res.status(201).json(await PlanEntrenamientoModel.create({ data }));
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error al crear el plan" });

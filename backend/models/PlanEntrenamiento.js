@@ -3,63 +3,14 @@ import { prisma } from "../config/db.js";
 export class PlanEntrenamientoModel {
   static async create({ data }) {
     try {
-      const { nombre, descripcion, objetivo, fechaInicio, dias } = data;
-
-      const planActualizado = await prisma.planEntrenamiento.update({
-        where: { id: planId },
-        data: {
-          nombre,
-          descripcion,
-          objetivo,
-          fechaInicio: new Date(fechaInicio)
-        },
-        include: {
-          dias: {
-            include: {
-              ejercicios: {
-                include: { ejercicio: true }
-              }
-            }
-          }
-        }
+      const nuevoPlan = await prisma.planEntrenamiento.create({
+        data: data
       });
 
-      if (dias && dias.length > 0) {
-        await prisma.ejerciciosDia.deleteMany({
-          where: {
-            diaEntrenamiento: {
-              planId
-            }
-          }
-        });
-
-        await prisma.diaEntrenamiento.deleteMany({
-          where: {
-            planId
-          }
-        });
-
-        // Creamos los nuevos días y ejercicios
-        await prisma.diaEntrenamiento.createMany({
-          data: dias.map((dia) => ({
-            planId,
-            nombre: dia.nombre,
-            diaNumero: dia.diaNumero,
-            ejercicios: {
-              create: dia.ejercicios.map((ej) => ({
-                ejercicio: { connect: { id: ej.ejercicioId } },
-                series: ej.series,
-                repeticiones: ej.repeticiones,
-                peso: ej.peso
-              }))
-            }
-          }))
-        });
-      }
-
-      return planActualizado;
+      return nuevoPlan;
     } catch (error) {
-      console.error("Error al crear el plan de entrenamiento:", error);
+      console.error("Error al crear plan de entrenamiento:", error);
+      throw error;
     }
   }
 
@@ -163,7 +114,7 @@ export class PlanEntrenamientoModel {
     });
   }
 
-  static async delete({id}) {
+  static async delete({ id }) {
     return await prisma.planEntrenamiento.delete({
       where: { id: id }
     });

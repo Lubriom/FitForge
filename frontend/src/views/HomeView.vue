@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex h-[35rem] flex-col w-full backface-hidden overflow-hidden text-white shadow-md">
+  <div class="relative flex h-[35rem] justify-center flex-col w-full backface-hidden overflow-hidden text-white shadow-md">
     <div class="absolute bg-black inset-0">
       <div class="absolute flex w-full bg-cover inset-0"></div>
       <!-- Fondo base (imagen a la derecha) -->
@@ -8,7 +8,7 @@
       <!-- Capa superior con clip-path en curva -->
       <div class="absolute inset-0 bg-linear-[90deg,#000000_40%,transparent_80%]"></div>
     </div>
-    <div class="z-10 h-full flex flex-col justify-center items-start px-10 gap-6 text-white w-1/2">
+    <div class="z-10 flex flex-col justify-center items-start px-10 gap-6 text-white w-1/2">
       <h1 class="text-6xl font-light w-[500px] mt-6" style="font-family: var(--font-inter)">
         Forja Disciplina. Construye Fuerza.
       </h1>
@@ -16,14 +16,15 @@
         En FitForge nos dedicamos a transformar tu vida llevando tus entrenamientos y rutinas a otro nivel.
       </p>
       <div class="flex gap-4">
-        <a href="#" class="bg-tertiary-500 text-white rounded-tl-2xl hover:bg-orange-700 p-4 px-6 font-bold"
+        <router-link :to="{name: 'Register'}" class="text-2xl bg-tertiary-500 text-white hover:bg-orange-700 p-4 px-6 font-bold brochazo-horizontal transition-all duration-300 anton">Comienza ahora</router-link>
+        <a href="#know" class=" text-2xl bg-quaternary-500 text-white hover:bg-gray-700 p-4 px-6 font-bold brochazo-horizontal transition-all duration-300 anton"
           >SABER MAS</a
         >
       </div>
     </div>
   </div>
 
-  <div class="flex flex-row h-full justify-between items-start text-black bg-white py-40">
+  <div class="flex flex-row justify-between items-start text-black bg-white py-40">
     <div class="flex justify-start items-center w-3/5 relative">
       <div
         class="bg-tertiary-500 w-full h-96 diagonal-top-right absolute top-3 left-0 z-0"
@@ -46,12 +47,131 @@
       </p>
     </div>
   </div>
+  <section class="bg-tertiary-500 text-black py-24 px-6" id="know">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <h2 class="text-5xl font-bold anton">¿QUÉ PUEDES HACER CON FITFORGE?</h2>
+      <p class="mt-4 text-lg max-w-2xl mx-auto">
+        FitForge te ofrece herramientas inteligentes para entrenar, alimentarte y progresar con propósito.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <Dumbbell class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Rutinas personalizadas</h3>
+        <p>Genera entrenamientos adaptados a tu objetivo y nivel físico.</p>
+      </div>
+
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <LineChart class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Progreso visual</h3>
+        <p>Monitorea tu evolución con gráficas interactivas.</p>
+      </div>
+
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all"
+        data-aos="fade-up"
+        data-aos-delay="300"
+      >
+        <MonitorSmartphone class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Accede desde cualquier lugar</h3>
+        <p>Tus rutinas están disponibles en todo momento, desde móvil, tablet o PC.</p>
+      </div>
+
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all"
+        data-aos="fade-up"
+        data-aos-delay="400"
+      >
+        <CalendarCheck class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Organiza tus rutinas</h3>
+        <p>Planifica tus días de entrenamiento y registra cada sesión.</p>
+      </div>
+
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all duration-75"
+        data-aos="fade-up"
+        data-aos-delay="500"
+      >
+        <HeartPulse class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Bienestar físico</h3>
+        <p>Controla tu salud con métricas clave de seguimiento.</p>
+      </div>
+
+      <div
+        class="p-6 rounded-2xl shadow-lg bg-gray-50 hover:scale-105 transition-all"
+        data-aos="fade-up"
+        data-aos-delay="600"
+      >
+        <CircleGauge class="w-12 h-12 text-primary-500 mb-4" />
+        <h3 class="text-xl font-bold mb-2">Rutinas creadas por expertos</h3>
+        <p>Entrenadores certificados diseñan planes personalizados según tus objetivos.</p>
+      </div>
+    </div>
+  </section>
+  <div class="bg-black py-32 pb-28 flex flex-col lg:flex-row text-white gap-8">
+    <div class="w-full lg:w-2/5 px-10 flex flex-col justify-center items-center gap-6">
+      <h2 class="text-5xl font-bold anton" data-aos="fade-up">TODO EN SIMPLES PASOS</h2>
+      <div class="flex flex-col gap-4 text-lg justify-self-center">
+        <p class="flex items-center gap-2" data-aos="fade-right" data-aos-delay="300">
+          <MoveRight class="w-5 h-5 text-white" />
+          Ingresa tus datos
+        </p>
+        <p class="flex items-center gap-2" data-aos="fade-right" data-aos-delay="350">
+          <MoveRight class="w-5 h-5 text-white" />
+          Elige tu objetivo
+        </p>
+        <p class="flex items-center gap-2" data-aos="fade-right" data-aos-delay="400">
+          <MoveRight class="w-5 h-5 text-white" />
+          Crea tu rutina
+        </p>
+        <p class="flex items-center gap-2" data-aos="fade-right" data-aos-delay="450">
+          <MoveRight class="w-5 h-5 text-white" />
+          Sigue tu progreso
+        </p>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-3/5 h-96 flex overflow-hidden py-2 border-y-1 hover:border-y-8 hover:border-y-tertiary-500 duration-200 transition-all" data-aos="fade-up" data-aos-delay="500">
+      <div
+        class="bg-[url('/imgs/chander-r-z4WH11FMfIQ-unsplash.jpg')] bg-cover bg-center flex-1 hover:flex-[3] transition-all duration-500 ease-in-out"
+      ></div>
+      <div
+        class="bg-[url('/imgs/karsten-winegeart-0Wra5YYVQJE-unsplash.jpg')] bg-cover bg-center flex-1 hover:flex-[3] transition-all duration-500 ease-in-out"
+      ></div>
+      <div
+        class="bg-[url('/imgs/i-yunmai-_-DOhLYdUFM-unsplash.jpg')] bg-cover bg-center flex-1 hover:flex-[3] transition-all duration-500 ease-in-out"
+      ></div>
+    </div>
+  </div>
+  <div class="p-12 bg-gradient-to-b from-black to-white"></div>
+  <div class="bg-white py-32 flex justify-center items-center">
+    <h2 class="text-5xl font-bold anton text-black">MUCHOS EJERCICIOS</h2>
+  </div>
+
 </template>
 
 <script setup>
 import axios from "axios";
 import { useAuthStore } from "@/utils/auth";
 import { onMounted, ref } from "vue";
+import {
+  Dumbbell,
+  LineChart,
+  HeartPulse,
+  CalendarCheck,
+  MonitorSmartphone,
+  CircleGauge,
+  MoveRight
+} from "lucide-vue-next";
 
 const auth = useAuthStore();
 </script>
@@ -61,4 +181,28 @@ const auth = useAuthStore();
   clip-path: polygon(0 0, 80% 0, 100% 100%, 100% 100%, 0 100%);
 }
 
+.brochazo-horizontal {
+  clip-path: polygon(
+    0% 10%,
+    /* Arranca más arriba (menos 30% antes) */ 5% 5%,
+    15% 8%,
+    25% 0%,
+    40% 10%,
+    60% 5%,
+    75% 15%,
+    85% 10%,
+    95% 13%,
+    100% 10%,
+    100% 90%,
+    /* Baja más (antes 70%) */ 95% 95%,
+    85% 92%,
+    75% 98%,
+    60% 90%,
+    40% 95%,
+    25% 85%,
+    15% 90%,
+    5% 88%,
+    0% 90%
+  );
+}
 </style>

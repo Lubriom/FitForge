@@ -14,26 +14,43 @@ const validarFechaNac = (fechaStr) => {
 
 const infoSchema = z.object({
   fec_nac: z.string().refine(validarFechaNac, {
-    message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
+    message: "Introduce una fecha válida y realista"
   }),
 
   genero: z.enum(["Hombre", "Mujer", "Otro"], {
     errorMap: () => ({ message: "Selecciona un género válido." })
   }),
 
-  peso: z.string().refine((val) => /^\d{1,3}(\.\d{1,2})?$/.test(val), {
-    message: "Peso debe ser un número válido (hasta 2 decimales)."
-  }),
+  peso: z
+    .number({ invalid_type_error: "Peso debe ser un número" })
+    .min(1, "Peso debe ser mayor que 0")
+    .max(500, "Peso demasiado alto"),
 
-  altura: z.string().refine((val) => /^\d{2,3}(\.\d{1,2})?$/.test(val), {
-    message: "Altura debe ser un número válido en centímetros (hasta 2 decimales)."
-  }),
+  altura: z
+    .number({ invalid_type_error: "Altura debe ser un número" })
+    .min(30, "Altura demasiado baja")
+    .max(300, "Altura demasiado alta"),
 
   discapacidad: z.enum(["no", "0-32", "33-64", "65-100"], {
     errorMap: () => ({ message: "Selecciona un grado de discapacidad válido." })
   }),
 
-  patologiasSeleccionadas: z.array(z.string()).optional()
+  patologiasSeleccionadas: z
+    .array(
+      z.enum([
+        "Cardíacas",
+        "Respiratorias",
+        "Metabólicas",
+        "Musculoesqueléticas",
+        "Neurológicas",
+        "Digestivas",
+        "Psicológicas"
+      ]),
+      {
+        errorMap: () => ({ message: "Selecciona al menos una patología válida." })
+      }
+    )
+    .optional()
 });
 
 export const validateInfo = (req, res, next) => {
