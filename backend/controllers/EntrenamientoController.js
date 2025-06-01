@@ -208,10 +208,28 @@ export class EntrenamientoController {
   }
 
   static async update(req, res) {
-    const { id } = req.params;
+    const { id: planId, userId } = req.params;
+    const data = req.body;
+
+    if (data.dias && Array.isArray(data.dias)) {
+      data.dias = data.dias.map((dia) => ({
+        ...dia,
+        ejercicios: dia.ejercicios.map((ejercicio) => ({
+          ...ejercicio,
+          peso: parseFloat(ejercicio.peso) || 0,
+          repeticiones: parseInt(ejercicio.repeticiones) || 0,
+          series: parseInt(ejercicio.series) || 0,
+          descanso: parseInt(ejercicio.descanso) || 0
+        }))
+      }));
+    }
 
     try {
-      const planActualizado = await PlanEntrenamientoModel.update(parseInt(id), req.body);
+      const planActualizado = await PlanEntrenamientoModel.update({
+        planId: parseInt(planId),
+        userId: parseInt(userId),
+        data: data
+      });
       res.json({ message: "Plan actualizado con éxito", plan: planActualizado });
     } catch (error) {
       console.error(error);

@@ -54,63 +54,66 @@ export class PlanEntrenamientoModel {
     });
   }
 
-  static async update(planId, data) {
-    const { nombre, descripcion, nivel, activo, objetivo, usuarioId, fechaInicio, fechaFin, dias } = data;
+  static async update({planId, userId, data}) {
+    const { nombre, descripcion, nivel, activo, objetivo, fechaInicio, fechaFin, dias } = data;
 
-    // Primero borramos los ejercicios antiguos asociados a los días del plan
-    await prisma.ejerciciosDia.deleteMany({
-      where: {
-        dia: {
-          planId
+    return await prisma.$transaction(async (tx) => {
+      // Primero borrar ejercicios asociados a días del plan
+      await tx.ejerciciosDia.deleteMany({
+        where: {
+          dia: {
+            planId: planId
+          }
         }
-      }
-    });
+      });
 
-    // Luego borramos los días antiguos del plan
-    await prisma.diaEntrenamiento.deleteMany({
-      where: {
-        planId
-      }
-    });
-
-    // Finalmente actualizamos el plan y creamos los días y ejercicios nuevos
-    return await prisma.planEntrenamiento.update({
-      where: { id: planId },
-      data: {
-        nombre,
-        descripcion,
-        nivel,
-        activo,
-        objetivo,
-        usuarioId,
-        fechaInicio: new Date(fechaInicio),
-        fechaFin: new Date(fechaFin),
-        dias: {
-          create: dias.map((dia) => ({
-            nombre: dia.nombre, // si tienes este campo en DiaEntrenamiento (en el modelo que enviaste no está, podrías eliminarlo)
-            diaNumero: dia.diaNumero,
-            grupoMuscular: dia.grupoMuscular,
-            ejercicios: {
-              create: dia.ejercicios.map((ej) => ({
-                ejercicio: { connect: { id: ej.ejercicioId } },
-                descanso: ej.descanso,
-                series: ej.series,
-                repeticiones: ej.repeticiones,
-                peso: ej.peso
-              }))
-            }
-          }))
+      // Borrar días antiguos
+      await tx.diaEntrenamiento.deleteMany({
+        where: {
+          planId: planId
         }
-      },
-      include: {
-        dias: {
-          include: {
-            ejercicios: {
-              include: { ejercicio: true }
+      });
+
+      // Actualizar plan y crear días y ejercicios nuevos
+      return await tx.planEntrenamiento.update({
+        where: { id: planId },
+        data: {
+          nombre,
+          descripcion,
+          nivel,
+          activo,
+          objetivo,
+          usuarioId: userId,
+          fechaInicio: new Date(fechaInicio),
+          fechaFin: new Date(fechaFin),
+          dias: {
+            create: dias.map((dia) => ({
+              diaNumero: dia.diaNumero,
+              grupoMuscular: dia.grupoMuscular,
+              finalizado: dia.finalizado,
+              fecha: new Date(dia.fecha),
+              ejercicios: {
+                create: dia.ejercicios.map((ej) => ({
+                  ejercicio: { connect: { id: ej.ejercicioId } },
+                  descanso: ej.descanso,
+                  series: ej.series,
+                  repeticiones: ej.repeticiones,
+                  peso: ej.peso
+                }))
+              }
+            }))
+          }
+        },
+        include: {
+          dias: {
+            include: {
+              ejercicios: {
+                include: { ejercicio: true }
+              }
             }
           }
         }
-      }
+      });
     });
   }
 

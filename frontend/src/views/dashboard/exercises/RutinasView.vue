@@ -29,7 +29,7 @@
             <div class="flex flex-row gap-2">
               <router-link
                 class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
-                :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }"
+                :to="{ name: 'ExercisesTrainEdit', params: { id: rutina.id, userId: auth.getId() } }"
               >
                 <SquarePen />
               </router-link>

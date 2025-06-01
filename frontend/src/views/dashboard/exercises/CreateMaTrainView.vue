@@ -1,6 +1,6 @@
 <template>
-  <div class="w-2/3 p-6 bg-white rounded-2xl shadow space-y-4 flex justify-center items-center">
-    <div class="w-full px-5">
+  <div class="w-full h-full p-6 p-y-10 flex justify-center items-center">
+    <div class="w-4/5 h-fit p-5 bg-white rounded-2xl shadow">
       <h2 class="text-2xl font-bold mb-4 text-center">Crear tu plan de Entrenamiento</h2>
 
       <form @submit.prevent="submitForm" class="gap-4 flex flex-col">
@@ -120,7 +120,7 @@ const submitForm = async () => {
     );
 
     alert("Plan creado correctamente");
-    router.push("/dashboard"); // O donde quieras redirigir
+    // router.push({ name: "Exercises" , params: { id: response.data.id } }); 
   } catch (error) {
     console.error(error);
     alert("Error al crear el plan");

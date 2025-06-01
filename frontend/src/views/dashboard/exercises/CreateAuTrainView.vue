@@ -130,7 +130,7 @@ const step = ref(0);
 const totalSteps = 3;
 const isLoading = ref(false);
 
-const usuarioTieneRM = ref(false); // lógica real dependerá de tu backend o store
+const usuarioTieneRM = ref(false); 
 
 const form = ref({
   objetivo: "",
@@ -192,20 +192,20 @@ const enviarFormulario = async () => {
   }
 
   isLoading.value = true; // comienza a cargar
-
+  
   try {
     const payload = {
       ...form.value,
       usuarioId: auth.getId()
     };
-
+    
     const response = await axios.post("http://localhost:8081/trains/autocreate", payload, {
       headers: {
         Authorization: `Bearer ${auth.getToken()}`
       }
     });
-
-    router.push("/dashboard/train/get/" + response.data.planId); // o `/entrenamientos/:id` si tienes el ID
+    console.log("Holi")
+    router.push("/dashboard/train/get/" + response.data.planId);
   } catch (error) {
     console.error("Error al enviar el formulario:", error);
     alert("Hubo un error al crear el plan. Intenta de nuevo.");

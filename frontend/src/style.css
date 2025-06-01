@@ -59,3 +59,21 @@
 .custom-gradient {
   background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, black 10%, black 90%, rgba(0, 0, 0, 0.1) 100%);
 }
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d27d05;
+}
