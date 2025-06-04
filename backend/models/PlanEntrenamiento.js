@@ -54,7 +54,7 @@ export class PlanEntrenamientoModel {
     });
   }
 
-  static async update({planId, userId, data}) {
+  static async update({ planId, userId, data }) {
     const { nombre, descripcion, nivel, activo, objetivo, fechaInicio, fechaFin, dias } = data;
 
     return await prisma.$transaction(async (tx) => {
@@ -122,4 +122,24 @@ export class PlanEntrenamientoModel {
       where: { id: id }
     });
   }
+
+  static async finalizarDia({ id }) {
+    return await prisma.diaEntrenamiento.update({
+      where: { id: id },
+      data: { finalizado: true }
+    });
+  }
+
+  static async getDiasEntrenados({ id }) {
+    return await prisma.diaEntrenamiento.findMany({
+      where: {
+        finalizado: true,
+        plan: {
+          usuarioId: id
+        }
+      }
+    });
+  }
+
+  
 }

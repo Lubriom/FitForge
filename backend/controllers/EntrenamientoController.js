@@ -2,6 +2,7 @@ import { EjercicioModel } from "../models/Ejercicio.js";
 import { PlanEntrenamientoModel } from "../models/PlanEntrenamiento.js";
 import { UserModel } from "../models/User.js";
 import { prisma } from "../config/db.js";
+import { subDays, startOfDay, format, addDays, endOfDay } from "date-fns";
 
 export class EntrenamientoController {
   static async createPlan(req, res) {
@@ -31,6 +32,26 @@ export class EntrenamientoController {
     monday.setDate(date.getDate() + diff);
     monday.setHours(0, 0, 0, 0); // Resetear la hora
     return monday;
+  }
+
+  static async finalizarDia(req, res) {
+    try {
+      const { id } = req.params;
+      return res.json(await PlanEntrenamientoModel.finalizarDia({ id: parseInt(id) }));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error al finalizar el dia" });
+    }
+  }
+
+  static async getDiasEntrenados(req, res) {
+    try {
+      const { id } = req.params;
+      return res.json(await PlanEntrenamientoModel.getDiasEntrenados({ id: parseInt(id) }));
+    } catch {
+      console.error(error);
+      res.status(500).json({ error: "Error al obtener los dias entrenados" });
+    }
   }
 
   static async createAutoPlan(req, res) {
@@ -196,10 +217,10 @@ export class EntrenamientoController {
   }
 
   static async getPlanesPorUsuario(req, res) {
-    const { usuarioId } = req.params;
+    const { id } = req.params;
 
     try {
-      const planes = await PlanEntrenamientoModel.getPlanUserById(parseInt(usuarioId));
+      const planes = await PlanEntrenamientoModel.getPlanUserById({ usuarioId: parseInt(id) });
       res.json(planes);
     } catch (error) {
       console.error(error);
@@ -250,6 +271,49 @@ export class EntrenamientoController {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error al eliminar el plan" });
+    }
+  }
+
+  static async getDiasEntrenadosUltimos7(req, res) {
+    try {
+      const userId = parseInt(req.params.id);
+      const hoy = startOfDay(new Date());
+      const fechaInicio = subDays(hoy, 6); // hace 7 días exactos
+      const fechaFin = endOfDay(hoy);   // ayer, para excluir hoy
+  
+      // Consultar días entrenados en el rango para planes del usuario
+      const diasEntrenados = await prisma.diaEntrenamiento.findMany({
+        where: {
+          plan: {
+            usuarioId: userId,
+          },
+          finalizado: true,
+          fecha: {
+            gte: fechaInicio,
+            lte: fechaFin,
+          },
+        },
+        select: { fecha: true },
+        orderBy: { fecha: 'asc' },
+      });
+  
+      // Crear array con últimos 7 días (sin hoy)
+      const dias = Array.from({ length: 7 }, (_, i) => {
+        return format(addDays(fechaInicio, i), 'yyyy-MM-dd');
+      });
+  
+      const fechasEntrenadas = new Set(diasEntrenados.map(d => format(d.fecha, 'yyyy-MM-dd')));
+  
+      // Crear resultado con entrenado o no para cada día
+      const resultado = dias.map(fechaStr => ({
+        fecha: fechaStr,
+        entrenado: fechasEntrenadas.has(fechaStr),
+      }));
+  
+      return res.json(resultado);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Error al obtener días entrenados' });
     }
   }
 }

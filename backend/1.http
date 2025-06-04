@@ -71,4 +71,4 @@ Content-Type: application/json
 }
 
 ### ASd
-GET http://localhost:8081/trains/plan/6
+GET http://localhost:8081/trains/user/4

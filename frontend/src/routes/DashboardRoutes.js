@@ -26,7 +26,7 @@ export default [
   {
     path: "/dashboard/stats/",
     name: "DashboardStats",
-    component: () => import("@/views/dashboard/SeeProfileView.vue"),
+    component: () => import("@/views/dashboard/StatsView.vue"),
     meta: { layout: "dashboard", requiresAuth: true }
   },
   {

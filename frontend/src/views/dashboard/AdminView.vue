@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col h-full gap-3">
     <!-- Barra de listado -->
-    <div class="flex flex-row-reverse justify-between items-center gap-4">
+    <div class="hidden md:flex flex-row-reverse justify-between items-center gap-4">
       <form class="flex flex-wrap gap-2 p-2 mr-2 rounded-lg">
         <div class="flex items-center gap-2">
           <label for="perPage">Mostrando: </label>
@@ -70,14 +70,14 @@
       <table class="table-fixed bg-white rounded-lg">
         <thead class="sticky top-0">
           <tr class="bg-gray-100 text-left">
-            <th class="p-3  cursor-pointer w-12">
+            <th class="p-3  cursor-pointer w-1/12 sm:w-12">
               <button @click="sortBy('id')">ID</button>
             </th>
             <th class="p-3 w-1/12 text-center">Foto</th>
             <th class="p-3 w-1/4">
               <button @click="sortBy('nombre')">Nombre Completo</button>
             </th>
-            <th class="p-3 w-1/4">
+            <th class="p-3 w-1/4 hidden sm:table-cell">
               <button @click="sortBy('correo')">Correo</button>
             </th>
             <th class="p-3 w-1/8 hidden md:table-cell">
@@ -86,7 +86,7 @@
             <th class="p-3 w-1/6 hidden lg:table-cell">
               <button @click="sortBy('activo')">Activo</button>
             </th>
-            <th class="p-3 w-1/2">Acciones</th>
+            <th class="p-3 w-1/3 sm:1/2">Acciones</th>
           </tr>
         </thead>
         <tbody class="overflow-y-scroll">
@@ -102,7 +102,7 @@
               </div>
             </td>
             <td class="p-3">{{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}</td>
-            <td class="p-3">{{ user.correo }}</td>
+            <td class="p-3 hidden sm:table-cell">{{ user.correo }}</td>
             <td class="p-3 hidden md:table-cell">{{ user.role }}</td>
             <td class="p-3 hidden lg:table-cell">
               <div class="flex justify-center items-center h-full">
@@ -149,7 +149,7 @@
     </div>
     <!-- Paginación -->
     <div
-      class="bg-gray-100 p-2 rounded-xl flex justify-between items-center shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+      class="bg-gray-100 p-2 rounded-xl flex justify-between items-center "
     >
       <button
         @click="prevPage"

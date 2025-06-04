@@ -1,7 +1,8 @@
 <template>
   <div class="flex flex-col h-full gap-3">
-    <div class="flex flex-row justify-between items-center gap-3">
+    <div class="hidden md:flex flex-row justify-between items-center gap-3 ">
       <router-link
+        v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
         :to="{ name: 'ExercisesCreate' }"
         class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
       >
@@ -61,7 +62,7 @@
       </form>
     </div>
 
-    <div class="bg-gray-200/70 px-4 p-2 rounded-2xl text-gray-700 text-sm">
+    <div class="bg-quaternary-500 px-4 p-2 rounded-2xl text-gray-100 text-sm">
       <p>Listando {{ exercises.length }} ejercicios</p>
     </div>
     <!-- Ejercicios -->
@@ -143,6 +144,7 @@
                 </div>
                 <div class="flex h-full items-end justify-end">
                   <router-link
+                    v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
                     class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
                     :to="{ name: 'ExercisesEdit', params: { id: exercise.id } }"
                     ><SquarePen
@@ -163,6 +165,9 @@ import axios from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen } from "lucide-vue-next";
 import { computed } from "vue";
+import { useAuthStore } from "@/utils/auth";
+
+const auth = useAuthStore();
 
 function getImageUrl(categoria) {
   return new URL(`/src/assets/imgs/exercises/${categoria}.avif`, import.meta.url).href;

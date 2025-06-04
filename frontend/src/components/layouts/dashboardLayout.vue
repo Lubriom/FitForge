@@ -1,12 +1,10 @@
 <template>
   <div class="flex flex-col h-screen">
     <div class="bg-white p-3 h-full rounded bg-[url(@/assets/imgs/bg.jpg)] bg-cover bg-center bg-no-repeat">
-      <div class="flex flex-row h-full gap-3 rounded-2xl overflow-hidden">
-        <div>
+      <div class="flex flex-col-reverse md:flex-row h-full gap-3 rounded-2xl overflow-hidden">
           <Header />
-        </div>
 
-        <main class="w-full flex flex-col rounded-2xl gap-2 overflow-hidden">
+        <main class="w-full h-full flex flex-col gap-2 overflow-hidden">
           <div class="flex justify-between items-center px-2 pb-1">
             <h1 class="text-black text-2xl font-bold">{{ layoutStore.title }}</h1>
             <div class="flex bg-tertiary-500 p-1 rounded-full shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]">
@@ -22,7 +20,7 @@
                 <transition name="fade-slide">
                   <ul
                     v-if="dropdownOpen"
-                    class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                    class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20"
                   >
                     <li>
                       <router-link
@@ -52,7 +50,7 @@
             </div>
           </div>
 
-          <div class="flex-1 overflow-y-auto rounded-xl">
+          <div class="flex-1 overflow-y-auto w-full h-full">
             <router-view />
           </div>
 
