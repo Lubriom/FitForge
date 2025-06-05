@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-6 h-full">
-    <div class="bg-gray-100 p-4 rounded-2xl h-full w-full flex flex-row gap-4">
-      <div class="flex flex-col gap-6 h-full w-1/3 justify-around">
+    <div class="bg-gray-100 p-4 rounded-2xl h-fit xl:h-full w-full flex flex-col xl:flex-row gap-4">
+      <div class="flex flex-row xl:flex-col gap-3 h-full w-full xl:w-1/3 justify-evenly items-center xl:justify-around">
         <!-- Imagen de perfil y nombre -->
         <div class="flex flex-col items-center gap-4">
           <div class="relative w-64 h-64 rounded-full border-4 border-tertiary-500 overflow-hidden bg-white shadow-md">
@@ -13,11 +13,15 @@
         </div>
 
         <!-- Datos del usuario -->
-        <div class="bg-white rounded-2xl shadow-lg w-full px-4 py-6">
+        <div class="bg-white rounded-2xl shadow-lg w-fit xl:w-full h-fit px-4 py-3">
           <ul class="flex flex-col gap-4 text-black text-md">
+            <li class="flex items-center gap-2">
+              <span class="text-primary-600"><User /></span>
+              <span>{{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}</span>
+            </li>
             <!-- Correo -->
             <li class="flex items-center gap-2">
-              <span class="text-primary-600"><Mail /></span>
+              <span class="text-primary-600 text-gray-600"><Mail /></span>
               <span>{{ user.correo }}</span>
             </li>
 
@@ -61,200 +65,322 @@
         </div>
       </div>
 
-      <div class="border-1 border-gray-500/10" />
+      <div class="hidden lg:flex border-1 border-gray-500/10" />
 
       <!-- Información del usuario -->
-      <div class="grid grid-cols-3 grid-rows-5 gap-4 h-full w-full">
-        <!-- Datos fisicos -->
-        <div class="col-span-2 row-span-2">
-          <div class="bg-white p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
-            <h2 class="text-xl font-semibold text-gray-800 gap-2 flex items-center">
-              <Info class="w-6 h-6 text-blue-500" />
-              Datos físicos del usuario
-            </h2>
+      <div class="flex h-full w-full xl:overflow-y-auto">
+        <div class="flex flex-col sm:grid sm:grid-cols-3 sm:grid-rows-[1fr] gap-4 h-fit w-full">
+          <!-- Datos fisicos -->
+          <div class="col-span-2 row-span-2">
+            <div class="bg-white p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
+              <h2 class="text-xl font-semibold text-gray-800 gap-2 flex items-center">
+                <Info class="w-6 h-6 text-blue-500" />
+                Datos físicos del usuario
+              </h2>
 
-            <div v-if="userInfo" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-gray-700 h-full">
-              <!-- ALTURA -->
-              <div
-                class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-indigo-100"
-              >
-                <div class="flex justify-center items-center gap-2 mb-1">
-                  <Ruler class="w-5 h-5 text-indigo-500 transition-transform duration-300 group-hover:scale-110" />
-                  <p class="font-semibold text-sm sm:text-base">Altura</p>
-                </div>
-                <p class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-indigo-700">
-                  {{ userInfo.altura }} cm
-                </p>
-              </div>
-
-              <!-- PESO -->
-              <div
-                class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-green-100"
-              >
-                <div class="flex justify-center items-center gap-2 mb-1">
-                  <Weight class="w-5 h-5 text-green-500 transition-transform duration-300 group-hover:scale-110" />
-                  <p class="font-semibold text-sm sm:text-base">Peso</p>
-                </div>
-                <p class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-green-700">
-                  {{ userInfo.peso }} kg
-                </p>
-              </div>
-
-              <!-- GÉNERO -->
-              <div
-                class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-pink-100"
-              >
-                <div class="flex justify-center items-center gap-2 mb-1">
-                  <Dna class="w-5 h-5 text-pink-400 transition-transform duration-300 group-hover:scale-110" />
-                  <p class="font-semibold text-sm sm:text-base">Género</p>
-                </div>
-                <p
-                  class="text-lg sm:text-3xl text-center font-medium text-gray-900 capitalize group-hover:text-pink-600"
+              <div v-if="userInfo" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-gray-700 h-full">
+                <!-- ALTURA -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-indigo-100"
                 >
-                  {{ user.genero }}
-                </p>
-              </div>
-            </div>
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <Ruler class="w-5 h-5 text-indigo-500 transition-transform duration-300 group-hover:scale-110" />
+                    <p class="font-semibold text-sm sm:text-base">Altura</p>
+                  </div>
+                  <p class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-indigo-700">
+                    {{ userInfo.altura }} cm
+                  </p>
+                </div>
 
-            <div v-else class="text-gray-500 italic">No se encontraron datos físicos.</div>
-          </div>
-        </div>
-
-        <!-- IMC -->
-        <div class="row-span-5 col-start-3">
-          <!-- IMC panel con SVG -->
-
-          <div
-            class="bg-quaternary-500 text-white p-4 rounded-2xl w-full h-full flex-col flex relative justify-between"
-          >
-            <div v-if="userInfo && userInfo.imc">
-              <!-- Texto IMC y categoría -->
-              <div>
-                <h1 class="font-bold mb-2">
-                  Tu IMC: <span class="text-gray-200">{{ userInfo.imc }}</span>
-                </h1>
-                <p class="text-sm text-gray-200 mb-4">
-                  {{ getIMCCategory(userInfo.imc) }}
-                </p>
-              </div>
-
-              <!-- SVG con color -->
-              <div class="relative w-full aspect-[6/7] mb-4">
+                <!-- PESO -->
                 <div
-                  class="absolute inset-0 z-0"
-                  :style="{
-                    backgroundColor: '#000',
-                    WebkitMaskImage: `url(${svgImc})`,
-                    WebkitMaskRepeat: 'no-repeat',
-                    WebkitMaskSize: 'contain',
-                    WebkitMaskPosition: 'center',
-                    maskImage: `url(${svgImc})`,
-                    maskRepeat: 'no-repeat',
-                    maskSize: 'contain',
-                    maskPosition: 'center',
-                    filter: 'blur(2px)'
-                  }"
-                ></div>
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-green-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <Weight class="w-5 h-5 text-green-500 transition-transform duration-300 group-hover:scale-110" />
+                    <p class="font-semibold text-sm sm:text-base">Peso</p>
+                  </div>
+                  <p class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-green-700">
+                    {{ userInfo.peso }} kg
+                  </p>
+                </div>
+
+                <!-- GÉNERO -->
                 <div
-                  class="absolute inset-0 z-10"
-                  :style="{
-                    backgroundColor: getIMCColor(userInfo.imc),
-                    WebkitMaskImage: `url(${svgImc})`,
-                    WebkitMaskRepeat: 'no-repeat',
-                    WebkitMaskSize: 'contain',
-                    WebkitMaskPosition: 'center',
-                    maskImage: `url(${svgImc})`,
-                    maskRepeat: 'no-repeat',
-                    maskSize: 'contain',
-                    maskPosition: 'center'
-                  }"
-                ></div>
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-pink-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <Dna class="w-5 h-5 text-pink-400 transition-transform duration-300 group-hover:scale-110" />
+                    <p class="font-semibold text-sm sm:text-base">Género</p>
+                  </div>
+                  <p
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 capitalize group-hover:text-pink-600"
+                  >
+                    {{ user.genero }}
+                  </p>
+                </div>
               </div>
 
-              <!-- Barra de progreso -->
-              <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
-                <div
-                  class="top-0 left-0 h-full"
-                  :style="{
-                    width: getIMCPercentage(userInfo.imc) + '%',
-                    backgroundColor: getIMCColor(userInfo.imc)
-                  }"
-                ></div>
-                <div
-                  class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
-                  :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
-                ></div>
-              </div>
-
-              <div class="text-xs text-gray-200 mt-2 flex justify-between">
-                <span>Bajo</span>
-                <span>Normal</span>
-                <span>Alto</span>
-              </div>
-            </div>
-
-            <!-- 📭 Estado cuando no hay IMC -->
-            <div v-else class="flex flex-col items-center justify-center h-full text-center gap-4">
-              <div class="relative w-40 aspect-[6/7]">
-                <div
-                  class="absolute inset-0 z-10 bg-gray-400/50"
-                  :style="{
-                    WebkitMaskImage: `url(${svgImc})`,
-                    WebkitMaskRepeat: 'no-repeat',
-                    WebkitMaskSize: 'contain',
-                    WebkitMaskPosition: 'center',
-                    maskImage: `url(${svgImc})`,
-                    maskRepeat: 'no-repeat',
-                    maskSize: 'contain',
-                    maskPosition: 'center'
-                  }"
-                ></div>
-              </div>
-              <p class="text-sm text-gray-200">Aún no se ha registrado tu índice de masa corporal.</p>
-              <p class="text-xs text-gray-300">Puedes actualizar tus datos físicos desde tu perfil.</p>
+              <div v-else class="text-gray-500 italic">No se encontraron datos físicos.</div>
             </div>
           </div>
-        </div>
 
-        <!-- Dias entrenados -->
-        <div class="col-span-2 row-start-3 w-full h-full">
-          <div class="bg-white p-4 rounded-2xl h-full w-full px-8 flex flex-row gap-8 shadow-md"></div>
-        </div>
+          <!-- IMC -->
+          <div class="row-span-4 col-start-3">
+            <!-- IMC panel con SVG -->
 
-        <!-- Rutinas -->
-        <div class="col-span-2 row-span-2 row-start-4">
-          <div class="bg-tertiary-500 py-6 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 shadow-md">
-            <h1 class="flex gap-2 items-center text-xl"><LandPlot class="w-7 h-7" /> Rutinas del usuario</h1>
             <div
-              v-if="userRutinas && userRutinas.length > 0"
-              class="bg-tertiary-500 rounded-2xl h-full w-full flex flex-col gap-8 overflow-y-auto pr-2"
+              class="bg-quaternary-500 text-white p-4 rounded-2xl w-full h-full flex-col flex relative justify-between"
             >
-              <router-link
-                v-for="rutina in userRutinas"
-                :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }"
-                class="bg-white px-5 py-2 rounded-2xl w-full shadow-md hover:bg-gray-100 transition-all duration-300 text-black font-semibold flex flex-col justify-between h-full space-y-4"
-              >
-                <div class="flex flex-row gap-2 items-start justify-between">
-                  <div class="flex flex-col gap-1">
-                    <p class="text-xl font-bold">Nombre: {{ rutina.nombre }}</p>
-                    <p class="text-sm text-gray-700">{{ rutina.descripcion }}</p>
-                  </div>
-                  <div v-if="rutina.activo" class="flex rounded-2xl bg-green-500/50 p-2">Activo</div>
+              <div v-if="userInfo && userInfo.imc">
+                <!-- Texto IMC y categoría -->
+                <div>
+                  <h1 class="font-bold mb-2">
+                    Tu IMC: <span class="text-gray-200">{{ userInfo.imc }}</span>
+                  </h1>
+                  <p class="text-sm text-gray-200 mb-4">
+                    {{ getIMCCategory(userInfo.imc) }}
+                  </p>
                 </div>
 
-                <div class="flex flex-row justify-between text-sm text-gray-800">
-                  <div>
-                    <p><span class="font-semibold">Nivel:</span> {{ capitalizar(rutina.nivel) }}</p>
-                    <p><span class="font-semibold">Objetivo:</span> {{ capitalizar(rutina.objetivo) }}</p>
-                  </div>
-                  <div v-if="rutina.diaActual" class="text-right">
-                    <p><span class="font-semibold">Hoy:</span> {{ formatFecha(rutina.diaActual.fecha) }}</p>
-                    <p><span class="font-semibold">Toca:</span> {{ capitalizar(rutina.diaActual.grupoMuscular) }}</p>
+                <!-- SVG con color -->
+                <div class="relative w-full aspect-[6/7] mb-4">
+                  <div
+                    class="absolute inset-0 z-0"
+                    :style="{
+                      backgroundColor: '#000',
+                      WebkitMaskImage: `url(${svgImc})`,
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url(${svgImc})`,
+                      maskRepeat: 'no-repeat',
+                      maskSize: 'contain',
+                      maskPosition: 'center',
+                      filter: 'blur(2px)'
+                    }"
+                  ></div>
+                  <div
+                    class="absolute inset-0 z-10"
+                    :style="{
+                      backgroundColor: getIMCColor(userInfo.imc),
+                      WebkitMaskImage: `url(${svgImc})`,
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url(${svgImc})`,
+                      maskRepeat: 'no-repeat',
+                      maskSize: 'contain',
+                      maskPosition: 'center'
+                    }"
+                  ></div>
+                </div>
+
+                <!-- Barra de progreso -->
+                <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
+                  <div
+                    class="top-0 left-0 h-full"
+                    :style="{
+                      width: getIMCPercentage(userInfo.imc) + '%',
+                      backgroundColor: getIMCColor(userInfo.imc)
+                    }"
+                  ></div>
+                  <div
+                    class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
+                    :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
+                  ></div>
+                </div>
+
+                <div class="text-xs text-gray-200 mt-2 flex justify-between">
+                  <span>Bajo</span>
+                  <span>Normal</span>
+                  <span>Alto</span>
+                </div>
+              </div>
+
+              <!-- 📭 Estado cuando no hay IMC -->
+              <div v-else class="flex flex-col items-center justify-center h-full text-center gap-4">
+                <div class="relative w-40 aspect-[6/7]">
+                  <div
+                    class="absolute inset-0 z-10 bg-gray-400/50"
+                    :style="{
+                      WebkitMaskImage: `url(${svgImc})`,
+                      WebkitMaskRepeat: 'no-repeat',
+                      WebkitMaskSize: 'contain',
+                      WebkitMaskPosition: 'center',
+                      maskImage: `url(${svgImc})`,
+                      maskRepeat: 'no-repeat',
+                      maskSize: 'contain',
+                      maskPosition: 'center'
+                    }"
+                  ></div>
+                </div>
+                <p class="text-sm text-gray-200">Este usuario no ha registrado su índice de masa corporal.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dias entrenados -->
+          <div class="col-span-2 row-start-3 w-full h-fit">
+            <div class="flex flex-col gap-4 w-full h-fit bg-white rounded-2xl shadow-md p-4">
+              <div class="flex flex-col gap-3">
+                <h1 class="flex items-center font-semibold text-xl gap-2 px-3">
+                  <Calendar1 /> Últimos 7 días entrenados
+                </h1>
+                <div class="flex flex-row gap-2">
+                  <div
+                    v-for="dia in diasEntrenados7dias"
+                    :key="dia.fecha"
+                    :title="dia.fecha"
+                    class="flex-1 h-16 rounded-xl flex flex-col items-center justify-center text-white font-semibold cursor-default select-none"
+                    :class="dia.entrenado ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
+                  >
+                    <span>{{ formatFecha(dia.fecha, "EEE") }}</span>
+                    <small class="text-xs opacity-75">{{ formatFecha(dia.fecha, "dd/MM") }}</small>
                   </div>
                 </div>
-              </router-link>
+              </div>
             </div>
-            <p v-else class="text-black/60 italic">Este usuario aún no tiene ninguna rutina registrada</p>
+          </div>
+
+          <!-- Rutinas -->
+          <div class="col-span-2 row-span-2 row-start-4">
+            <div class="bg-tertiary-500 py-4 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 shadow-md">
+              <h1 class="flex gap-2 items-center text-xl text-white">
+                <LandPlot class="w-7 h-7" /> Rutinas del usuario
+              </h1>
+              <div
+                v-if="userRutinas && userRutinas.length > 0"
+                class="bg-tertiary-500 rounded-2xl h-full w-full flex flex-col gap-4 pr-2 items-center"
+              >
+                <div class="w-full flex flex-col gap-4 h-48 overflow-y-auto pr-3">
+                  <router-link
+                    v-for="rutina in userRutinas"
+                    :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }"
+                    class="bg-white px-5 py-2 rounded-2xl w-full shadow-md hover:bg-gray-100 transition-all duration-300 text-black font-semibold flex flex-col justify-between h-full space-y-4"
+                  >
+                    <div class="flex flex-row gap-2 items-start justify-between">
+                      <div class="flex flex-col gap-1">
+                        <p class="text-xl font-bold">Nombre: {{ rutina.nombre }}</p>
+                        <p class="text-sm text-gray-700">{{ rutina.descripcion }}</p>
+                      </div>
+                      <div v-if="rutina.activo" class="flex rounded-2xl bg-green-500/50 p-2">Activo</div>
+                    </div>
+
+                    <div class="flex flex-row justify-between text-sm text-gray-800">
+                      <div>
+                        <p><span class="font-semibold">Nivel:</span> {{ capitalizar(rutina.nivel) }}</p>
+                        <p><span class="font-semibold">Objetivo:</span> {{ capitalizar(rutina.objetivo) }}</p>
+                      </div>
+                      <div v-if="rutina.diaActual" class="text-right">
+                        <p><span class="font-semibold">Hoy:</span> {{ formatFecha2(rutina.diaActual.fecha) }}</p>
+                        <p>
+                          <span class="font-semibold">Toca:</span> {{ capitalizar(rutina.diaActual.grupoMuscular) }}
+                        </p>
+                      </div>
+                    </div>
+                  </router-link>
+                </div>
+                <router-link
+                  :to="{ name: 'ExercisesTrainCreateAU' }"
+                  class="bg-white hover:bg-gray-200 text-orange-400 font-medium px-4 py-2 rounded-xl shadow-md w-fit"
+                  ><span class="flex items-center gap-1"><Plus /> Nuevo Plan </span></router-link
+                >
+              </div>
+              <p v-else class="text-black/60 italic">Este usuario aún no tiene ninguna rutina registrada</p>
+            </div>
+          </div>
+
+          <!-- Datos fisicos -->
+          <div class="col-span-3 row-span-2 row-start-6">
+            <div class="bg-gray-200 p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
+              <h2 class="text-xl font-semibold text-gray-800 gap-2 flex items-center">
+                <Info class="w-6 h-6 text-blue-500" />
+                Datos Importantes
+              </h2>
+
+              <div v-if="userInfo" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-gray-700 h-full">
+                <!-- DISCAPACIDAD -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-purple-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <Accessibility
+                      class="w-5 h-5 text-purple-500 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Discapacidad</p>
+                  </div>
+                  <p class="text-lg sm:text-xl text-center font-medium text-gray-900 group-hover:text-purple-700">
+                    <template v-if="userInfo.discapacidad"> Discapacidad del {{ userInfo.discapacidad }}% </template>
+                    <template v-else> No </template>
+                  </p>
+                </div>
+
+                <!-- PESO -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-orange-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <BicepsFlexed
+                      class="w-5 h-5 text-orange-500 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Fuerza (RM)</p>
+                  </div>
+                  <p
+                    v-if="userInfo.rm"
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-orange-700"
+                  >
+                    {{ userInfo.rm }} kg
+                  </p>
+                  <p
+                    v-else
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-orange-700"
+                  >
+                    No registrada
+                  </p>
+                </div>
+
+                <!-- GÉNERO -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-pink-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <ClockArrowUp
+                      class="w-5 h-5 text-pink-400 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Ultimo registro</p>
+                  </div>
+                  <p
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 capitalize group-hover:text-pink-600"
+                  >
+                    {{
+                      new Date(userInfo.fechaRegistro).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      })
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div v-else class="text-gray-500 italic">No se encontraron datos físicos.</div>
+            </div>
+          </div>
+
+          <!-- PATOLOGIAS -->
+          <div class="row-start-5 col-start-3">
+            <div
+              class="bg-quinary-500 py-6 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 text-white shadow-md"
+            >
+              <h1 class="flex flex-row gap-2 text-xl"><Stethoscope class="w-10 h-10" /> Patologias:</h1>
+              <ol>
+                <li v-if="userPato.length == 0" class="text-md opacity-70 font-light italic">
+                  No tiene patologias registradas
+                </li>
+                <li v-else v-for="pato in userPato" class="text-lg font-semibold italic">{{ pato.patologia }}</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
@@ -268,31 +394,42 @@ import { useAuthStore } from "@/utils/auth";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { parseISO, format } from "date-fns";
+import { es } from "date-fns/locale";
 
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Mi perfil");
+
+const route = useRoute();
 
 const auth = useAuthStore();
 const user = ref({});
 const userInfo = ref({});
 const userRutinas = ref({});
+const userPato = ref([]);
 const imageURL = ref("");
 const svgImc = ref("");
 const diasEntrenados = ref([]);
-const route = useRoute();
+const diasEntrenados7dias = ref([]);
 
 onMounted(async () => {
   const userId = route.params.id;
   const token = auth.getToken();
 
   try {
-    const [response, responseInfo, responseRutinas, responseDias] = await Promise.all([
+    const [response, responseInfo, responseRutinas, responseDias, response7dias, responsePato] = await Promise.all([
       axios.get(`http://localhost:8081/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
       axios.get(`http://localhost:8081/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
       axios.get(`http://localhost:8081/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
       axios.get(`http://localhost:8081/trains/user/${userId}/days`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`http://localhost:8081/trains/user/${userId}/finish/days`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`http://localhost:8081/users/get/${userId}/patologias`, {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);
@@ -301,8 +438,10 @@ onMounted(async () => {
 
     user.value = response.data;
     userInfo.value = responseInfo.data;
+    userPato.value = responsePato.data;
     userRutinas.value = responseRutinas.data;
     diasEntrenados.value = responseDias.data;
+    diasEntrenados7dias.value = response7dias.data;
 
     const hoy = new Date().toISOString().split("T")[0];
 
@@ -318,7 +457,7 @@ onMounted(async () => {
       }
     });
 
-    svgImc.value = user.genero == "Hombre" ? "/female.svg" : "/male.svg";
+    svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
   }
@@ -326,7 +465,20 @@ onMounted(async () => {
 
 // ICONS
 
-import { Dna, Info, LandPlot, Ruler, User, Weight } from "lucide-vue-next";
+import {
+  Accessibility,
+  BicepsFlexed,
+  Calendar1,
+  ClockArrowUp,
+  Dna,
+  Info,
+  LandPlot,
+  Plus,
+  Ruler,
+  Stethoscope,
+  User,
+  Weight
+} from "lucide-vue-next";
 import { Mail } from "lucide-vue-next";
 import { Cake } from "lucide-vue-next";
 import { Mars } from "lucide-vue-next";
@@ -346,7 +498,7 @@ function getIMCColor(imc) {
   return "#991b1b"; // Obesidad clase 3
 }
 
-function getIMCCategory(imc = 0) {
+function getIMCCategory(imc) {
   if (imc < 16) return "Delgadez severa";
   if (imc < 17) return "Delgadez moderada";
   if (imc < 18.5) return "Delgadez leve";
@@ -369,9 +521,14 @@ const capitalizar = (texto) => {
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 };
 
-function formatFecha(fecha) {
+function formatFecha2(fecha) {
   if (!fecha) return "";
   const opciones = { day: "2-digit", month: "2-digit" };
   return new Intl.DateTimeFormat("es-ES", opciones).format(new Date(fecha));
+}
+
+function formatFecha(fechaStr, formato) {
+  const date = parseISO(fechaStr);
+  return format(date, formato, { locale: es });
 }
 </script>

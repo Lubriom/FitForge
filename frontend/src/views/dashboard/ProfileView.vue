@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-6 h-full">
-    <div class="bg-gray-100 p-4 rounded-2xl h-full w-full flex flex-col xl:flex-row gap-4">
-      <div class="flex flex-row xl:flex-col gap-6 h-full w-full xl:w-1/3 justify-evenly items-center xl:justify-around">
+    <div class="bg-gray-100 p-4 rounded-2xl h-fit xl:h-full w-full flex flex-col xl:flex-row gap-4">
+      <div class="flex flex-row xl:flex-col gap-3 h-full w-full xl:w-1/3 justify-evenly items-center xl:justify-around">
         <!-- Imagen de perfil y nombre -->
         <div class="flex flex-col items-center gap-4">
           <div class="relative w-64 h-64 rounded-full border-4 border-tertiary-500 overflow-hidden bg-white shadow-md">
@@ -13,11 +13,15 @@
         </div>
 
         <!-- Datos del usuario -->
-        <div class="bg-white rounded-2xl shadow-lg w-fit xl:w-full h-fit px-4 py-6">
+        <div class="bg-white rounded-2xl shadow-lg w-fit xl:w-full h-fit px-4 py-3">
           <ul class="flex flex-col gap-4 text-black text-md">
+            <li class="flex items-center gap-2">
+              <span class="text-primary-600"><User /></span>
+              <span>{{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}</span>
+            </li>
             <!-- Correo -->
             <li class="flex items-center gap-2">
-              <span class="text-primary-600"><Mail /></span>
+              <span class="text-primary-600 text-gray-600"><Mail /></span>
               <span>{{ user.correo }}</span>
             </li>
 
@@ -64,8 +68,8 @@
       <div class="hidden lg:flex border-1 border-gray-500/10" />
 
       <!-- Información del usuario -->
-      <div class="flex h-full w-full overflow-y-auto">
-        <div class="grid grid-cols-3 grid-rows-[1fr] gap-4 h-fit w-full">
+      <div class="flex h-full w-full xl:overflow-y-auto">
+        <div class="flex flex-col sm:grid sm:grid-cols-3 sm:grid-rows-[1fr] gap-4 h-fit w-full">
           <!-- Datos fisicos -->
           <div class="col-span-2 row-span-2">
             <div class="bg-white p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
@@ -243,7 +247,9 @@
           <!-- Rutinas -->
           <div class="col-span-2 row-span-2 row-start-4">
             <div class="bg-tertiary-500 py-4 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 shadow-md">
-              <h1 class="flex gap-2 items-center text-xl text-white"><LandPlot class="w-7 h-7" /> Rutinas del usuario</h1>
+              <h1 class="flex gap-2 items-center text-xl text-white">
+                <LandPlot class="w-7 h-7" /> Rutinas del usuario
+              </h1>
               <div
                 v-if="userRutinas && userRutinas.length > 0"
                 class="bg-tertiary-500 rounded-2xl h-full w-full flex flex-col gap-4 pr-2 items-center"
@@ -286,8 +292,94 @@
             </div>
           </div>
 
+          <!-- Mas Datos fisicos -->
+          <div class="col-span-3 row-span-2 row-start-6">
+            <div class="bg-gray-200 p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
+              <h2 class="text-xl font-semibold text-gray-800 gap-2 flex items-center">
+                <Info class="w-6 h-6 text-blue-500" />
+                Datos Importantes
+              </h2>
+
+              <div v-if="userInfo" class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-gray-700 h-full">
+                <!-- DISCAPACIDAD -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-purple-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <Accessibility
+                      class="w-5 h-5 text-purple-500 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Discapacidad</p>
+                  </div>
+                  <p class="text-lg sm:text-xl text-center font-medium text-gray-900 group-hover:text-purple-700">
+                    <template v-if="userInfo.discapacidad"> Discapacidad del {{ userInfo.discapacidad }}% </template>
+                    <template v-else> No </template>
+                  </p>
+                </div>
+
+                <!-- PESO -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-orange-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <BicepsFlexed
+                      class="w-5 h-5 text-orange-500 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Fuerza (RM)</p>
+                  </div>
+                  <p
+                    v-if="userInfo.rm"
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-orange-700"
+                  >
+                    {{ userInfo.rm }} kg
+                  </p>
+                  <p
+                    v-else
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-orange-700"
+                  >
+                    No registrada
+                  </p>
+                </div>
+
+                <!-- GÉNERO -->
+                <div
+                  class="group bg-gray-50 p-4 rounded-xl shadow-sm flex flex-col justify-center h-full transition-all duration-300 hover:bg-pink-100"
+                >
+                  <div class="flex justify-center items-center gap-2 mb-1">
+                    <ClockArrowUp
+                      class="w-5 h-5 text-pink-400 transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <p class="font-semibold text-sm sm:text-base">Ultimo registro</p>
+                  </div>
+                  <p
+                    class="text-lg sm:text-3xl text-center font-medium text-gray-900 capitalize group-hover:text-pink-600"
+                  >
+                    {{
+                      new Date(userInfo.fechaRegistro).toLocaleDateString("es-ES", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric"
+                      })
+                    }}
+                  </p>
+                </div>
+              </div>
+
+              <div v-else class="text-gray-500 italic">No se encontraron datos físicos.</div>
+            </div>
+          </div>
+
+          <!-- Patologias -->
           <div class="row-start-5 col-start-3">
-            <div class="bg-tertiary-500 py-6 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 shadow-md"></div>
+            <div
+              class="bg-quinary-500 py-6 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 text-white shadow-md"
+            >
+              <h1 class="flex flex-row gap-2 text-xl"><Stethoscope class="w-10 h-10" /> Patologias:</h1>
+              <ol>
+                <li v-if="userPato.length == 0" class="text-md opacity-70 light italic">No tienes patologias registradas</li>
+                <li v-else v-for="pato in userPato" class="text-lg font-semibold italic">{{ pato.patologia }}</li>
+              </ol>
+            </div>
           </div>
         </div>
       </div>
@@ -311,6 +403,7 @@ const auth = useAuthStore();
 const user = ref({});
 const userInfo = ref({});
 const userRutinas = ref({});
+const userPato = ref([]);
 const imageURL = ref("");
 const svgImc = ref("");
 const diasEntrenados = ref([]);
@@ -321,7 +414,7 @@ onMounted(async () => {
   const token = auth.getToken();
 
   try {
-    const [response, responseInfo, responseRutinas, responseDias, response7dias] = await Promise.all([
+    const [response, responseInfo, responseRutinas, responseDias, response7dias, responsePato] = await Promise.all([
       axios.get(`http://localhost:8081/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
       axios.get(`http://localhost:8081/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -332,6 +425,9 @@ onMounted(async () => {
       }),
       axios.get(`http://localhost:8081/trains/user/${userId}/finish/days`, {
         headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`http://localhost:8081/users/get/${userId}/patologias`, {
+        headers: { Authorization: `Bearer ${token}` }
       })
     ]);
 
@@ -339,6 +435,7 @@ onMounted(async () => {
 
     user.value = response.data;
     userInfo.value = responseInfo.data;
+    userPato.value = responsePato.data;
     userRutinas.value = responseRutinas.data;
     diasEntrenados.value = responseDias.data;
     diasEntrenados7dias.value = response7dias.data;
@@ -357,7 +454,7 @@ onMounted(async () => {
       }
     });
 
-    svgImc.value = user.genero == "Hombre" ? "/female.svg" : "/male.svg";
+    svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
   }
@@ -365,7 +462,20 @@ onMounted(async () => {
 
 // ICONS
 
-import { Calendar1, Dna, Info, LandPlot, Plus, Ruler, User, Weight } from "lucide-vue-next";
+import {
+  Accessibility,
+  BicepsFlexed,
+  Calendar1,
+  ClockArrowUp,
+  Dna,
+  Info,
+  LandPlot,
+  Plus,
+  Ruler,
+  Stethoscope,
+  User,
+  Weight
+} from "lucide-vue-next";
 import { Mail } from "lucide-vue-next";
 import { Cake } from "lucide-vue-next";
 import { Mars } from "lucide-vue-next";

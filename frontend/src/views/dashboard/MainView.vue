@@ -381,7 +381,7 @@ onMounted(async () => {
       console.warn("rutinaActual no tiene 'dias'");
     }
 
-    svgImc.value = userInfo.value.genero == "Hombre" ? "/female.svg" : "/male.svg";
+    svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
   } catch (error) {
     console.error("Error al cargar los datos:", error);
   }
