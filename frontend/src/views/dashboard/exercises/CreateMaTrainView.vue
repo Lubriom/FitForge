@@ -1,67 +1,78 @@
 <template>
   <div class="w-full h-full p-6 p-y-10 flex justify-center items-center">
-    <div class="w-4/5 h-fit p-5 bg-white rounded-2xl shadow">
-      <h2 class="text-2xl font-bold mb-4 text-center">Crear tu plan de Entrenamiento</h2>
+    <div class="w-4/5 h-full lg:h-fit p-5 bg-white rounded-2xl shadow overflow-y-auto pr-6">
+      <h2 class="text-2xl font-bold mb-4 text-center" v-if="idParam == auth.getId()">Crea tu entrenamiento</h2>
+      <h2 class="text-2xl font-bold mb-4 text-center" v-else-if="user">
+        Plan de Entrenamiento para: {{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}
+      </h2>
 
-      <form @submit.prevent="submitForm" class="gap-4 flex flex-col">
-        <div class="flex flex-row gap-8">
-          <div class="flex flex-col w-1/2 gap-4">
+      <form @submit.prevent="submitForm" class="gap-4 flex flex-col h-fit">
+        <div class="flex flex-col lg:flex-row gap-8 h-fit">
+          <div class="flex flex-col w-full lg:w-1/2 gap-4">
             <label class="block">
               Nombre:
               <input
                 v-model="form.nombre"
                 type="text"
-                required
                 class="w-full rounded border px-3 py-2 mt-1"
                 placeholder="Ej: Plan para fuerza"
               />
+              <p class="text-red-500 text-sm" v-if="errors.nombre">{{ errors.nombre[0] }}</p>
             </label>
 
-            <label class="block">
+            <label class="flex flex-col h-full">
               Descripción:
               <textarea
                 v-model="form.descripcion"
                 rows="3"
-                class="w-full rounded border px-3 py-2 mt-1"
+                class="w-full h-full resize-none rounded border px-3 py-2 mt-1"
                 placeholder="Descripción breve"
               ></textarea>
+              <p class="text-red-500 text-sm" v-if="errors.descripcion">{{ errors.descripcion[0] }}</p>
             </label>
           </div>
 
-          <div class="flex flex-col w-1/2 gap-4">
+          <div class="flex flex-col w-full lg:w-1/2 gap-4">
             <label class="block">
               Nivel:
-              <select v-model="form.nivel" required class="w-full rounded border px-3 py-2 mt-1">
+              <select v-model="form.nivel" class="w-full rounded border px-3 py-2 mt-1">
                 <option value="" disabled>Selecciona nivel</option>
                 <option value="basico">Basico</option>
                 <option value="avanzado">Avanzado</option>
                 <option value="personalizado">Personalizado</option>
               </select>
+              <p class="text-red-500 text-sm" v-if="errors.nivel">{{ errors.nivel[0] }}</p>
             </label>
 
             <label class="block">
               Objetivo:
-              <select v-model="form.objetivo" required class="w-full rounded border px-3 py-2 mt-1">
+              <select v-model="form.objetivo" class="w-full rounded border px-3 py-2 mt-1">
                 <option value="" disabled>Selecciona objetivo</option>
                 <option value="hipertrofia">Hipertrofia</option>
                 <option value="fuerza">Fuerza</option>
                 <option value="personalizado">Personalizado</option>
               </select>
+              <p class="text-red-500 text-sm" v-if="errors.objetivo">{{ errors.objetivo[0] }}</p>
             </label>
 
             <label class="block">
-              Fecha inicio:
-              <input v-model="form.fechaInicio" type="date" required class="w-full rounded border px-3 py-2 mt-1" />
+              Fecha de inicio:
+              <input v-model="form.fechaInicio" type="date" class="w-full rounded border px-3 py-2 mt-1" />
+              <p class="text-red-500 text-sm" v-if="errors.fechaInicio">{{ errors.fechaInicio[0] }}</p>
             </label>
 
             <label class="block">
-              Fecha fin:
-              <input v-model="form.fechaFin" type="date" required class="w-full rounded border px-3 py-2 mt-1" />
+              Fecha de finalización:
+              <input v-model="form.fechaFin" type="date" class="w-full rounded border px-3 py-2 mt-1" />
+              <p class="text-red-500 text-sm" v-if="errors.fechaFin">{{ errors.fechaFin[0] }}</p>
             </label>
           </div>
         </div>
 
-        <button type="submit" class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition">
+        <button
+          type="submit"
+          class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer"
+        >
           Crear Plan
         </button>
       </form>
@@ -70,16 +81,20 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
+import { z } from "zod";
 
 const router = useRouter();
+const route = useRoute();
 const auth = useAuthStore();
+const idParam = route.params.id;
 
 const usuarioId = 1; // Aquí deberías obtenerlo del estado global o contexto de usuario
 
+const errors = ref({});
 const form = ref({
   nombre: "",
   descripcion: "",
@@ -90,37 +105,70 @@ const form = ref({
   activo: false,
   usuarioId
 });
+const user = ref({});
+
+onMounted(async () => {
+  try {
+    const response = await axios.get(`http://localhost:8081/users/get/${idParam}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("log_token")}`
+      }
+    });
+
+    user.value = response.data;
+  } catch (error) {
+    console.error("Error al consulta la información del usuario");
+  }
+});
 
 const submitForm = async () => {
   try {
-    
-    // Validación sencilla: fechaFin > fechaInicio
-    if (form.value.fechaFin <= form.value.fechaInicio) {
-      alert("La fecha fin debe ser posterior a la fecha inicio");
+    const planSchema = z.object({
+      nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
+      descripcion: z.string().optional(),
+      nivel: z.enum(["basico", "avanzado", "personalizado"], {
+        errorMap: () => ({ message: "Selecciona un nivel válido" })
+      }),
+      objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"], {
+        errorMap: () => ({ message: "Selecciona un objetivo válido" })
+      }),
+      fechaInicio: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        message: "La fecha de inicio no es válida"
+      }),
+      fechaFin: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        message: "La fecha final no es válida"
+      })
+    });
+    console.log(form.value);
+
+    const validation = planSchema.safeParse(form.value);
+
+    if (!validation.success) {
+      errors.value = validation.error.flatten().fieldErrors;
       return;
     }
 
+    // Validación extra: fechaFin > fechaInicio
+    if (new Date(form.value.fechaFin) <= new Date(form.value.fechaInicio)) {
+      errors.value.fechaFin = ["La fecha fin debe ser posterior a la fecha inicio"];
+      return;
+    }
+
+    errors.value = {}; // limpiar errores previos si todo es válido
+
+    const payload = {
+      ...form.value,
+      usuarioId: auth.getId() == idParam ? auth.getId() : idParam
+    };
     // POST al backend (ajusta URL y datos según tu API)
-    const response = await axios.post(
-      "http://localhost:8081/trains/create",
-      {
-        nombre: form.value.nombre,
-        descripcion: form.value.descripcion,
-        nivel: form.value.nivel,
-        objetivo: form.value.objetivo,
-        fechaInicio: form.value.fechaInicio,
-        fechaFin: form.value.fechaFin,
-        usuarioId: auth.getId()
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("log_token")}`
-        }
+    const response = await axios.post("http://localhost:8081/trains/create", payload, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }
-    );
+    });
 
     alert("Plan creado correctamente");
-    // router.push({ name: "Exercises" , params: { id: response.data.id } }); 
+    router.push({ name: "ExercisesTrainEdit", params: { id: response.data.id, userId: response.data.usuarioId } });
   } catch (error) {
     console.error(error);
     alert("Error al crear el plan");

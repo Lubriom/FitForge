@@ -141,5 +141,24 @@ export class PlanEntrenamientoModel {
     });
   }
 
-  
+  static async togglePlan({ id, userId }) {
+    const plan = await prisma.planEntrenamiento.findUnique({
+      where: { id },
+      select: { activo: true, usuarioId: true }
+    });
+
+    if (!plan) throw new Error("Plan no encontrado");
+
+    await prisma.planEntrenamiento.updateMany({
+      where: { usuarioId: userId },
+      data: { activo: false }
+    });
+
+    const updatedPlan = await prisma.planEntrenamiento.update({
+      where: { id },
+      data: { activo: true }
+    });
+
+    return updatedPlan;
+  }
 }

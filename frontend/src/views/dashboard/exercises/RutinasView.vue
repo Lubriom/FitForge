@@ -3,7 +3,7 @@
     <div class="flex flex-row justify-evenly items-center">
       <router-link
         v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
-        :to="{ name: 'ExercisesTrainCreateMA' }"
+        :to="{ name: 'ExercisesTrainCreateMA', params: { id: auth.getId() } }"
         class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
         ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Manualmente</span></router-link
       >
@@ -15,24 +15,28 @@
     </div>
 
     <div class="flex flex-col gap-3 overflow-y-auto">
-      <router-link
-        v-if="rutinas.length > 0"
-        v-for="rutina in rutinas"
-        :key="rutina.id"
-        :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }"
-        class="mb-4"
-      >
+      <div v-if="rutinas.length > 0" v-for="rutina in rutinas" :key="rutina.id" class="mb-4">
         <div
           class="flex flex-col bg-white hover:bg-gray-200 shadow-md hover:shadow-lg transition-shadow rounded-2xl p-6 border border-gray-200 gap-2"
         >
           <div class="flex flex-col items-center justify-between mb-2 gap-1">
             <div class="flex flex-row justify-between w-full items-center">
               <!-- SOLO el nombre es clicable para navegar -->
-              <div class="text-xl font-semibold text-gray-800">
-                {{ rutina.nombre }}
-              </div>
+              <router-link :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }" class="w-full">
+                <div class="text-xl font-semibold text-gray-800 w-full">Nombre: {{ rutina.nombre }}</div>
+              </router-link>
 
-              <div class="flex flex-row gap-2">
+              <div class="flex flex-row gap-2 items-center">
+                <h1>Activo</h1>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" class="sr-only peer" :checked="rutina.activo" @change="toggleActivo(rutina)" />
+                  <div
+                    class="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-tertiary-500 rounded-full peer peer-checked:bg-green-500 transition-colors"
+                  ></div>
+                  <div
+                    class="absolute left-1 bg-white w-4 h-4 rounded-full transition-transform peer-checked:translate-x-full"
+                  ></div>
+                </label>
                 <router-link
                   class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
                   :to="{ name: 'ExercisesTrainEdit', params: { id: rutina.id, userId: auth.getId() } }"
@@ -76,7 +80,7 @@
             </span>
           </div>
         </div>
-      </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -106,7 +110,6 @@ onMounted(async () => {
       headers: { Authorization: `Bearer ${token}` }
     });
     rutinas.value = response.data;
-    console.log(rutinas.value);
   } catch (error) {
     console.error(error);
   }
@@ -123,6 +126,30 @@ const eliminarRutina = async (rutinaId) => {
     alert("Rutina eliminada con éxito");
   } catch (error) {
     console.error("Error al eliminar la rutina:", error);
+  }
+};
+
+const toggleActivo = async (rutina) => {
+  try {
+    await axios.patch(
+      `http://localhost:8081/trains/user/${auth.getId()}/${rutina.id}/toggle`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${auth.getToken()}`
+        }
+      }
+    );
+
+    // Desactivar todas las rutinas en la vista
+    rutinas.value.forEach((r) => {
+      r.activo = false;
+    });
+
+    // Activar solo la rutina seleccionada
+    rutina.activo = true;
+  } catch (error) {
+    alert("Error al cambiar el estado de la rutina");
   }
 };
 

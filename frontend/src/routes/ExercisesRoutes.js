@@ -36,7 +36,7 @@ export default [
         meta: { layout: "clean", requiresAuth: true }
     },
     {
-        path: "/dashboard/train/create/manual",
+        path: "/dashboard/train/create/manual/:id",
         name: "ExercisesTrainCreateMA",
         component: () => import('@/views/dashboard/exercises/CreateMaTrainView.vue'),
         meta: { layout: "dashboard", requiresAuth: true }

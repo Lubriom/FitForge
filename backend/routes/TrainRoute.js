@@ -13,5 +13,6 @@ trainRouter.get("/user/:id/finish/days", validateId, validateToken, Entrenamient
 trainRouter.patch("/day/:id/finalizar", validateToken, validateId, EntrenamientoController.finalizarDia);
 trainRouter.patch("/update/:id/user/:userId", validateToken, validateId, validatePlanUpdate, EntrenamientoController.update);
 trainRouter.delete("/delete/:id", validateToken, validateId, EntrenamientoController.delete);
+trainRouter.patch("/user/:userId/:id/toggle", validateToken, validateId, EntrenamientoController.togglePlan);
 trainRouter.post("/create", validateToken, EntrenamientoController.createPlan);
 trainRouter.post("/autocreate", validateToken, EntrenamientoController.createAutoPlan);

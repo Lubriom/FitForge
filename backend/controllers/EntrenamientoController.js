@@ -316,4 +316,15 @@ export class EntrenamientoController {
       return res.status(500).json({ message: 'Error al obtener días entrenados' });
     }
   }
+
+  static async togglePlan(req, res) {
+    try {
+      const { id, userId } = req.params;
+      const plan = await PlanEntrenamientoModel.togglePlan({ id: parseInt(id), userId: parseInt(userId) });
+      return res.json(plan);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Error al activar el plan" });
+    }
+  }
 }

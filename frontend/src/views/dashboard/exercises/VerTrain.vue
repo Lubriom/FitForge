@@ -127,7 +127,6 @@ function abreviarDia(nombre) {
   return nombre.slice(0, 3);
 }
 
-
 onMounted(() => {
   fetchPlan();
 });
@@ -142,7 +141,7 @@ onMounted(() => {
       <div class="gap-2 flex flex-col">
         <div class="flex flex-row w-full justify-between items-center">
           <h2 class="text-xl font-semibold">
-            <b>{{ plan.nombre }}</b>
+            <b>Nombre: {{ plan.nombre }}</b>
           </h2>
           <div class="flex flex-row gap-2">
             <button
@@ -159,7 +158,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="flex flex-row justify-between">
-          <p class="text-gray-700"><b>Descripcion: </b>{{ plan.descripcion }}</p>
+          <p class="text-gray-700"><b>Descripcion: </b>{{ plan.descripcion || "Sin descripción" }}</p>
           <div class="flex flex-col gap-2 text-sm text-gray-500 mb-1">
             <div class="flex flex-row gap-2">
               <p class="flex items-center gap-2">
@@ -206,6 +205,7 @@ onMounted(() => {
 
         <div class="flex gap-2 w-full">
           <button
+            v-if="diasPaginados.length > 0"
             v-for="(dia, index) in diasPaginados"
             :key="paginaActual * diasPorPagina + index"
             @click="seleccionarDia(paginaActual * diasPorPagina + index)"
@@ -219,6 +219,7 @@ onMounted(() => {
             <p>{{ capitalizar(abreviarDia(obtenerFechaDelDia(dia.diaNumero))) + " " + formatFecha(dia.fecha) }}</p>
             <span class="text-xs text-gray-600">{{ capitalizar(dia.grupoMuscular) || "Descanso" }}</span>
           </button>
+          <p v-else class="mx-auto">No hay dias para este entrenamiento</p>
         </div>
 
         <button
@@ -240,7 +241,7 @@ onMounted(() => {
       </div>
 
       <div class="bg-gray-50 p-4 rounded-lg shadow-inner flex flex-col overflow-y-auto max-h-full gap-2">
-        <template v-if="diaSeleccionado.ejercicios.length">
+        <template v-if="diaSeleccionado && diaSeleccionado.ejercicios.length > 0">
           <h3 class="text-lg font-semibold px-2">
             {{ capitalizar(obtenerFechaDelDia(diaSeleccionado.diaNumero)) }} -
             {{ capitalizar(diaSeleccionado.grupoMuscular) || "Sin grupo muscular" }}
@@ -263,12 +264,12 @@ onMounted(() => {
           </div>
         </template>
 
-        <template v-else-if="diaEsAnteriorAlInicio(diaSeleccionado.diaNumero)">
-          <p class="text-center text-gray-500 text-lg">Tu plan aún no había comenzado este día 🕓</p>
+        <template v-else-if="diaSeleccionado && diaSeleccionado.ejercicios.length === 0">
+          <p class="text-center text-gray-500 text-lg">Este día puedes descansar 😌</p>
         </template>
 
         <template v-else>
-          <p class="text-center text-gray-600 text-lg">Este día puedes descansar 😌</p>
+          <p class="text-center text-gray-600 text-lg">No hay un dia seleccionado</p>
         </template>
       </div>
     </div>
