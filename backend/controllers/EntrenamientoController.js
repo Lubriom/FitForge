@@ -56,16 +56,39 @@ export class EntrenamientoController {
 
   static async createAutoPlan(req, res) {
     try {
-      const { usuarioId, objetivo, nivel, nombre, descripcion } = req.body;
+      const { usuarioId, objetivo, rm, nivel, nombre, descripcion } = req.body;
 
       const usuario = await UserModel.getById({ id: usuarioId });
       if (!usuario) {
         return res.status(404).json({ error: "Usuario no encontrado" });
       }
+      const infoUsuario = await prisma.informacionSalud.findFirst({
+        where: { usuarioId },
+        orderBy: { fechaRegistro: "desc" }
+      });
 
       const genero = usuario.genero.toLowerCase();
-      const rmUsuario = usuario.rm;
-      const rm = nivel === "basico" ? (genero === "hombre" ? 50 : 30) : rmUsuario;
+
+      // Si se proporciona un nuevo RM, actualiza el último registro de InformaciónSalud
+      let rmUsuario = infoUsuario ? infoUsuario.rm : null;
+      if (rm && typeof rm === "number") {
+        rmUsuario = rm;
+
+        // Actualiza el último registro de InformaciónSalud
+        const ultimaInfoSalud = await prisma.informacionSalud.findFirst({
+          where: { usuarioId },
+          orderBy: { fechaRegistro: "desc" }
+        });
+
+        if (ultimaInfoSalud) {
+          await prisma.informacionSalud.update({
+            where: { id: ultimaInfoSalud.id },
+            data: { rm: rmUsuario }
+          });
+        }
+      }
+
+      const rmFinal = nivel === "basico" ? (genero === "hombre" ? 50 : 30) : rmUsuario;
 
       const distribucionBase =
         genero === "femenino"
@@ -130,18 +153,20 @@ export class EntrenamientoController {
         }
 
         const ejerciciosFiltrados = ejercicios.filter((e) => e.categoria === grupoMuscular);
-        const usados = new Set();
+
         const cantidadEjercicios = nivel === "basico" ? 5 : 8;
-        const ejerciciosSeleccionados = [];
 
-        while (ejerciciosSeleccionados.length < cantidadEjercicios) {
-          const candidato = ejerciciosFiltrados[Math.floor(Math.random() * ejerciciosFiltrados.length)];
-          if (candidato && !usados.has(candidato.id)) {
-            usados.add(candidato.id);
-            ejerciciosSeleccionados.push(candidato);
-          }
+        // Mezcla aleatoriamente los ejercicios disponibles
+        const ejerciciosBarajados = ejerciciosFiltrados.sort(() => Math.random() - 0.5);
+
+        // Toma solo los ejercicios disponibles (aunque sean menos)
+        const ejerciciosSeleccionados = ejerciciosBarajados.slice(0, cantidadEjercicios);
+
+        if (ejerciciosSeleccionados.length < cantidadEjercicios) {
+          console.warn(
+            `[WARN] Solo se seleccionaron ${ejerciciosSeleccionados.length}/${cantidadEjercicios} ejercicios para ${grupoMuscular}.`
+          );
         }
-
         const indicePorcentaje = diaEntrenamientoCount % porcentajeCiclo.length;
         const porcentaje = porcentajeCiclo[indicePorcentaje];
         const repeticion = Array.isArray(repeticiones) ? repeticiones[indicePorcentaje] : repeticiones;
@@ -164,12 +189,19 @@ export class EntrenamientoController {
           }
 
           let peso =
-            ejercicio.categoria === "brazos" || ejercicio.categoria === "hombros" ? rm * 0.3 : rm * (porcentaje / 100);
+            ejercicio.categoria === "brazos" || ejercicio.categoria === "hombros"
+              ? rmFinal * 0.3
+              : rmFinal * (porcentaje / 100);
 
           let reps = repeticion;
 
-          if (nombreEjercicio.includes("flexiones") && !nombreEjercicio.includes("palmada")) {
+          if (nombreEjercicio.includes("flexiones") && nombreEjercicio.includes("palmada") && nombreEjercicio.includes("mountain") && nombreEjercicio.includes("abdominal") && nombreEjercicio.includes("sentadillas con salto")) {
             peso = 0;
+            reps = nivel === "basico" ? 10 : 15;
+          }
+
+          if (nombreEjercicio.includes("sentadillas") && nombreEjercicio.includes("zancadas") && !nombreEjercicio.includes("planchas")) {
+            peso = rmFinal * 0.3;
             reps = nivel === "basico" ? 10 : 15;
           }
 
@@ -279,41 +311,41 @@ export class EntrenamientoController {
       const userId = parseInt(req.params.id);
       const hoy = startOfDay(new Date());
       const fechaInicio = subDays(hoy, 6); // hace 7 días exactos
-      const fechaFin = endOfDay(hoy);   // ayer, para excluir hoy
-  
+      const fechaFin = endOfDay(hoy); // ayer, para excluir hoy
+
       // Consultar días entrenados en el rango para planes del usuario
       const diasEntrenados = await prisma.diaEntrenamiento.findMany({
         where: {
           plan: {
-            usuarioId: userId,
+            usuarioId: userId
           },
           finalizado: true,
           fecha: {
             gte: fechaInicio,
-            lte: fechaFin,
-          },
+            lte: fechaFin
+          }
         },
         select: { fecha: true },
-        orderBy: { fecha: 'asc' },
+        orderBy: { fecha: "asc" }
       });
-  
+
       // Crear array con últimos 7 días (sin hoy)
       const dias = Array.from({ length: 7 }, (_, i) => {
-        return format(addDays(fechaInicio, i), 'yyyy-MM-dd');
+        return format(addDays(fechaInicio, i), "yyyy-MM-dd");
       });
-  
-      const fechasEntrenadas = new Set(diasEntrenados.map(d => format(d.fecha, 'yyyy-MM-dd')));
-  
+
+      const fechasEntrenadas = new Set(diasEntrenados.map((d) => format(d.fecha, "yyyy-MM-dd")));
+
       // Crear resultado con entrenado o no para cada día
-      const resultado = dias.map(fechaStr => ({
+      const resultado = dias.map((fechaStr) => ({
         fecha: fechaStr,
-        entrenado: fechasEntrenadas.has(fechaStr),
+        entrenado: fechasEntrenadas.has(fechaStr)
       }));
-  
+
       return res.json(resultado);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: 'Error al obtener días entrenados' });
+      return res.status(500).json({ message: "Error al obtener días entrenados" });
     }
   }
 

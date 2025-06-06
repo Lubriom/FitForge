@@ -17,11 +17,11 @@
           v-model="filtros.nombre"
           type="text"
           placeholder="Buscar por nombre"
-          class="bg-white p-2 rounded-lg flex-1 min-w-[200px]"
+          class="rounded-xl px-4 py-2 flex-1 min-w-[200px] bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
         />
 
         <!-- Tipo -->
-        <select v-model="filtros.tipo" class="p-2 border rounded-lg">
+        <select v-model="filtros.tipo" class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
           <option disabled value="">Filtrar por tipo</option>
           <option value="pull">Pull</option>
           <option value="press">Press</option>
@@ -32,7 +32,7 @@
         </select>
 
         <!-- Categoría -->
-        <select v-model="filtros.categoria" class="p-2 border rounded-lg">
+        <select v-model="filtros.categoria" class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
           <option disabled value="">Filtrar por categoría</option>
           <option value="piernas">Pierna</option>
           <option value="pecho">Pecho</option>

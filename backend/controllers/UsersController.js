@@ -181,4 +181,26 @@ export class UserController {
       return res.status(500).send("Error al actualizar el usuario");
     }
   }
+
+  static async obtenerMetricas(req, res) {
+    const userId = parseInt(req.params.id);
+
+    try {
+      const metricas = await UserModel.obtenerMetricasRecientes( { userId } );
+      return res.json(metricas);
+    } catch (error) {
+      console.error("Error al obtener métricas:", error);
+      return res.status(500).json({ error: "Error al obtener métricas del usuario" });
+    }
+  }
+
+  static async getEstadisticas(req, res) {
+    try {
+      const estadisticas = await UserModel.getEstadisticas({ id: parseInt(req.params.id) });
+      return res.json(estadisticas);
+    } catch (error) {
+      console.error("Error al obtener estadísticas:", error);
+      return res.status(500).json({ error: "Error al obtener estadísticas del usuario" });
+    }
+  }
 }

@@ -1,27 +1,32 @@
 <template>
   <div class="flex flex-col gap-6 h-full">
-    <div class="flex flex-col gap-6 overflow-y-auto">
-      <div class="bg-gray-100 p-4 rounded-2xl h-full w-full px-8">
+    <div class="flex flex-col gap-6 overflow-y-auto pr-2">
+      <div class="bg-gray-100 p-4 rounded-2xl border-2 border-tertiary-500 h-fit w-full px-8">
         <Preferencias />
       </div>
-      <div class="bg-primary-500 text-white p-4 rounded-2xl h-full w-full px-8">
-        <Password />
-      </div>
-      <div class="flex flex-col bg-gray-100 p-4 rounded-2xl w-full px-8 gap-3">
-        <h1 class="text-gray-600 font-bold">Seguridad:</h1>
-        <button
-          @click="openModal"
-          class="text-white cursor-pointer bg-red-500 hover:bg-red-800 px-6 py-3 rounded-full w-60"
-        >
-          Eliminar Cuenta
-        </button>
-        <BaseModal
-          :visible="showModal"
-          :component="modalComponent"
-          :props="{}"
-          @close="showModal = false"
-          class="absolute"
-        />
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="bg-primary-500 text-white p-4 rounded-2xl h-full w-full px-8">
+          <Password />
+        </div>
+        <div class="flex flex-col bg-gray-100 p-4 rounded-2xl w-full h-full px-8 gap-3">
+          <h1 class="text-gray-600 font-bold text-2xl">Seguridad:</h1>
+          <div class="flex w-full h-full justify-center items-center">
+            <button
+              @click="openModal"
+              class="text-white cursor-pointer bg-red-500 hover:bg-red-800 px-6 py-3 rounded-full w-60 transition"
+            >
+              Eliminar Cuenta
+            </button>
+            <BaseModal
+              :visible="showModal"
+              :component="modalComponent"
+              :title="titleModal"
+              :props="{}"
+              @close="showModal = false"
+              class="absolute"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -37,6 +42,7 @@ import { useLayoutStore } from "@/stores/layoutStore";
 
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Configuración");
+const titleModal = "¿Estás seguro que deseas eliminar tu cuenta?";
 
 const router = useRouter();
 const showModal = ref(false);

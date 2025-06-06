@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col w-full h-full gap-3">
-    <div class="flex flex-row justify-between items-center h-full gap-3">
-      <form @submit.prevent="crearEjercicio" class="space-y-4 p-8 bg-white rounded-2xl shadow-md w-1/2 mx-auto">
+  <div class="flex flex-col w-full h-full gap-3 justify-center items-center">
+    <div class="flex flex-row h-fit gap-3 p-6 pr-2 shadow-md bg-white rounded-2xl min-w-[360px] w-fit lg:w-1/2 mx-auto">
+      <form @submit.prevent="crearEjercicio" class="space-y-4 pr-2  w-full  h-[450px] sm:h-fit overflow-y-auto">
         <h2 class="text-2xl font-semibold text-center text-tertiary-600">Crear Nuevo Ejercicio</h2>
 
         <div class="flex flex-col">
@@ -11,18 +11,18 @@
             v-model="form.nombre"
             type="text"
             placeholder="Nombre"
-            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+            class="rounded-xl px-4 py-2 flex-1 min-w-[200px] bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
           />
-          <span class="text-red-500 text-sm text-center">{{ errors.nombre }}</span>
+          <span class="text-red-500 text-sm">{{ errors.nombre }}</span>
         </div>
 
-        <div class="flex flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <div class="flex flex-col w-full">
             <label for="tipo" class="font-medium">Tipo</label>
             <select
               id="tipo"
               v-model="form.tipo"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 bg-white w-full text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             >
               <option disabled value="">Selecciona un tipo</option>
               <option value="pull">Pull</option>
@@ -32,7 +32,7 @@
               <option value="hit">Hit</option>
               <option value="core">Core</option>
             </select>
-            <span class="text-red-500 text-sm text-center">{{ errors.tipo }}</span>
+            <span class="text-red-500 text-sm">{{ errors.tipo }}</span>
           </div>
 
           <div class="flex flex-col w-full">
@@ -40,7 +40,7 @@
             <select
               id="categoria"
               v-model="form.categoria"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             >
               <option disabled value="">Selecciona una categoría</option>
               <option value="piernas">Pierna</option>
@@ -51,11 +51,11 @@
               <option value="abdomen">Abdomen</option>
               <option value="full body">Full Body</option>
             </select>
-            <span class="text-red-500 text-sm text-center">{{ errors.categoria }}</span>
+            <span class="text-red-500 text-sm">{{ errors.categoria }}</span>
           </div>
         </div>
 
-        <div class="flex flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <div class="flex flex-col w-full">
             <label for="descanso" class="font-medium">Descanso (segundos)</label>
             <input
@@ -63,9 +63,9 @@
               v-model="form.descanso"
               type="text"
               placeholder="Descanso (segundos)"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             />
-            <span class="text-red-500 text-sm text-center">{{ errors.descanso }}</span>
+            <span class="text-red-500 text-sm">{{ errors.descanso }}</span>
           </div>
 
           <div class="flex flex-col w-full">
@@ -75,13 +75,13 @@
               v-model="form.series"
               type="text"
               placeholder="Series"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             />
-            <span class="text-red-500 text-sm text-center">{{ errors.series }}</span>
+            <span class="text-red-500 text-sm">{{ errors.series }}</span>
           </div>
         </div>
 
-        <div class="flex flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3">
           <div class="flex flex-col w-full">
             <label for="repeticiones" class="font-medium">Repeticiones</label>
             <input
@@ -89,9 +89,9 @@
               v-model="form.repeticiones"
               type="text"
               placeholder="Repeticiones"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             />
-            <span class="text-red-500 text-sm text-center">{{ errors.repeticiones }}</span>
+            <span class="text-red-500 text-sm">{{ errors.repeticiones }}</span>
           </div>
 
           <div class="flex flex-col w-full">
@@ -101,15 +101,15 @@
               v-model="form.peso"
               type="text"
               placeholder="Peso (kg)"
-              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-tertiary-500"
+              class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
             />
-            <span class="text-red-500 text-sm text-center">{{ errors.peso }}</span>
+            <span class="text-red-500 text-sm">{{ errors.peso }}</span>
           </div>
         </div>
 
         <span class="text-red-500 text-center block">{{ errors.serverError }}</span>
 
-        <button type="submit" class="bg-tertiary-500 hover:bg-tertiary-600 text-white py-2 px-4 rounded-lg w-full">
+        <button type="submit" class="bg-tertiary-500 hover:bg-orange-700 text-white py-2 px-4 rounded-lg w-full cursor-pointer">
           Crear Ejercicio
         </button>
       </form>

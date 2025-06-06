@@ -1,35 +1,34 @@
 <template>
   <h2 class="text-2xl font-semibold mb-6">Editar perfil</h2>
   <form @submit.prevent="guardarCambios" class="w-full">
-    <div class="flex flex-row gap-24">
-      <div class="flex flex-col w-full gap-3">
-        <div>
+    <div class="flex flex-col-reverse md:flex-row gap-6 md:gap-12 lg:gap-24 ">
+      <div class="flex flex-col w-full gap-3 bg-gray-200 p-4 rounded-2xl">
+        <div class="space-y-2">
           <label class="block text-sm font-medium">Nombre</label>
-          <input type="text" v-model="form.nombre" class="input" />
+          <input type="text" v-model="form.nombre" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all" />
           <span v-if="errors.nombre" class="text-red-500 text-xs mt-1">{{ errors.nombre }}</span>
         </div>
-        <div class="flex flex-row gap-4">
-          <div class="w-1/2">
+        <div class="flex flex-col lg:flex-row gap-4 ">
+          <div class="w-full lg:w-1/2 space-y-2">
             <label class="block text-sm font-medium">Apellido</label>
-            <input type="text" v-model="form.apellido" class="input" />
+            <input type="text" v-model="form.apellido" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all" />
             <span v-if="errors.apellido" class="text-red-500 text-xs mt-1">{{ errors.apellido }}</span>
           </div>
-          <div class="w-1/2">
+          <div class="w-full lg:w-1/2 space-y-2">
             <label class="block text-sm font-medium">Segundo apellido</label>
-            <input type="text" v-model="form.sapellido" class="input" />
+            <input type="text" v-model="form.sapellido" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all" />
             <span v-if="errors.sapellido" class="text-red-500 text-xs mt-1">{{ errors.sapellido }}</span>
-
           </div>
         </div>
-        <div>
+        <div class="space-y-2">
           <label class="block text-sm font-medium">Correo electrónico</label>
-          <input type="email" v-model="form.correo" class="input" />
+          <input type="email" v-model="form.correo" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all" />
           <span v-if="errors.correo" class="text-red-500 text-xs mt-1">{{ errors.correo }}</span>
         </div>
-        <div class="flex flex-row gap-4">
-          <div class="w-full">
+        <div class="flex flex-col lg:flex-row gap-4">
+          <div class="w-full space-y-2">
             <label class="block text-sm font-medium">Género</label>
-            <select v-model="form.genero" class="input">
+            <select v-model="form.genero" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
               <option value="">Selecciona una opción</option>
               <option value="Hombre">Hombre</option>
               <option value="Mujer">Mujer</option>
@@ -37,26 +36,28 @@
             </select>
             <span v-if="errors.genero" class="text-red-500 text-xs mt-1">{{ errors.genero }}</span>
           </div>
-          <div class="w-full">
+          <div class="w-full space-y-2">
             <label class="block text-sm font-medium">Fecha de nacimiento</label>
-            <input type="date" v-model="form.fec_nac" class="input" />
+            <input type="date" v-model="form.fec_nac" class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all" />
             <span v-if="errors.fec_nac" class="text-red-500 text-xs mt-1">{{ errors.fec_nac }}</span>
           </div>
         </div>
 
-        <button type="submit" class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 w-full rounded-full">
+        <button type="submit" class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 w-full rounded-full cursor-pointer transition">
           Guardar cambios
         </button>
       </div>
-      <div class="flex flex-col w-1/2 justify-center items-center mr-20 relative">
-        <div class="relative w-64 h-64 rounded-full overflow-hidden group cursor-pointer" @click="triggerFileInput">
-          <img :src="previewUrl || imageURL" alt="Foto de perfil" class="w-full h-full object-cover" />
-          <div
-            class="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          >
-            Cambiar imagen
+      <div class="flex flex-col w-full justify-center items-center md:mr-10 lg:mr-20 relative">
+        <div class="p-2 rounded-full bg-tertiary-500">
+          <div class="relative w-64 h-64 rounded-full overflow-hidden group cursor-pointer" @click="triggerFileInput">
+            <img :src="previewUrl || imageURL" alt="Foto de perfil" class="w-full h-full object-cover" />
+            <div
+              class="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              Cambiar imagen
+            </div>
+            <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
           </div>
-          <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
         </div>
         <p class="mt-2 text-lg">Foto de perfil:</p>
       </div>
@@ -166,9 +167,9 @@ const guardarCambios = async () => {
     });
 
     auth.login(response.data.token);
-    
+
     alert("Cambios guardados correctamente.");
-    
+
     window.location.reload();
   } catch (error) {
     // Si el error proviene de la validación de Zod
@@ -232,12 +233,3 @@ async function uploadImage() {
   }
 }
 </script>
-
-<style scoped>
-.input {
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-}
-</style>

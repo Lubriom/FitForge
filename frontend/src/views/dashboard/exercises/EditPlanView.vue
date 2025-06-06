@@ -335,7 +335,7 @@ function moverEjercicioAbajo(index) {
       </div>
     </div>
     <div class="w-1/2 flex flex-col bg-white rounded-2xl h-full">
-      <!-- 🏋️‍♂️ Ejercicios del día seleccionado -->
+      <!-- Ejercicios del día seleccionado -->
       <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 rounded overflow-hidden">
         <!-- Cabecera -->
         <h3 class="font-semibold text-xl mb-2">
@@ -357,6 +357,13 @@ function moverEjercicioAbajo(index) {
         <label class="mb-2">Ejercicios</label>
         <div class="flex-1 overflow-y-auto pr-2 space-y-2 p-2 bg-gray-100 rounded-md">
           <transition-group name="move" tag="div" class="space-y-2">
+            <div class="grid grid-cols-6 gap-2">
+              <p class="col-span-2 pl-1 text-sm">Ejercicios</p>
+              <p class="pl-1 text-sm">Series</p>
+              <p class="pl-1 text-sm">Repeticiones</p>
+              <p class="pl-1 text-sm">Peso</p>
+              <p class="pl-1 text-sm">Descanso</p>
+            </div>
             <div
               v-for="(ej, j) in diaSeleccionado.ejercicios"
               :key="ej.id ?? j"
@@ -401,7 +408,7 @@ function moverEjercicioAbajo(index) {
           </transition-group>
 
           <div v-if="diaSeleccionado.ejercicios.length === 0" class="text-gray-500 mb-4">
-            No hay ejercicios para este día. Si lo dejas en blanco se considerará un día de entrenamiento.
+            No hay ejercicios para este día. Si lo dejas en blanco se considerará un día de descanso.
           </div>
         </div>
 

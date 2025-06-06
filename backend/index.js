@@ -1,7 +1,7 @@
 import Express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
-import { mainRouter } from "./routes/route.js";
+import { mainRouter } from "./routes/MainRoute.js";
 import { userRouter } from "./routes/UsersRoute.js"; 
 import { authRouter } from "./routes/AuthRoute.js"; 
 import { corsMiddleware } from "./middlewares/cors.js";

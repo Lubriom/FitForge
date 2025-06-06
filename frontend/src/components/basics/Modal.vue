@@ -13,8 +13,18 @@
       leave-from-class="opacity-100 scale-100"
       leave-to-class="opacity-0 scale-90"
     >
-      <div v-show="visible" class="bg-white p-6 rounded-2xl w-1/2 relative shadow-2xl">
-        <button class="absolute top-2 right-2 text-black text-xl bg-red-500 rounded-2xl p-1" @click="close"><X class="text-white"/></button>
+      <div v-show="visible" class="bg-white p-6 rounded-2xl w-2/5 min-w-[300px] relative shadow-2xl">
+        <div class="flex flex-row justify-between items-start gap-4">
+          <h1 class="text-2xl font-bold">{{ title }}</h1>
+          <div class="w-fit h-fit flex justify-center items-center cursor-pointer">
+            <button
+              class="text-black text-xl bg-red-500 rounded-xl p-1.5 w-fit h-fit flex justify-center items-center cursor-pointer hover:bg-red-700 transition"
+              @click="close"
+            >
+              <X class="text-white" />
+            </button>
+          </div>
+        </div>
         <component :is="component" v-bind="props" />
       </div>
     </Transition>
@@ -27,6 +37,7 @@ import { X } from "lucide-vue-next";
 
 const props = defineProps({
   visible: Boolean,
+  title: String,
   component: [Object, Function, String],
   props: Object
 });

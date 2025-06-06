@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[200px_200px_1fr] xl:grid-cols-5 xl:grid-rows-5 gap-4 w-full overflow-y-auto xl:h-full h-fit"
+    class="flex flex-col sm:grid md:grid-cols-2 lg:grid-cols-4 lg:grid-rows-[200px_200px_1fr] xl:grid-cols-5 xl:grid-rows-5 gap-4 w-full overflow-y-auto xl:h-full h-fit"
   >
     <!-- Dias entrenados -->
     <div class="row-span-1 xl:row-span-2 col-span-1 col-start-1 row-start-1 w-full h-full">
@@ -47,7 +47,9 @@
     </div>
 
     <!-- Datos físicos -->
-    <div class="row-span-1 xl:row-span-2 col-span-2 xl:col-span-2 col-start-1 row-start-3 lg:row-start-2 xl:row-start-3 w-full h-full">
+    <div
+      class="row-span-1 xl:row-span-2 col-span-2 xl:col-span-2 col-start-1 row-start-3 lg:row-start-2 xl:row-start-3 w-full h-full"
+    >
       <div class="bg-white p-6 rounded-2xl w-full h-full shadow-md flex flex-col gap-3">
         <h2 class="text-xl font-semibold text-gray-800 gap-2 flex items-center">
           <Info class="w-6 h-6 text-blue-500" />
@@ -100,7 +102,9 @@
     </div>
 
     <!-- Entrenamiento diario -->
-    <div class="row-span-1 xl:col-span-2 col-span-2 lg:col-span-4 col-start-1 row-start-4 lg:row-start-3 xl:row-start-5 w-full h-full">
+    <div
+      class="row-span-1 xl:col-span-2 col-span-2 lg:col-span-4 col-start-1 row-start-4 lg:row-start-3 xl:row-start-5 w-full h-full"
+    >
       <div
         v-if="rutinaActual && rutinaActual.diaActual"
         class="bg-primary-500 p-6 rounded-2xl w-full h-full shadow-lg flex flex-col justify-between text-white"
@@ -112,6 +116,11 @@
           </p>
         </div>
 
+        <div v-else-if="rutinaActual.diaActual.ejercicios.length === 0" class="flex items-center justify-center h-full">
+          <p class="text-xl font-semibold flex gap-3 items-center">
+            <CheckCircle class="w-8 h-8 text-orange-400" /> No hay ejercicios asignados este dia, descansa por hoy
+          </p>
+        </div>
         <!-- Si aún no entrenó -->
         <div v-else class="flex flex-row justify-between items-center w-full">
           <div class="flex flex-col gap-1">
@@ -143,70 +152,114 @@
           </div>
         </div>
       </div>
+      <div
+        v-else
+        class="bg-primary-500 p-6 rounded-2xl w-full h-full shadow-lg flex flex-col justify-center text-white"
+      >
+        No tienes nada que entrenar hoy
+      </div>
     </div>
 
     <!-- IMC panel con SVG -->
-    <div class="lg:col-span-2 xl:col-span-1 xl:row-span-4 row-span-2 col-start-2 lg:col-start-3 xl:col-start-5 row-start-1 w-full h-full">
-      <div class="bg-quaternary-500 text-white p-4 rounded-2xl w-full h-full flex-col flex relative justify-between">
-        <div class="">
-          <h1 class="font-bold mb-2">
-            Tu IMC: <span class="text-gray-200">{{ userInfo.imc }}</span>
-          </h1>
-          <p class="text-sm text-gray-200 mb-4">{{ getIMCCategory(userInfo.imc) }}</p>
+    <div
+      class="lg:col-span-2 xl:col-span-1 xl:row-span-4 row-span-2 col-start-2 lg:col-start-3 xl:col-start-5 row-start-1"
+    >
+      <div
+        class="bg-quaternary-500 text-white p-4 sm:p-4 rounded-2xl w-full h-full flex flex-col relative gap-4 min-w-0 overflow-hidden"
+        :class="userInfo && userInfo.imc ? 'grid-rows-[auto_1fr_auto]' : 'grid-rows-[1fr_auto]'"
+      >
+        <!-- Si hay IMC -->
+        <div v-if="userInfo && userInfo.imc" class="flex flex-col justify-between h-full">
+          <!-- Texto IMC y categoría -->
+          <div>
+            <h1 class="font-bold mb-2 break-words">
+              Tu IMC: <span class="text-gray-200">{{ userInfo.imc }}</span>
+            </h1>
+            <p class="text-sm text-gray-200 mb-4 break-words">
+              {{ getIMCCategory(userInfo.imc) }}
+            </p>
+          </div>
+
+          <!-- SVG con color -->
+          <div class="relative aspect-[6/7] w-[min(80vw,15rem)] max-w-full mx-auto flex justify-center">
+            <div
+              class="absolute inset-0 z-0"
+              :style="{
+                backgroundColor: '#000',
+                WebkitMaskImage: `url(${svgImc})`,
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskSize: 'contain',
+                WebkitMaskPosition: 'center',
+                maskImage: `url(${svgImc})`,
+                maskRepeat: 'no-repeat',
+                maskSize: 'contain',
+                maskPosition: 'center',
+                filter: 'blur(2px)'
+              }"
+            ></div>
+            <div
+              class="absolute inset-0 z-10"
+              :style="{
+                backgroundColor: getIMCColor(userInfo.imc),
+                WebkitMaskImage: `url(${svgImc})`,
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskSize: 'contain',
+                WebkitMaskPosition: 'center',
+                maskImage: `url(${svgImc})`,
+                maskRepeat: 'no-repeat',
+                maskSize: 'contain',
+                maskPosition: 'center'
+              }"
+            ></div>
+          </div>
+
+          <!-- Barra de progreso -->
+          <div class="flex flex-col">
+            <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden max-w-full">
+              <div
+                class="top-0 left-0 h-full"
+                :style="{
+                  width: getIMCPercentage(userInfo.imc) + '%',
+                  backgroundColor: getIMCColor(userInfo.imc)
+                }"
+              ></div>
+              <div
+                class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
+                :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
+              ></div>
+            </div>
+
+            <div class="text-xs text-gray-200 mt-2 flex justify-between">
+              <span>Bajo</span>
+              <span>Normal</span>
+              <span>Alto</span>
+            </div>
+          </div>
         </div>
 
-        <!-- Silueta SVG -->
-        <div class="relative w-full max-h-[300px] aspect-[6/7] overflow-hidden mb-4">
-          <div
-            class="absolute inset-0 z-0"
-            :style="{
-              backgroundColor: '#000',
-              WebkitMaskImage: `url(${svgImc})`,
-              WebkitMaskRepeat: 'no-repeat',
-              WebkitMaskSize: 'contain',
-              WebkitMaskPosition: 'center',
-              maskImage: `url(${svgImc})`,
-              maskRepeat: 'no-repeat',
-              maskSize: 'contain',
-              maskPosition: 'center',
-              filter: 'blur(2px)'
-            }"
-          ></div>
-          <div
-            class="absolute inset-0 z-10"
-            :style="{
-              backgroundColor: getIMCColor(userInfo.imc),
-              WebkitMaskImage: `url(${svgImc})`,
-              WebkitMaskRepeat: 'no-repeat',
-              WebkitMaskSize: 'contain',
-              WebkitMaskPosition: 'center',
-              maskImage: `url(${svgImc})`,
-              maskRepeat: 'no-repeat',
-              maskSize: 'contain',
-              maskPosition: 'center'
-            }"
-          ></div>
-        </div>
-
-        <!-- Barra de IMC -->
-        <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
-          <div
-            class="top-0 left-0 h-full"
-            :style="{
-              width: getIMCPercentage(userInfo.imc) + '%',
-              backgroundColor: getIMCColor(userInfo.imc)
-            }"
-          ></div>
-          <div
-            class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
-            :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
-          ></div>
-        </div>
-
-        <div class="text-xs text-gray-200 mt-2 flex justify-between">
-          <span>Bajo</span>
-          <span>Normal</span>
-          <span>Alto</span>
+        <!-- Estado cuando no hay IMC -->
+        <div v-else class="contents">
+          <div class="place-self-center min-w-0 max-w-full">
+            <div class="relative w-40 aspect-[6/7] max-w-full">
+              <div
+                class="absolute inset-0 z-10 bg-gray-400/50"
+                :style="{
+                  WebkitMaskImage: `url(${svgImc})`,
+                  WebkitMaskRepeat: 'no-repeat',
+                  WebkitMaskSize: 'contain',
+                  WebkitMaskPosition: 'center',
+                  maskImage: `url(${svgImc})`,
+                  maskRepeat: 'no-repeat',
+                  maskSize: 'contain',
+                  maskPosition: 'center'
+                }"
+              ></div>
+            </div>
+          </div>
+          <div class="self-end text-center text-sm text-gray-200 break-words">
+            <p class="mb-1">Aún no se ha registrado tu índice de masa corporal.</p>
+            <p class="text-xs text-gray-300">Puedes actualizar tus datos físicos desde el panel de estadísticas.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -264,13 +317,20 @@
 
         Peso
       </h1>
-      <div class="bg-gray-200 p-2 rounded-2xl w-full h-full">
-        <PesoChart :datosPeso="datosPeso" class="w-full h-full items-center flex justify-center" />
+      <div class="bg-gray-200 p-2 rounded-2xl w-full h-full flex items-center justify-center">
+        <PesoChart
+          :datosPeso="datosPeso"
+          v-if="datosPeso.length > 0"
+          class="w-full h-full items-center flex justify-center"
+        />
+        <p v-else class="text-center text-sm text-gray-700">No tienes ningún registro sobre tu peso</p>
       </div>
     </div>
 
     <!-- Ver rutinas -->
-    <div class="col-start-1 col-span-2 hidden lg:flex xl:col-span-1 xl:col-start-5 xl:row-start-5 row-start-5 w-full h-full">
+    <div
+      class="col-start-1 col-span-2 hidden lg:flex xl:col-span-1 xl:col-start-5 xl:row-start-5 row-start-5 w-full h-full"
+    >
       <div class="bg-white p-6 rounded-2xl shadow-md h-full w-full">
         <router-link
           :to="{ name: 'ExercisesTrain' }"
@@ -308,27 +368,13 @@ const auth = useAuthStore();
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Bienvenido, " + auth.getName() + " !");
 
-const showModal = ref(false);
-const modalComponent = ref(null);
-
-const openModal = () => {
-  modalComponent.value = markRaw(defineAsyncComponent(() => import("@/components/forms/FormPlan.vue")));
-  showModal.value = true;
-};
-
 const user = ref({});
 const userInfo = ref({});
 const userPato = ref([]);
 const userRutinas = ref([]);
 const rutinaActual = ref({});
 const diasEntrenados = ref([]);
-const datosPeso = ref([
-  { fecha: "2025-03-25", peso: 70 },
-  { fecha: "2025-04-28", peso: 69.8 },
-  { fecha: "2025-05-30", peso: 69.5 },
-  { fecha: "2025-06-01", peso: 69.3 },
-  { fecha: "2025-07-01", peso: 72.3 }
-]);
+const datosPeso = ref([]);
 
 const baseURL = "http://localhost:8081";
 const svgImc = ref("");
@@ -341,7 +387,7 @@ onMounted(async () => {
   imageURL.value = `http://localhost:8081/pfp/${auth.getImage()}`;
 
   try {
-    const [response, responseInfo, responsePato, responseRutinas, responseDias] = await Promise.all([
+    const [response, responseInfo, responsePato, responseRutinas, responseDias, responseMetricas] = await Promise.all([
       axios.get(`http://localhost:8081/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
       axios.get(`http://localhost:8081/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -352,15 +398,24 @@ onMounted(async () => {
       axios.get(`http://localhost:8081/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
       axios.get(`http://localhost:8081/trains/user/${userId}/days`, {
         headers: { Authorization: `Bearer ${token}` }
+      }),
+      axios.get(`http://localhost:8081/users/get/metrics/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
       })
     ]);
 
+    console.log(responseMetricas.data);
     user.value = response.data;
     userInfo.value = responseInfo.data;
     userPato.value = responsePato.data;
     userRutinas.value = responseRutinas.data;
     rutinaActual.value = userRutinas.value.find((rutina) => rutina.activo === true) || null;
     diasEntrenados.value = responseDias.data;
+    responseMetricas.data.sort((a, b) => new Date(a.fechaRegistro) - new Date(b.fechaRegistro));
+    datosPeso.value = responseMetricas.data.map((m) => ({
+      fecha: new Date(m.fechaRegistro).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "2-digit" }),
+      peso: m.peso
+    }));
 
     let diaActual = null;
 
@@ -402,12 +457,11 @@ const marcarDiaComoCompletado = async () => {
 
     const responseDias = await axios.get(`http://localhost:8081/trains/user/${auth.getId()}/days`, {
       headers: { Authorization: `Bearer ${token}` }
-    })
+    });
     diasEntrenados.value = responseDias.data;
 
     // Actualizar el estado local
     rutinaActual.value.diaActual.finalizado = true;
-
   } catch (error) {
     console.error("Error al marcar como completado:", error);
   }

@@ -14,12 +14,12 @@
       >
     </div>
 
-    <div class="flex flex-col gap-3 overflow-y-auto">
-      <div v-if="rutinas.length > 0" v-for="rutina in rutinas" :key="rutina.id" class="mb-4">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 overflow-y-auto">
+      <div v-if="rutinas.length > 0" v-for="rutina in rutinas" :key="rutina.id">
         <div
           class="flex flex-col bg-white hover:bg-gray-200 shadow-md hover:shadow-lg transition-shadow rounded-2xl p-6 border border-gray-200 gap-2"
         >
-          <div class="flex flex-col items-center justify-between mb-2 gap-1">
+          <div class="flex flex-col items-center justify-between gap-1">
             <div class="flex flex-row justify-between w-full items-center">
               <!-- SOLO el nombre es clicable para navegar -->
               <router-link :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }" class="w-full">

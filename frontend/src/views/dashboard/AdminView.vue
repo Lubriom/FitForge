@@ -26,12 +26,12 @@
           v-model="filtros.query"
           type="text"
           placeholder="Buscar por nombre, ID o correo"
-          class="bg-white p-2 rounded-lg flex-1 min-w-[200px] disabled:text-gray-400"
+          class="rounded-xl px-4 py-2 min-w-[200px] flex-1 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
           :disabled="filtros.ordenarPor === 'activo'"
         />
 
         <!-- Ordenar por -->
-        <select v-model="filtros.ordenarPor" class="p-2 border rounded-lg">
+        <select v-model="filtros.ordenarPor" class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
           <option disabled value="">Ordenar por...</option>
           <option value="id">ID</option>
           <option value="nombre">Nombre</option>
@@ -42,7 +42,7 @@
         </select>
 
         <!-- Dirección -->
-        <select v-model="filtros.direccion" class="p-2 border rounded-lg">
+        <select v-model="filtros.direccion" class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
           <option value="asc">Ascendente</option>
           <option value="desc">Descendente</option>
         </select>

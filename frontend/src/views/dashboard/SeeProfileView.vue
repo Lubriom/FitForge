@@ -130,21 +130,23 @@
             <!-- IMC panel con SVG -->
 
             <div
-              class="bg-quaternary-500 text-white p-4 rounded-2xl w-full h-full flex-col flex relative justify-between"
+              class="bg-quaternary-500 text-white p-4 sm:p-4 rounded-2xl w-full h-full flex flex-col relative gap-4 min-w-0 overflow-hidden"
+              :class="userInfo && userInfo.imc ? 'grid-rows-[auto_1fr_auto]' : 'grid-rows-[1fr_auto]'"
             >
-              <div v-if="userInfo && userInfo.imc">
+              <!-- Si hay IMC -->
+              <div v-if="userInfo && userInfo.imc" class="flex flex-col justify-between h-full">
                 <!-- Texto IMC y categoría -->
                 <div>
-                  <h1 class="font-bold mb-2">
+                  <h1 class="font-bold mb-2 break-words">
                     Tu IMC: <span class="text-gray-200">{{ userInfo.imc }}</span>
                   </h1>
-                  <p class="text-sm text-gray-200 mb-4">
+                  <p class="text-sm text-gray-200 mb-4 break-words">
                     {{ getIMCCategory(userInfo.imc) }}
                   </p>
                 </div>
 
                 <!-- SVG con color -->
-                <div class="relative w-full aspect-[6/7] mb-4">
+                <div class="relative aspect-[6/7] w-[min(80vw,20rem)] max-w-full mx-auto flex justify-center">
                   <div
                     class="absolute inset-0 z-0"
                     :style="{
@@ -177,45 +179,54 @@
                 </div>
 
                 <!-- Barra de progreso -->
-                <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
-                  <div
-                    class="top-0 left-0 h-full"
-                    :style="{
-                      width: getIMCPercentage(userInfo.imc) + '%',
-                      backgroundColor: getIMCColor(userInfo.imc)
-                    }"
-                  ></div>
-                  <div
-                    class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
-                    :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
-                  ></div>
-                </div>
+                <div class="flex flex-col">
+                  <div class="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden max-w-full">
+                    <div
+                      class="top-0 left-0 h-full"
+                      :style="{
+                        width: getIMCPercentage(userInfo.imc) + '%',
+                        backgroundColor: getIMCColor(userInfo.imc)
+                      }"
+                    ></div>
+                    <div
+                      class="absolute top-0 left-[calc(var(--percent)*1%)] w-[2px] h-full bg-black"
+                      :style="{ '--percent': getIMCPercentage(userInfo.imc) }"
+                    ></div>
+                  </div>
 
-                <div class="text-xs text-gray-200 mt-2 flex justify-between">
-                  <span>Bajo</span>
-                  <span>Normal</span>
-                  <span>Alto</span>
+                  <div class="text-xs text-gray-200 mt-2 flex justify-between">
+                    <span>Bajo</span>
+                    <span>Normal</span>
+                    <span>Alto</span>
+                  </div>
                 </div>
               </div>
 
-              <!-- 📭 Estado cuando no hay IMC -->
-              <div v-else class="flex flex-col items-center justify-center h-full text-center gap-4">
-                <div class="relative w-40 aspect-[6/7]">
-                  <div
-                    class="absolute inset-0 z-10 bg-gray-400/50"
-                    :style="{
-                      WebkitMaskImage: `url(${svgImc})`,
-                      WebkitMaskRepeat: 'no-repeat',
-                      WebkitMaskSize: 'contain',
-                      WebkitMaskPosition: 'center',
-                      maskImage: `url(${svgImc})`,
-                      maskRepeat: 'no-repeat',
-                      maskSize: 'contain',
-                      maskPosition: 'center'
-                    }"
-                  ></div>
+              <!-- Estado cuando no hay IMC -->
+              <div v-else class="contents">
+                <div class="place-self-center min-w-0 max-w-full">
+                  <div class="relative w-40 aspect-[6/7] max-w-full">
+                    <div
+                      class="absolute inset-0 z-10 bg-gray-400/50"
+                      :style="{
+                        WebkitMaskImage: `url(${svgImc})`,
+                        WebkitMaskRepeat: 'no-repeat',
+                        WebkitMaskSize: 'contain',
+                        WebkitMaskPosition: 'center',
+                        maskImage: `url(${svgImc})`,
+                        maskRepeat: 'no-repeat',
+                        maskSize: 'contain',
+                        maskPosition: 'center'
+                      }"
+                    ></div>
+                  </div>
                 </div>
-                <p class="text-sm text-gray-200">Este usuario no ha registrado su índice de masa corporal.</p>
+                <div class="self-end text-center text-sm text-gray-200 break-words">
+                  <p class="mb-1">Aún no se ha registrado tu índice de masa corporal.</p>
+                  <p class="text-xs text-gray-300">
+                    Puedes actualizar tus datos físicos desde el panel de estadísticas.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -373,7 +384,7 @@
             <div
               class="bg-quinary-500 py-6 pl-6 pr-3 rounded-2xl h-full w-full flex flex-col gap-3 text-white shadow-md"
             >
-              <h1 class="flex flex-row gap-2 text-xl"><Stethoscope class="w-10 h-10" /> Patologias:</h1>
+              <h1 class="flex flex-row gap-2 text-xl"><Stethoscope class="w-8 h-8" /> Patologias:</h1>
               <ol>
                 <li v-if="userPato.length == 0" class="text-md opacity-70 font-light italic">
                   No tiene patologias registradas
@@ -398,7 +409,6 @@ import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
 
 const layoutStore = useLayoutStore();
-layoutStore.setTitle("Mi perfil");
 
 const route = useRoute();
 
@@ -458,6 +468,7 @@ onMounted(async () => {
     });
 
     svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
+    layoutStore.setTitle("Perfil de " + user.value.nombre + " " + user.value.apellido + " " + user.value.sapellido);
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
   }

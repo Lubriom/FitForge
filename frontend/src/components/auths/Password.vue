@@ -4,20 +4,52 @@
 
     <div class="flex flex-row justify-between">
       <form @submit.prevent="changePass" class="flex flex-col gap-4 w-full">
-        <div class="flex flex-row justify-evenly gap-4 mx-1">
+        <div class="flex flex-col lg:flex-row justify-evenly gap-4 mx-1">
           <div class="w-full">
-            <label class="block text-sm font-medium">Contraseña</label>
-            <input type="text" v-model="user.password" class="input" />
+            <label class="block text-sm font-medium mb-2">Contraseña</label>
+            <div class="relative">
+              <input
+                :type="isPasswordVisible0 ? 'text' : 'password'"
+                id="password"
+                v-model="user.password"
+                placeholder="********"
+                class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+              />
+              <button
+                type="button"
+                @click="togglePasswordVisibility"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+              >
+                <span v-if="isPasswordVisible0"><Eye /></span>
+                <span v-else><EyeClosed /></span>
+              </button>
+            </div>
             <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</span>
           </div>
 
           <div class="w-full">
-            <label class="block text-sm font-medium">Repetir contraseña</label>
-            <input type="text" v-model="user.respassword" class="input" />
+            <label class="block text-sm font-medium mb-2">Repetir contraseña</label>
+            <div class="relative">
+              <input
+                :type="isPasswordVisible1 ? 'text' : 'password'"
+                id="confirmPassword"
+                v-model="user.respassword"
+                placeholder="********"
+                class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+              />
+              <button
+                type="button"
+                @click="togglePasswordVisibility1"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+              >
+                <span v-if="isPasswordVisible1"><Eye /></span>
+                <span v-else><EyeClosed /></span>
+              </button>
+            </div>
             <span v-if="errors.respassword" class="text-red-500 text-xs mt-1">{{ errors.respassword }}</span>
           </div>
         </div>
-        <button type="submit" class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 rounded-full">
+        <button type="submit" class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-full cursor-pointer transition">
           Cambiar Contraseña
         </button>
       </form>
@@ -31,9 +63,21 @@ import { useAuthStore } from "@/utils/auth";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
+import { Eye, EyeClosed } from "lucide-vue-next";
 
 const auth = useAuthStore();
 const router = useRouter();
+
+const isPasswordVisible0 = ref(false);
+const isPasswordVisible1 = ref(false);
+
+function togglePasswordVisibility() {
+  isPasswordVisible0.value = !isPasswordVisible0.value;
+}
+
+function togglePasswordVisibility1() {
+  isPasswordVisible1.value = !isPasswordVisible1.value;
+}
 
 const user = ref({
   password: "",

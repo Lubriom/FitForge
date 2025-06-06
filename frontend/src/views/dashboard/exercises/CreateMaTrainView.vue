@@ -1,81 +1,97 @@
 <template>
   <div class="w-full h-full p-6 p-y-10 flex justify-center items-center">
-    <div class="w-4/5 h-full lg:h-fit p-5 bg-white rounded-2xl shadow overflow-y-auto pr-6">
-      <h2 class="text-2xl font-bold mb-4 text-center" v-if="idParam == auth.getId()">Crea tu entrenamiento</h2>
-      <h2 class="text-2xl font-bold mb-4 text-center" v-else-if="user">
-        Plan de Entrenamiento para: {{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}
-      </h2>
+    <div class="w-4/5 h-full p-3 bg-gray-100 rounded-2xl shadow">
+      <div class="h-full lg:h-fit p-3 overflow-y-auto pr-2">
+        <h2 class="text-2xl font-bold mb-4 text-center" v-if="idParam == auth.getId()">Crea tu entrenamiento</h2>
+        <h2 class="text-2xl font-bold mb-4 text-center" v-else-if="user">
+          Plan de Entrenamiento para: {{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}
+        </h2>
 
-      <form @submit.prevent="submitForm" class="gap-4 flex flex-col h-fit">
-        <div class="flex flex-col lg:flex-row gap-8 h-fit">
-          <div class="flex flex-col w-full lg:w-1/2 gap-4">
-            <label class="block">
-              Nombre:
-              <input
-                v-model="form.nombre"
-                type="text"
-                class="w-full rounded border px-3 py-2 mt-1"
-                placeholder="Ej: Plan para fuerza"
-              />
-              <p class="text-red-500 text-sm" v-if="errors.nombre">{{ errors.nombre[0] }}</p>
-            </label>
+        <form @submit.prevent="submitForm" class="gap-4 flex flex-col h-fit">
+          <div class="flex flex-col lg:flex-row gap-8 h-fit">
+            <div class="flex flex-col w-full lg:w-1/2 gap-4">
+              <label class="block">
+                Nombre:
+                <input
+                  v-model="form.nombre"
+                  type="text"
+                  class="w-full rounded-xl px-4 py-2 bg-white hover:border-tertiary-500 text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                  placeholder="Ej: Plan para fuerza"
+                />
+                <p class="text-red-500 text-sm" v-if="errors.nombre">{{ errors.nombre[0] }}</p>
+              </label>
 
-            <label class="flex flex-col h-full">
-              Descripción:
-              <textarea
-                v-model="form.descripcion"
-                rows="3"
-                class="w-full h-full resize-none rounded border px-3 py-2 mt-1"
-                placeholder="Descripción breve"
-              ></textarea>
-              <p class="text-red-500 text-sm" v-if="errors.descripcion">{{ errors.descripcion[0] }}</p>
-            </label>
+              <label class="flex flex-col h-full">
+                Descripción:
+                <textarea
+                  v-model="form.descripcion"
+                  rows="3"
+                  class="w-full h-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all resize-none"
+                  placeholder="Descripción breve"
+                ></textarea>
+                <p class="text-red-500 text-sm" v-if="errors.descripcion">{{ errors.descripcion[0] }}</p>
+              </label>
+            </div>
+
+            <div class="flex flex-col w-full lg:w-1/2 gap-4">
+              <label class="block">
+                Nivel:
+                <select
+                  v-model="form.nivel"
+                  class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                >
+                  <option value="" disabled>Selecciona nivel</option>
+                  <option value="basico">Basico</option>
+                  <option value="avanzado">Avanzado</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+                <p class="text-red-500 text-sm" v-if="errors.nivel">{{ errors.nivel[0] }}</p>
+              </label>
+
+              <label class="block">
+                Objetivo:
+                <select
+                  v-model="form.objetivo"
+                  class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                >
+                  <option value="" disabled>Selecciona objetivo</option>
+                  <option value="hipertrofia">Hipertrofia</option>
+                  <option value="fuerza">Fuerza</option>
+                  <option value="personalizado">Personalizado</option>
+                </select>
+                <p class="text-red-500 text-sm" v-if="errors.objetivo">{{ errors.objetivo[0] }}</p>
+              </label>
+
+              <label class="block">
+                Fecha de inicio:
+                <input
+                  v-model="form.fechaInicio"
+                  type="date"
+                  class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                />
+                <p class="text-red-500 text-sm" v-if="errors.fechaInicio">{{ errors.fechaInicio[0] }}</p>
+              </label>
+
+              <label class="block">
+                Fecha de finalización:
+                <input
+                  v-model="form.fechaFin"
+                  type="date"
+                  class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                />
+                <p class="text-red-500 text-sm" v-if="errors.fechaFin">{{ errors.fechaFin[0] }}</p>
+              </label>
+            </div>
           </div>
 
-          <div class="flex flex-col w-full lg:w-1/2 gap-4">
-            <label class="block">
-              Nivel:
-              <select v-model="form.nivel" class="w-full rounded border px-3 py-2 mt-1">
-                <option value="" disabled>Selecciona nivel</option>
-                <option value="basico">Basico</option>
-                <option value="avanzado">Avanzado</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-              <p class="text-red-500 text-sm" v-if="errors.nivel">{{ errors.nivel[0] }}</p>
-            </label>
-
-            <label class="block">
-              Objetivo:
-              <select v-model="form.objetivo" class="w-full rounded border px-3 py-2 mt-1">
-                <option value="" disabled>Selecciona objetivo</option>
-                <option value="hipertrofia">Hipertrofia</option>
-                <option value="fuerza">Fuerza</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-              <p class="text-red-500 text-sm" v-if="errors.objetivo">{{ errors.objetivo[0] }}</p>
-            </label>
-
-            <label class="block">
-              Fecha de inicio:
-              <input v-model="form.fechaInicio" type="date" class="w-full rounded border px-3 py-2 mt-1" />
-              <p class="text-red-500 text-sm" v-if="errors.fechaInicio">{{ errors.fechaInicio[0] }}</p>
-            </label>
-
-            <label class="block">
-              Fecha de finalización:
-              <input v-model="form.fechaFin" type="date" class="w-full rounded border px-3 py-2 mt-1" />
-              <p class="text-red-500 text-sm" v-if="errors.fechaFin">{{ errors.fechaFin[0] }}</p>
-            </label>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer"
-        >
-          Crear Plan
-        </button>
-      </form>
+          <button
+            type="submit"
+            class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer"
+          >
+            Crear Plan
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </template>

@@ -1,22 +1,16 @@
 <template>
   <div class="flex flex-col gap-5">
     <div>
-      <h1>¿Estás seguro que deseas eliminar tu cuenta?</h1>
+      <p class="italic text-sm text-gray-600 mb-4">Esta accion es irreversible</p>
+      <p class="text-center">Al eliminar tu cuenta, perderas todos tus datos incluyendo metricas y entrenamientos</p>
     </div>
     <div class="flex flex-row justify-around">
       <button
         @click="deleteUser"
         :disabled="loading"
-        class="bg-red-500 hover:bg-red-600 active:bg-red-700 px-6 py-3 rounded-full text-gray-100 hover:text-white"
+        class="bg-red-500 hover:bg-red-700 active:bg-red-200 px-6 py-3 rounded-2xl text-gray-100 hover:text-white transition cursor-pointer"
       >
         Eliminar
-      </button>
-      <button
-        @click="showModal = false"
-        :disabled="loading"
-        class="bg-gray-500 hover:bg-gray-600 active:bg-gray-700 px-6 py-3 rounded-full"
-      >
-        Cancelar
       </button>
     </div>
   </div>
