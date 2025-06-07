@@ -151,6 +151,7 @@ import BaseModal from "@/components/basics/Modal.vue";
 import { Trash } from "lucide-vue-next";
 import router from "../../routes/Router";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
 const showModal = ref(false);
 const modalComponent = ref(null);
 
@@ -187,6 +188,7 @@ const errors = ref({
 });
 
 onMounted(async () => {
+  emit("loading-start");
   const token = auth.getToken();
 
   try {
@@ -224,21 +226,44 @@ const guardarCambios = async () => {
       return !isNaN(fecha.getTime()) && fecha <= hoy && fecha >= hace120Anios;
     };
 
-    const userUpdateSchema = z.object({
-      nombre: z.string().min(1, "El nombre es requerido"),
-      apellido: z.string().min(1, { message: "El primer apellido es requerido" }),
-      sapellido: z.string().min(1, { message: "El segundo apellido es requerido" }),
-      correo: z.string().email("Email no válido"),
-      fec_nac: z.string().refine(validarFechaNac, {
-        message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
-      }),
-      genero: z.enum(["Hombre", "Mujer", "Otro"], {
-        errorMap: () => ({ message: "Selecciona un género válido." })
-      }),
-      role: z.enum(["admin", "entrenador", "user"], {
-        errorMap: () => ({ message: "Selecciona un rol valido." })
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
+    const userUpdateSchema = z
+      .object({
+        nombre: z.string().min(3, "El nombre es requerido").optional(),
+        apellido: z.string().min(3, { message: "El primer apellido es requerido" }).optional(),
+        sapellido: z.string().min(3, { message: "El segundo apellido es requerido" }).optional(),
+        correo: z.string().email("Email no válido").optional(),
+        password: z
+          .string()
+          .refine((val) => passwordRegex.test(val), {
+            message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+          })
+          .optional(),
+        respassword: z
+          .string()
+          .refine((val) => passwordRegex.test(val), {
+            message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+          })
+          .optional(),
+        fec_nac: z
+          .string()
+          .refine(validarFechaNac, {
+            message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
+          })
+          .optional(),
+        genero: z
+          .enum(["Hombre", "Mujer", "Otro"], {
+            errorMap: () => ({ message: "Selecciona un género válido." })
+          })
+          .optional(),
+        role: z
+          .enum(["admin", "entrenador", "user"], {
+            errorMap: () => ({ message: "Selecciona un rol valido." })
+          })
+          .optional()
       })
-    });
+      .partial();
 
     Object.keys(errors.value).forEach((key) => (errors.value[key] = ""));
     userUpdateSchema.parse(form.value);
@@ -254,7 +279,6 @@ const guardarCambios = async () => {
 
     alert("Cambios guardados correctamente.");
     window.location.reload();
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {
@@ -266,6 +290,8 @@ const guardarCambios = async () => {
     } else {
       console.error("Error al actualizar:", error);
     }
+  } finally {
+    emit("loading-end");
   }
 };
 
@@ -294,12 +320,14 @@ const changePass = async (event) => {
     const passSchema = z.object({
       password: z
         .string()
-        .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-        .nonempty("La contraseña es obligatoria"),
+        .refine((val) => passwordRegex.test(val), {
+          message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+        }),
       respassword: z
         .string()
-        .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-        .nonempty("La confirmación de la contraseña es obligatoria")
+        .refine((val) => passwordRegex.test(val), {
+          message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+        })
     });
 
     Object.keys(errorsPass.value).forEach((key) => (errorsPass.value[key] = ""));
@@ -317,7 +345,6 @@ const changePass = async (event) => {
 
     if (response.data.message) alert(response.data.message);
   } catch (error) {
-    console.log("Hay un error pero no se como tratarlo");
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {
         if (err.path[0] in errorsPass.value) {
@@ -326,7 +353,6 @@ const changePass = async (event) => {
       });
     } else {
       errorsPass.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
-      console.log(error);
     }
   }
 };
@@ -377,7 +403,6 @@ async function uploadImage() {
     alert("Imagen subida correctamente");
     window.location.reload();
   } catch (error) {
-    console.log(error);
     alert("Error al subir la imagen");
   }
 }

@@ -153,6 +153,8 @@ import { z } from "zod";
 import { useRouter } from "vue-router";
 import { Info } from "lucide-vue-next";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const router = useRouter();
 
 const auth = useAuthStore();
@@ -171,6 +173,8 @@ const form = ref({
 });
 
 onMounted(async () => {
+  emit("loading-start");
+
   const token = auth.getToken();
   try {
     const response = await axios.get(`http://localhost:8081/users/get/${auth.getId()}/info/last`, {
@@ -180,6 +184,8 @@ onMounted(async () => {
     usuarioTieneRM.value = form.rm !== null;
   } catch (error) {
     console.error(error);
+  } finally {
+    emit("loading-end");
   }
 });
 

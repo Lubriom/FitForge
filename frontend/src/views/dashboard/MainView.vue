@@ -238,7 +238,7 @@
         </div>
 
         <!-- Estado cuando no hay IMC -->
-        <div v-else class="contents">
+        <div v-else class="flex flex-col justify-center items-center h-full">
           <div class="place-self-center min-w-0 max-w-full">
             <div class="relative w-40 aspect-[6/7] max-w-full">
               <div
@@ -256,7 +256,7 @@
               ></div>
             </div>
           </div>
-          <div class="self-end text-center text-sm text-gray-200 break-words">
+          <div class="self-center text-center text-sm text-gray-200 break-words">
             <p class="mb-1">Aún no se ha registrado tu índice de masa corporal.</p>
             <p class="text-xs text-gray-300">Puedes actualizar tus datos físicos desde el panel de estadísticas.</p>
           </div>
@@ -349,6 +349,8 @@ import { useAuthStore } from "@/utils/Auth.js";
 import { onMounted, ref, defineAsyncComponent, markRaw, computed } from "vue";
 import { useLayoutStore } from "@/stores/layoutStore";
 import PesoChart from "@/components/basics/PesoChart.vue";
+import maleSvg from "@/assets/svg/male.svg";
+import femaleSvg from "@/assets/svg/female.svg";
 import {
   AudioLines,
   Calendar1,
@@ -363,6 +365,8 @@ import {
   Waypoints,
   Weight
 } from "lucide-vue-next";
+
+const emit = defineEmits(["loading-start", "loading-end"]);
 
 const auth = useAuthStore();
 const layoutStore = useLayoutStore();
@@ -381,6 +385,7 @@ const svgImc = ref("");
 const imageURL = ref("");
 
 onMounted(async () => {
+  emit("loading-start");
   const userId = auth.getId();
   const token = auth.getToken();
 
@@ -404,7 +409,6 @@ onMounted(async () => {
       })
     ]);
 
-    console.log(responseMetricas.data);
     user.value = response.data;
     userInfo.value = responseInfo.data;
     userPato.value = responsePato.data;
@@ -413,7 +417,11 @@ onMounted(async () => {
     diasEntrenados.value = responseDias.data;
     responseMetricas.data.sort((a, b) => new Date(a.fechaRegistro) - new Date(b.fechaRegistro));
     datosPeso.value = responseMetricas.data.map((m) => ({
-      fecha: new Date(m.fechaRegistro).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "2-digit" }),
+      fecha: new Date(m.fechaRegistro).toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit"
+      }),
       peso: m.peso
     }));
 
@@ -427,8 +435,6 @@ onMounted(async () => {
         return fechaDia === hoy;
       });
 
-      console.log("Día actual por fecha:", diaActual);
-
       if (diaActual) {
         rutinaActual.value.diaActual = diaActual;
       }
@@ -436,15 +442,16 @@ onMounted(async () => {
       console.warn("rutinaActual no tiene 'dias'");
     }
 
-    svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
+    svgImc.value = user.genero === "Hombre" ? maleSvg : femaleSvg;
   } catch (error) {
     console.error("Error al cargar los datos:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 
 const marcarDiaComoCompletado = async () => {
   const token = auth.getToken();
-  console.log(rutinaActual.value.diaActual.id);
 
   try {
     await axios.patch(

@@ -158,6 +158,7 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useAuthStore } from "@/utils/auth";
+const emit = defineEmits(["loading-start", "loading-end"]);
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -251,7 +252,6 @@ const enviarFormulario = async (event) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       errors.value = error.flatten().fieldErrors;
-      console.log(errors.value);
     } else {
       console.error(error);
       alert("Ha ocurrido un error inesperado");
@@ -260,6 +260,7 @@ const enviarFormulario = async (event) => {
 };
 
 onMounted(async () => {
+  emit("loading-start");
   const id = auth.getId();
   const token = auth.getToken();
 
@@ -283,6 +284,8 @@ onMounted(async () => {
     };
   } catch (error) {
     console.error("Error al cargar la info del usuario:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 </script>

@@ -54,7 +54,4 @@ const openModal = () => {
   showModal.value = true;
 };
 
-function volverAtras() {
-  router.back();
-}
 </script>

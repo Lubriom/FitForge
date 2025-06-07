@@ -1,17 +1,16 @@
 <template>
   <footer class="bg-primary-500 h-fit w-full py-16 pt-24 text-white p-4 clipped-footer">
     <div class="flex flex-col gap-4">
-      <div class="flex flex-row justify-around items-start w-full h-full gap-8">
+      <div class="flex flex-col lg:flex-row justify-around items-center lg:items-start w-full h-full gap-8">
         <div class="flex flex-col gap-5">
           <div class="flex justify-center"><img src="/logov1.svg" class="h-36 w-36" /></div>
         </div>
-        <div class="flex flex-row gap-12 items-start">
+        <div class="flex flex-col sm:flex-row gap-12 items-start">
           <div class="flex flex-col">
             <h1 class="text-2xl text-tertiary-500 mb-3 font-bold revamped">General</h1>
             <div class="flex flex-col gap-1 text-gray-300">
               <router-link to="/" class="hover:text-tertiary-500">Inicio</router-link>
-              <router-link to="/" class="hover:text-tertiary-500">Sobre Nosotros</router-link>
-              <router-link to="/" class="hover:text-tertiary-500">Contacto</router-link>
+              <router-link :to="{ name: 'About' }" class="hover:text-tertiary-500">Sobre Nosotros</router-link>
             </div>
           </div>
           <div class="flex flex-col">
@@ -25,8 +24,13 @@
           <div class="flex flex-col">
             <h1 class="text-2xl text-tertiary-500 mb-3 font-bold revamped">Soporte</h1>
             <div class="flex flex-col gap-1 text-gray-300">
-              <router-link to="/" class="hover:text-tertiary-500">Preguntas Frecuentes</router-link>
-              <router-link to="/" class="hover:text-tertiary-500">Terminos y Condiciones</router-link>
+              <router-link :to="{ name: 'Faq' }" class="hover:text-tertiary-500">Preguntas Frecuentes</router-link>
+              <router-link :to="{ name: 'Conditions' }" class="hover:text-tertiary-500"
+                >Terminos y Condiciones</router-link
+              >
+              <router-link :to="{ name: 'Privacy' }" class="hover:text-tertiary-500"
+                >Politica de Privacidad</router-link
+              >
             </div>
           </div>
         </div>

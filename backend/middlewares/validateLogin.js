@@ -1,8 +1,12 @@
 import { z } from "zod";
 
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
 const loginSchema = z.object({
   correo: z.string().email({ message: "Email no válido" }),
-  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
+  password: z.string().refine((val) => passwordRegex.test(val), {
+    message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+  })
 });
 
 export const validateLogin = (req, res, next) => {

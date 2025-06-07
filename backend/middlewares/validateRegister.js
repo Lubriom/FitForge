@@ -1,12 +1,24 @@
 import { z } from "zod";
 
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
 const registerSchema = z.object({
-  nombre: z.string().min(1, { message: "El nombre es requerido" }),
-  apellido: z.string().min(1, { message: "El primer apellido es requerido" }),
-  sapellido: z.string().min(1, { message: "El segundo apellido es requerido" }),
-  correo: z.string().email({ message: "Correo electronico no válido" }),
-  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }),
-  respassword: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
+  nombre: z.string().min(3, { message: "El nombre es requerido" }).nonempty("El nombre es obligatorio"),
+  apellido: z
+    .string()
+    .min(3, { message: "El primer apellido es requerido" })
+    .nonempty("El primer apellido es obligatorio"),
+  sapellido: z
+    .string()
+    .min(3, { message: "El segundo apellido es requerido" })
+    .nonempty("El segundo apellido es obligatorio"),
+  correo: z.string().email({ message: "Email no válido" }).nonempty("El correo es obligatorio"),
+  password: z.string().refine((val) => passwordRegex.test(val), {
+    message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+  }),
+  respassword: z.string().refine((val) => passwordRegex.test(val), {
+    message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+  })
 });
 
 export const validateRegister = (req, res, next) => {

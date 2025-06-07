@@ -1,14 +1,17 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
+import ExtendSessionToast from "@/components/auths/ExtendToast.vue"; // Lo crearemos luego
+import axios from "axios";
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
   const isLoggedIn = ref(false);
   const router = useRouter();
+  const toast = useToast();
 
-  // Inicializa isLoggedIn solo si el token es válido
   function initialize() {
-    const token = localStorage.getItem('log_token');
+    const token = localStorage.getItem("log_token");
     if (!token) return;
 
     try {
@@ -16,21 +19,75 @@ export const useAuthStore = defineStore('auth', () => {
       const now = Math.floor(Date.now() / 1000);
       if (decoded && (!decoded.exp || decoded.exp > now)) {
         isLoggedIn.value = true;
+        checkTokenExpiry(decoded.exp, now);
       } else {
         console.log("[!WARN]: You shouldn't be doing this");
-        localStorage.removeItem('log_token');
+        localStorage.removeItem("log_token");
       }
     } catch (error) {
-      console.log('Token inválido:', error);
-      localStorage.removeItem('log_token');
-      router.push('/');
+      console.log("Token inválido:", error);
+      localStorage.removeItem("log_token");
+      router.push("/");
     }
-  };
+  }
 
-  initialize(); 
+  // Nuevo método para comprobar expiración y mostrar toast
+  function checkTokenExpiry(exp, now) {
+    const timeLeft = exp - now;
+
+    console.log(`Tiempo restante del token: ${timeLeft} segundos`);
+    if (timeLeft <= 300 && timeLeft > 0) {
+      // Mostrar toast con opción para extender
+      toast(
+        {
+          component: ExtendSessionToast,
+          props: {
+            onExtend: extendSession,
+            onLogout: logout,
+            toastId: "extend-toast"
+          }
+        },
+        {
+          id: "extend-toast", 
+          timeout: false,
+          closeOnClick: false,
+          draggable: false,
+          component: true,
+          position: "top-right",
+          toastClassName: "toast-extend-session"
+        }
+      );
+    } else if (timeLeft <= 0) {
+      // Token expirado
+      toast.error("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+      logout();
+      router.push("/");
+    }
+  }
+
+  async function extendSession() {
+    try {
+      const response = await axios.post("http://localhost:8081/refresh-token", {}, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      });
+
+      const data = response.data;
+      login(data.token);
+      toast.success("Sesión extendida correctamente");
+    } catch (error) {
+      console.error("Error al extender la sesión:", error);
+      toast.error("No se pudo extender la sesión");
+      logout();
+      router.push("/");
+    }
+  }
+
+  initialize();
 
   function login(token) {
-    localStorage.setItem('log_token', token);
+    localStorage.setItem("log_token", token);
     isLoggedIn.value = true;
   }
 
@@ -38,7 +95,7 @@ export const useAuthStore = defineStore('auth', () => {
    * Función para cerrar sesión, elimina el token y cambia el estado de log
    */
   function logout() {
-    localStorage.removeItem('log_token');
+    localStorage.removeItem("log_token");
     isLoggedIn.value = false;
   }
 
@@ -48,8 +105,8 @@ export const useAuthStore = defineStore('auth', () => {
    */
   function isAdmin() {
     if (!isLoggedIn.value) return false;
-    const decoded = decodedToken(localStorage.getItem('log_token'));
-    return decoded.role === 'admin';  
+    const decoded = decodedToken(localStorage.getItem("log_token"));
+    return decoded.role === "admin";
   }
 
   /**
@@ -58,8 +115,8 @@ export const useAuthStore = defineStore('auth', () => {
    */
   function isTrainer() {
     if (!isLoggedIn.value) return false;
-    const decoded = decodedToken(localStorage.getItem('log_token'));
-    return decoded.role === 'entrenador';  
+    const decoded = decodedToken(localStorage.getItem("log_token"));
+    return decoded.role === "entrenador";
   }
 
   /**
@@ -67,7 +124,7 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns -> string - Nombre del usuario
    */
   function getName() {
-    const decoded = decodedToken(localStorage.getItem('log_token'));
+    const decoded = decodedToken(localStorage.getItem("log_token"));
     return decoded.nombre;
   }
 
@@ -76,7 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns -> string - Id del usuario
    */
   function getId() {
-    const decoded = decodedToken(localStorage.getItem('log_token'));
+    const decoded = decodedToken(localStorage.getItem("log_token"));
     return decoded.id;
   }
 
@@ -85,7 +142,7 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns -> string - Rol del usuario
    */
   function getRole() {
-    const decoded = decodedToken(localStorage.getItem('log_token'));
+    const decoded = decodedToken(localStorage.getItem("log_token"));
     return decoded.role;
   }
 
@@ -94,21 +151,37 @@ export const useAuthStore = defineStore('auth', () => {
    * @returns -> string - Token
    */
   function getToken() {
-    return localStorage.getItem('log_token');
+    return localStorage.getItem("log_token");
   }
 
   function getImage() {
-    const decoded = decodedToken(localStorage.getItem('log_token'));
+    const decoded = decodedToken(localStorage.getItem("log_token"));
     return decoded.profile_img;
   }
 
-  return { isLoggedIn, login, logout, isAdmin, isTrainer, getName, getId, getToken, getRole, getImage, isTokenValid };
+  initialize();
+
+  return {
+    isLoggedIn,
+    login,
+    logout,
+    isAdmin,
+    isTrainer,
+    getName,
+    getId,
+    getToken,
+    getRole,
+    getImage,
+    isTokenValid,
+    checkTokenExpiry,
+    extendSession
+  };
 });
 
 /**
  * Esta función permite decodificar un token para obtener sus valores del payload (parte del token que se refiere al contenido)
- * @param { Token a decodificar } token 
- * @returns 
+ * @param { Token a decodificar } token
+ * @returns
  */
 export const decodedToken = (token) => {
   try {
@@ -123,7 +196,7 @@ export const decodedToken = (token) => {
 };
 
 export function isTokenValid() {
-  const token = localStorage.getItem('log_token');
+  const token = localStorage.getItem("log_token");
   if (!token) return false;
 
   try {

@@ -72,6 +72,8 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import z from "zod";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const router = useRouter();
 
 const auth = useAuthStore();
@@ -94,6 +96,7 @@ const errors = ref({
 });
 
 onMounted(async () => {
+  emit("loading-start");
   const userId = auth.getId();
   const token = auth.getToken();
 
@@ -114,6 +117,8 @@ onMounted(async () => {
     };
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 

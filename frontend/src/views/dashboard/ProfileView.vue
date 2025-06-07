@@ -203,7 +203,7 @@
               </div>
 
               <!-- Estado cuando no hay IMC -->
-              <div v-else class="contents">
+              <div v-else class="flex flex-col justify-center items-center h-full">
                 <div class="place-self-center min-w-0 max-w-full">
                   <div class="relative w-40 aspect-[6/7] max-w-full">
                     <div
@@ -221,7 +221,7 @@
                     ></div>
                   </div>
                 </div>
-                <div class="self-end text-center text-sm text-gray-200 break-words">
+                <div class="self-center text-center text-sm text-gray-200 break-words">
                   <p class="mb-1">Aún no se ha registrado tu índice de masa corporal.</p>
                   <p class="text-xs text-gray-300">
                     Puedes actualizar tus datos físicos desde el panel de estadísticas.
@@ -407,6 +407,10 @@ import { useRouter } from "vue-router";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
+import maleSvg from "@/assets/svg/male.svg";
+import femaleSvg from "@/assets/svg/female.svg";
+
+const emit = defineEmits(["loading-start", "loading-end"]);
 
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Mi perfil");
@@ -422,6 +426,7 @@ const diasEntrenados = ref([]);
 const diasEntrenados7dias = ref([]);
 
 onMounted(async () => {
+  emit("loading-start");
   const userId = auth.getId();
   const token = auth.getToken();
 
@@ -466,9 +471,11 @@ onMounted(async () => {
       }
     });
 
-    svgImc.value = user.genero === "Hombre" ? "/male.svg" : "/female.svg";
+    svgImc.value = user.value.genero === "Hombre" ? maleSvg : femaleSvg;
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 

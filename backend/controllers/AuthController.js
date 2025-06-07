@@ -70,4 +70,32 @@ export class AuthController {
       console.log(error);
     }
   }
+
+  static async refreshToken(req, res) {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader?.split(" ")[1]; // Quitar "Bearer "
+
+    if (!token) return res.status(401).json({ mensaje: "Token no proporcionado" });
+
+    try {
+      // Verificas que el token sea válido (no expirado y firmado con la clave)
+      const decodedToken = jwt.verify(token, SECRET);
+
+      // Extraes solo la info necesaria para el nuevo token
+      const data = {
+        id: decodedToken.id,
+        nombre: decodedToken.nombre,
+        correo: decodedToken.correo,
+        profile_img: decodedToken.profile_img,
+        role: decodedToken.role
+      };
+
+      // Creas un nuevo token con nueva expiración (2h)
+      const nuevoToken = jwt.sign(data, SECRET, { expiresIn: "2h" });
+
+      res.json({ message: "Token renovado", token: nuevoToken });
+    } catch (error) {
+      res.status(403).json({ mensaje: "Token inválido o expirado" });
+    }
+  }
 }

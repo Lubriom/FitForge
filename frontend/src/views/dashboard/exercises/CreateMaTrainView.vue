@@ -103,6 +103,8 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
 import { z } from "zod";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const router = useRouter();
 const route = useRoute();
 const auth = useAuthStore();
@@ -124,6 +126,8 @@ const form = ref({
 const user = ref({});
 
 onMounted(async () => {
+  emit("loading-start");
+
   try {
     const response = await axios.get(`http://localhost:8081/users/get/${idParam}`, {
       headers: {
@@ -134,6 +138,8 @@ onMounted(async () => {
     user.value = response.data;
   } catch (error) {
     console.error("Error al consulta la información del usuario");
+  } finally {
+    emit("loading-end");
   }
 });
 
@@ -155,7 +161,6 @@ const submitForm = async () => {
         message: "La fecha final no es válida"
       })
     });
-    console.log(form.value);
 
     const validation = planSchema.safeParse(form.value);
 

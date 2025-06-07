@@ -129,7 +129,6 @@ const changePass = async (event) => {
       });
     } else {
       errors.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
-      console.log(error);
     }
   }
 };

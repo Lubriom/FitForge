@@ -167,6 +167,8 @@ import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen } from "lucide-vue
 import { computed } from "vue";
 import { useAuthStore } from "@/utils/auth";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const auth = useAuthStore();
 
 function getImageUrl(categoria) {
@@ -217,12 +219,16 @@ const resetFiltros = () => {
 };
 
 onMounted(async () => {
+  emit("loading-start");
+
   try {
     const response = await axios.get("http://localhost:8081/exercises/get");
     originalData.value = response.data;
     exercises.value = response.data;
   } catch (error) {
     console.error("Error al cargar los ejercicios:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 

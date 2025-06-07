@@ -12,13 +12,19 @@ const validarFechaNac = (fechaStr) => {
   );
 };
 
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
 const userUpdateSchema = z.object({
-  nombre: z.string().min(1, "El nombre es requerido").optional(),
-  apellido: z.string().min(1, { message: "El primer apellido es requerido" }).optional(),
-  sapellido: z.string().min(1, { message: "El segundo apellido es requerido" }).optional(),
+  nombre: z.string().min(3, "El nombre es requerido").optional(),
+  apellido: z.string().min(3, { message: "El primer apellido es requerido" }).optional(),
+  sapellido: z.string().min(3, { message: "El segundo apellido es requerido" }).optional(),
   correo: z.string().email("Email no válido").optional(),
-  password: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }).optional(),
-  respassword: z.string().min(6, { message: "La contraseña debe tener al menos 6 caracteres" }).optional(),
+  password: z.string().refine((val) => passwordRegex.test(val), {
+    message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+  }).optional(),
+  respassword: z.string().refine((val) => passwordRegex.test(val), {
+    message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+  }).optional(),
   fec_nac: z.string().refine(validarFechaNac, {
     message: "Introduce una fecha válida y realista (hasta 120 años atrás)."
   }).optional(),

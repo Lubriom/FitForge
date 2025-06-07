@@ -176,6 +176,8 @@ import axios from "axios";
 import { useAuthStore } from "@/utils/auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 // Stores
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Lista de Usuarios");
@@ -197,6 +199,8 @@ const filtros = ref({
 
 // Fetch de usuarios con filtros aplicados
 const fetchUsers = async () => {
+  emit("loading-start");
+
   try {
     if (filtros.ordenarPor === "activo") {
       filtros.query = "";
@@ -216,7 +220,10 @@ const fetchUsers = async () => {
     totalPages.value = res.data.totalPages;
   } catch (err) {
     console.error("Error al cargar usuarios:", err);
+  } finally {
+    emit("loading-end");
   }
+
 };
 
 // Orden desde headers de tabla
@@ -294,7 +301,6 @@ const resetFiltros = () => {
 // Inicial
 onMounted(fetchUsers);
 
-// Watchers útiles (opcionalmente)
 watch(
   () => filtros.value.perPage,
   (newVal, oldVal) => {

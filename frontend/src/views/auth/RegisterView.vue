@@ -87,21 +87,21 @@
           <div class="flex flex-col w-full gap-2">
             <label for="confirmPassword" class="mb-1 font-semibold text-sm text-white">Confirmar Contraseña</label>
             <div class="relative">
-            <input
-              :type="isPasswordVisible1 ? 'text' : 'password'"
-              id="confirmPassword"
-              v-model="user.respassword"
-              placeholder="********"
-              class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
-            />
-            <button
-              type="button"
-              @click="togglePasswordVisibility1"
-              class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
-            >
-              <span v-if="isPasswordVisible1"><Eye /></span>
-              <span v-else><EyeClosed /></span>
-            </button>
+              <input
+                :type="isPasswordVisible1 ? 'text' : 'password'"
+                id="confirmPassword"
+                v-model="user.respassword"
+                placeholder="********"
+                class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+              />
+              <button
+                type="button"
+                @click="togglePasswordVisibility1"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+              >
+                <span v-if="isPasswordVisible1"><Eye /></span>
+                <span v-else><EyeClosed /></span>
+              </button>
             </div>
             <span v-if="errors.respassword" class="text-red-500 text-xs mt-1">{{ errors.respassword }}</span>
           </div>
@@ -132,6 +132,9 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
 import { Eye } from "lucide-vue-next";
 import { EyeClosed } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -175,25 +178,25 @@ const register = async (event) => {
   event.preventDefault();
 
   try {
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
     const registerSchema = z.object({
-      nombre: z.string().min(1, { message: "El nombre es requerido" }).nonempty("El nombre es obligatorio"),
+      nombre: z.string().min(3, { message: "El nombre es requerido" }).nonempty("El nombre es obligatorio"),
       apellido: z
         .string()
-        .min(1, { message: "El primer apellido es requerido" })
+        .min(3, { message: "El primer apellido es requerido" })
         .nonempty("El primer apellido es obligatorio"),
       sapellido: z
         .string()
-        .min(1, { message: "El segundo apellido es requerido" })
+        .min(3, { message: "El segundo apellido es requerido" })
         .nonempty("El segundo apellido es obligatorio"),
       correo: z.string().email({ message: "Email no válido" }).nonempty("El correo es obligatorio"),
-      password: z
-        .string()
-        .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-        .nonempty("La contraseña es obligatoria"),
-      respassword: z
-        .string()
-        .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-        .nonempty("La confirmación de la contraseña es obligatoria")
+      password: z.string().refine((val) => passwordRegex.test(val), {
+        message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+      }),
+      respassword: z.string().refine((val) => passwordRegex.test(val), {
+        message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+      })
     });
 
     // Reset errors
@@ -209,11 +212,18 @@ const register = async (event) => {
     }
 
     // Hacer la solicitud al backend
-    const response = await axios.post("http://localhost:8081/register", user.value);x
+    const response = await axios.post("http://localhost:8081/register", user.value);
+    x;
 
     // Si la respuesta tiene un token, proceder con el login
     if (response.data.token) {
       auth.login(response.data.token);
+
+      toast.success("Registro exitoso");
+
+      // Esperar 5 segundos antes de redirigir
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
       router.push("/start");
     }
   } catch (error) {

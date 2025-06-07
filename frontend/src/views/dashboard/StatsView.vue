@@ -2,7 +2,7 @@
   <div class="w-full h-full flex flex-col lg:grid grid-cols-5 grid-rows-auto gap-4">
     <!-- Peso -->
     <div class="col-span-3 col-start-1 row-span-2 row-start-1 w-full h-full">
-      <div class="bg-white p-8 gap-4 flex rounded-2xl w-full h-full flex-col justify-center">
+      <div class="bg-white p-8 gap-4 flex rounded-2xl w-full h-full flex-col justify-between">
         <h1 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
           <Weight class="w-5 h-5 text-indigo-500" />
           Peso
@@ -41,7 +41,7 @@
           <h1 class="text-2xl font-semibold flex items-center gap-2">Grupo Muscular Favorito:</h1>
           <div v-if="userEstadisticas" class="w-full items-center flex flex-col justify-center h-full group">
             <h2 class="text-2xl font-bold group-hover:text-3xl group-hover:shadow-amber-50 transition-all duration-300">
-              {{ capitalizar(userEstadisticas.grupoMuscularMasEntrenado) }}
+              {{ userEstadisticas.grupoMuscularMasEntrenado ? capitalizar(userEstadisticas.grupoMuscularMasEntrenado) : "Sin registro" }}
             </h2>
           </div>
           <p v-else class="text-center text-sm text-gray-200">No tienes ningun registro sobre tus entrenamientos</p>
@@ -54,7 +54,7 @@
           <h1 class="text-2xl font-semibold flex items-center gap-2">Rutina Favorita:</h1>
           <div v-if="userEstadisticas" class="w-full items-center flex flex-col justify-center h-full group">
             <h2 class="text-2xl font-bold group-hover:text-3xl transition-all duration-300">
-              {{ capitalizar(userEstadisticas.rutinaMasCompletada) }}
+              {{ userEstadisticas.rutinaMasCompletada ? capitalizar(userEstadisticas.rutinaMasCompletada) : "Sin registro" }}
             </h2>
           </div>
           <p v-else class="text-center text-sm text-gray-200">No tienes ningun registro sobre tus entrenamientos</p>
@@ -122,7 +122,7 @@
               <p class="font-semibold text-sm sm:text-base">Altura</p>
             </div>
             <p class="text-lg sm:text-3xl text-center font-medium text-gray-900 group-hover:text-purple-700">
-              {{ userInfo?.altura + "m" || "N/A" }}
+              {{ userInfo?.altura ? userInfo.altura + "m" : "N/A" }}
             </p>
           </div>
         </div>
@@ -159,7 +159,7 @@
 
     <!-- RM -->
     <div class="col-span-2 col-start-4 row-span-3 row-start-3 w-full h-full">
-      <div class="bg-white p-8 gap-4 flex rounded-2xl w-full h-full flex-col justify-center">
+      <div class="bg-white p-8 gap-4 flex rounded-2xl w-full h-full flex-col justify-between">
         <h1 class="text-2xl font-semibold text-gray-800 flex items-center gap-2">
           <Weight class="w-5 h-5 text-indigo-500" />
           Fuerza (RM)
@@ -203,6 +203,8 @@ import ImcChart from "../../components/basics/ImcChart.vue";
 import { parseISO, format } from "date-fns";
 import { es } from "date-fns/locale";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const layoutStore = useLayoutStore();
 
 const auth = useAuthStore();
@@ -214,6 +216,7 @@ const diasEntrenados7dias = ref([]);
 const userEstadisticas = ref({});
 
 onMounted(async () => {
+  emit("loading-start");
   const token = auth.getToken();
   const id = auth.getId();
 
@@ -264,6 +267,8 @@ onMounted(async () => {
     layoutStore.setTitle("Mis estadisticas");
   } catch (error) {
     console.error("Error al cargar los datos del usuario:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 

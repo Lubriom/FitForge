@@ -22,7 +22,6 @@ const props = defineProps({
   }
 })
 
-console.log(props.datosRm.map(d => d.rm))
 // Preparar los datos
 const chartData = computed(() => {
   return {

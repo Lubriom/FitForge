@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { isTokenValid } from '@/utils/Auth.js';
+import { isTokenValid } from "@/utils/Auth.js";
 
 // Importar los componentes que vas a mostrar en las rutas
+import FaqView from "@/views/FaqView.vue";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
-import EditView from "@/views/EditView.vue";
 import LoginView from "@/views/auth/LoginView.vue";
 import RegisterView from "@/views/auth/RegisterView.vue";
-import StartView from "@/views/StartView.vue";
+import PrivacityView from "@/views/PrivacityView.vue";
+import ConditionsView from "@/views/ConditionsView.vue";
 import DashboardRoutes from "./DashboardRoutes.js";
 import ExercisesRoutes from "./ExercisesRoutes.js";
 
@@ -23,10 +24,19 @@ const routes = [
     component: AboutView
   },
   {
-    path: "/edit/:id",
-    name: "Edit",
-    component: EditView,
-    meta: { requiresAuth: true }
+    path: "/faq",
+    name: "Faq",
+    component: FaqView
+  },
+  {
+    path: "/conditions",
+    name: "Conditions",
+    component: ConditionsView
+  },
+  {
+    path: "/privacy",
+    name: "Privacy",
+    component: PrivacityView
   },
   {
     path: "/login",
@@ -38,7 +48,7 @@ const routes = [
     path: "/register",
     name: "Register",
     component: RegisterView,
-    meta: { layout: "auth"}
+    meta: { layout: "auth" }
   },
   ...DashboardRoutes,
   ...ExercisesRoutes
@@ -51,9 +61,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isTokenValid()) {
-    next('/login'); 
+    next("/login");
   } else {
-    next(); 
+    next();
   }
 });
 

@@ -6,6 +6,8 @@ import { useAuthStore } from "@/utils/auth";
 import { LucideAirVent, Trash } from "lucide-vue-next";
 import { z } from "zod";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const auth = useAuthStore();
 
 const route = useRoute();
@@ -25,6 +27,8 @@ const ejerciciosDisponibles = ref([]);
 const diaSeleccionado = ref(null);
 
 onMounted(async () => {
+  emit("loading-start");
+
   try {
     const res = await axios.get(`http://localhost:8081/trains/plan/${planId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
@@ -57,6 +61,8 @@ onMounted(async () => {
     ejerciciosDisponibles.value = resEjercicios.data;
   } catch (err) {
     console.error("Error cargando plan:", err);
+  } finally {
+    emit("loading-end");
   }
 });
 

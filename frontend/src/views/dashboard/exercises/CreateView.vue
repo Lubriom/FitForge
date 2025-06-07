@@ -124,6 +124,8 @@ import { useRouter } from "vue-router";
 import { z } from "zod";
 import { useAuthStore } from "@/utils/auth";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const auth = useAuthStore();
 
 const router = useRouter();
@@ -213,4 +215,6 @@ const crearEjercicio = async () => {
     }
   }
 };
+
+emit("loading-end");
 </script>

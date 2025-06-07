@@ -1,14 +1,23 @@
 <template>
   <div class="flex flex-col h-screen">
+    <transition name="fade-out">
+      <div v-if="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-90">
+        <div class="w-16 h-16 border-4 border-tertiary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-lg text-primary-600 font-semibold animate-pulse">Cargando...</p>
+      </div>
+    </transition>
+
     <div class="bg-white p-3 h-full rounded bg-[url(@/assets/imgs/bg.jpg)] bg-cover bg-center bg-no-repeat">
       <div class="flex flex-col-reverse md:flex-row h-full gap-3 rounded-2xl overflow-hidden">
-          <Header />
+        <Header />
 
         <main class="w-full h-full flex flex-col gap-2 overflow-hidden">
           <div class="flex justify-between items-center px-2 pb-1">
             <h1 class="text-black text-2xl font-bold">{{ layoutStore.title }}</h1>
             <div class="flex bg-tertiary-500 p-1 rounded-full shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]">
-              <div class="justify-center items-center px-4 hidden sm:flex"><b class="mr-2">Rol:</b> {{ capitalizar( auth.getRole() )}}</div>
+              <div class="justify-center items-center px-4 hidden sm:flex">
+                <b class="mr-2">Rol:</b> {{ capitalizar(auth.getRole()) }}
+              </div>
               <div class="relative">
                 <button
                   @click="toggleDropdown"
@@ -51,7 +60,9 @@
           </div>
 
           <div class="flex-1 overflow-y-auto w-full h-full">
-            <router-view />
+            <router-view v-slot="{ Component }">
+              <component :is="Component" @loading-start="loading = true" @loading-end="loading = false" />
+            </router-view>
           </div>
 
           <Footer />
@@ -74,6 +85,7 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const expanded = ref(false);
+const loading = ref(true);
 const dropdownOpen = ref(false);
 
 const imageURL = ref("");
@@ -110,5 +122,13 @@ const capitalizar = (texto) => {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(-4px);
+}
+
+.fade-out-leave-active {
+  transition: opacity 1s ease 0.2s; /* Solo salida, con delay */
+}
+
+.fade-out-leave-to {
+  opacity: 0;
 }
 </style>

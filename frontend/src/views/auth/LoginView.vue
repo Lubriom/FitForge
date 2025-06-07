@@ -71,13 +71,15 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/auth";
 import { Eye } from "lucide-vue-next";
 import { EyeClosed } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const isPasswordVisible = ref(false);
 
 function togglePasswordVisibility() {
   isPasswordVisible.value = !isPasswordVisible.value;
 }
-
 
 const emit = defineEmits();
 
@@ -121,12 +123,13 @@ const login = async (event) => {
   errors.value = { correo: "", password: "", serverError: "" };
 
   try {
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
+
     const loginSchema = z.object({
-      correo: z.string().email({ message: "Email no válido" }).nonempty("El correo es obligatorio"),
-      password: z
-        .string()
-        .min(6, { message: "La contraseña debe tener al menos 6 caracteres" })
-        .nonempty("La contraseña es obligatoria")
+      correo: z.string().email({ message: "Email no válido" }),
+      password: z.string().refine((val) => passwordRegex.test(val), {
+        message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial (abc12*)."
+      })
     });
 
     // Validación con Zod
@@ -137,7 +140,12 @@ const login = async (event) => {
 
     if (response.data.token) {
       auth.login(response.data.token);
-      alert(response.data.message);
+
+      toast.success("Sesión iniciada correctamente");
+
+      // Esperar 5 segundos antes de redirigir
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      
       router.push("/dashboard");
     } else {
       errors.value.serverError = response.data.error;

@@ -6,6 +6,8 @@ import { useLayoutStore } from "@/stores/layoutStore";
 import { useRouter, useRoute } from "vue-router";
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FileDown, SquarePen } from "lucide-vue-next";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const route = useRoute();
 
 const layoutStore = useLayoutStore();
@@ -26,27 +28,6 @@ function seleccionarDia(index) {
   diaSeleccionado.value = diasSemanaActual.value[index];
 }
 
-function diaEsAnteriorAlInicio(dia) {
-  if (!plan.value) return true;
-
-  const fechaInicio = new Date(plan.value.fechaInicio);
-  let fechaDelDia;
-
-  if (typeof dia === "object" && dia.fecha) {
-    fechaDelDia = dia.fecha;
-  } else if (typeof dia === "number") {
-    fechaDelDia = new Date(fechaInicio);
-    fechaDelDia.setDate(fechaInicio.getDate() + dia);
-  } else {
-    return true;
-  }
-
-  const inicioSinHora = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), fechaInicio.getDate());
-  const diaSinHora = new Date(fechaDelDia.getFullYear(), fechaDelDia.getMonth(), fechaDelDia.getDate());
-
-  return diaSinHora < inicioSinHora;
-}
-
 function obtenerFechaDelDia(diaNumero) {
   if (!plan.value) return "";
 
@@ -59,6 +40,7 @@ function obtenerFechaDelDia(diaNumero) {
 }
 
 async function fetchPlan() {
+  emit("loading-start");
   loading.value = true;
   error.value = "";
 
@@ -76,7 +58,8 @@ async function fetchPlan() {
     console.error(err);
   } finally {
     loading.value = false;
-  }
+    emit("loading-end");
+  } 
 }
 
 const capitalizar = (texto) => {

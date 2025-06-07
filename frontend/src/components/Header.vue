@@ -1,85 +1,156 @@
 <template>
-  <header class="text-white px-4 py-2 fixed w-full z-50" :class="[isScrolled ? 'bg-black' : 'bg-black/10']">
-    <nav class="flex flex-row justify-between p-4">
-      <!-- Título y botón -->
-      <router-link to="/" class="flex flex-row items-center justify-start mb-2">
-        <img src="/logov3.svg" alt="Logo FitForge" class="w-12 h-12" />
-        <div class="flex flex-row items-center">
-          <h1 class="text-white ml-2 text-3xl revamped">FitForge</h1>
-        </div>
+  <header class="text-white p-5 fixed w-full z-50 transition-all duration-300 ease-in-out" :class="headerBgClass">
+    <nav class="flex flex-wrap justify-between items-center">
+      <!-- Logo -->
+      <router-link to="/" class="flex items-center space-x-2">
+        <img src="/logov3.svg" alt="Logo FitForge" class="w-10 h-10" />
+        <h1 class="text-white text-2xl lg:text-3xl revamped">FitForge</h1>
       </router-link>
-      <ul class="flex gap-4 justify-between items-center">
-        <div class="flex gap-4">
-          <router-link
-            to="/"
-            active-class="bg-tertiary-500 hover:bg-orange-700"
-            class="bg-quaternary-500 text-white font-bold text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
-            >INICIO</router-link
-          >
-          <router-link
-            to="/about"
-            active-class="router-link-active"
-            class="bg-quaternary-500 text-white font-bold text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
-            >Sobre Nosotros</router-link
-          >
-        </div>
-        <div v-if="auth.isLoggedIn" class="flex gap-4">
-          <router-link
-            to="/dashboard"
-            class="bg-quaternary-500 text-white font-bold text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
-            >Dashboard</router-link
-          >
-          <li>
-            <button
-              @click="logout"
-              class="bg-tertiary-500 text-white font-bold text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton"
-            >
-              Logout
-            </button>
-          </li>
-        </div>
-        <div v-else class="flex space-x-2">
+
+      <!-- Botón hamburguesa animado -->
+      <button
+        @click="isMobileMenuOpen = !isMobileMenuOpen"
+        class="lg:hidden focus:outline-none relative w-10 h-10 flex justify-center items-center"
+      >
+        <span
+          class="block absolute h-0.5 w-8 bg-white transform transition duration-500 ease-in-out"
+          :class="{
+            'rotate-45 translate-y-0': isMobileMenuOpen,
+            '-translate-y-2': !isMobileMenuOpen
+          }"
+        ></span>
+        <span
+          class="block absolute h-0.5 w-8 bg-white transform transition duration-500 ease-in-out"
+          :class="{
+            'opacity-0': isMobileMenuOpen,
+            'translate-y-0': true
+          }"
+        ></span>
+        <span
+          class="block absolute h-0.5 w-8 bg-white transform transition duration-500 ease-in-out"
+          :class="{
+            '-rotate-45 -translate-y-0': isMobileMenuOpen,
+            'translate-y-2': !isMobileMenuOpen
+          }"
+        ></span>
+      </button>
+
+      <!-- Menú completo con transición -->
+      <Transition
+        enter-active-class="transition-all duration-800 ease-out"
+        enter-from-class="opacity-0 -translate-y-4"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition-all duration-800 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-4"
+      >
+        <ul
+          v-show="isMobileMenuOpen || !isMobile"
+          class="w-full lg:w-auto lg:flex items-center justify-end gap-4 mt-4 lg:mt-0"
+          :class="{
+            block: isMobileMenuOpen,
+            hidden: !isMobileMenuOpen && isMobile,
+            'lg:flex': true
+          }"
+        >
           <li>
             <router-link
-              to="/login"
-              class="bg-tertiary-500 text-white font-bold text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton"
+              to="/"
+              active-class="bg-tertiary-500 hover:bg-orange-700"
+              class="block lg:inline bg-gray-600 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
+              >INICIO</router-link
             >
-              LOG IN
-            </router-link>
           </li>
-        </div>
-      </ul>
+          <li>
+            <router-link
+              to="/about"
+              active-class="router-link-active"
+              class="block lg:inline bg-gray-600 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
+              >Sobre Nosotros</router-link
+            >
+          </li>
+          <template v-if="auth.isLoggedIn">
+            <li>
+              <router-link
+                to="/dashboard"
+                class="block lg:inline bg-gray-600 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
+                >Dashboard</router-link
+              >
+            </li>
+            <li>
+              <button
+                @click="logout"
+                class="block lg:inline bg-tertiary-500 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton cursor-pointer"
+              >
+                Logout
+              </button>
+            </li>
+          </template>
+          <template v-else>
+            <li>
+              <router-link
+                to="/login"
+                class="block lg:inline bg-tertiary-500 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton"
+                >LOG IN</router-link
+              >
+            </li>
+          </template>
+        </ul>
+      </Transition>
     </nav>
   </header>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/auth.js";
 
 const auth = useAuthStore();
 const router = useRouter();
+const route = useRoute();
 
 const logout = () => {
   auth.logout();
   router.push("/");
 };
 
-import { onMounted, onBeforeUnmount } from "vue";
-
+const isMobileMenuOpen = ref(false);
+const isMobile = ref(window.innerWidth <= 1024); // lg:1024px
 const isScrolled = ref(false);
 
+const updateIsMobile = () => {
+  isMobile.value = window.innerWidth <= 1024;
+};
+
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 300;
+  isScrolled.value = window.scrollY > 300 && !isMobileMenuOpen.value;
 };
 
 onMounted(() => {
+  window.addEventListener("resize", updateIsMobile);
   window.addEventListener("scroll", handleScroll);
 });
 
 onBeforeUnmount(() => {
+  window.removeEventListener("resize", updateIsMobile);
   window.removeEventListener("scroll", handleScroll);
+});
+
+// Computed que detecta si la ruta actual es home
+const isHomeRoute = computed(() => route.path === "/");
+
+// Computed para clases del fondo del header
+const headerBgClass = computed(() => {
+  if (!isHomeRoute.value) {
+    // Si NO es home, siempre fondo negro
+    return "bg-black";
+  } else {
+    // Si es home, comportamiento original
+    if (isMobile.value) return "bg-black";
+    if (isScrolled.value) return "bg-black";
+    return "bg-black/10";
+  }
 });
 </script>
 

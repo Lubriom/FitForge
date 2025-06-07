@@ -14,8 +14,8 @@
       >
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 overflow-y-auto">
-      <div v-if="rutinas.length > 0" v-for="rutina in rutinas" :key="rutina.id">
+    <div v-if="rutinas.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-3 overflow-y-auto">
+      <div  v-for="rutina in rutinas" :key="rutina.id">
         <div
           class="flex flex-col bg-white hover:bg-gray-200 shadow-md hover:shadow-lg transition-shadow rounded-2xl p-6 border border-gray-200 gap-2"
         >
@@ -81,6 +81,10 @@
           </div>
         </div>
       </div>
+
+    </div>
+    <div v-else class="text-center text-gray-500 bg-gray-200 p-6 rounded-2xl">
+      No hay rutinas creadas
     </div>
   </div>
 </template>
@@ -93,6 +97,8 @@ import { useAuthStore } from "@/utils/auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Plus, SquarePen, Trash } from "lucide-vue-next";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const layoutStore = useLayoutStore();
 const auth = useAuthStore();
 layoutStore.setTitle("Rutinas de Entrenamiento");
@@ -103,8 +109,10 @@ const route = useRoute();
 const rutinas = ref([]);
 
 onMounted(async () => {
+  emit("loading-start");
   const auth = useAuthStore();
   const token = auth.getToken();
+
   try {
     const response = await axios.get(`http://localhost:8081/trains/user/${auth.getId()}`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -112,6 +120,8 @@ onMounted(async () => {
     rutinas.value = response.data;
   } catch (error) {
     console.error(error);
+  } finally {
+    emit("loading-end");
   }
 });
 

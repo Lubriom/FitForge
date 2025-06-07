@@ -132,6 +132,8 @@ import { useAuthStore } from "@/utils/auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Trash } from "lucide-vue-next";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
 const auth = useAuthStore();
 
 const layoutStore = useLayoutStore();
@@ -238,6 +240,8 @@ const editarEjercicio = async () => {
 };
 
 onMounted(async () => {
+  emit("loading-start");
+
   try {
     const ejercicioId = router.currentRoute.value.params.id;
     const response = await axios.get(`http://localhost:8081/exercises/get/${ejercicioId}`);
@@ -255,6 +259,8 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error al cargar el ejercicio:", error);
     errors.value.serverError = "No se pudo cargar el ejercicio.";
+  } finally {
+    emit("loading-end");
   }
 });
 
