@@ -35,7 +35,6 @@ export const useAuthStore = defineStore("auth", () => {
   function checkTokenExpiry(exp, now) {
     const timeLeft = exp - now;
 
-    console.log(`Tiempo restante del token: ${timeLeft} segundos`);
     if (timeLeft <= 300 && timeLeft > 0) {
       // Mostrar toast con opción para extender
       toast(

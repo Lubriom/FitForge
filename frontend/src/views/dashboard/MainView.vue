@@ -370,7 +370,6 @@ const emit = defineEmits(["loading-start", "loading-end"]);
 
 const auth = useAuthStore();
 const layoutStore = useLayoutStore();
-layoutStore.setTitle("Bienvenido, " + auth.getName() + " !");
 
 const user = ref({});
 const userInfo = ref({});
@@ -392,14 +391,18 @@ onMounted(async () => {
 
   try {
     const [response, responseInfo, responsePato, responseRutinas, responseDias, responseMetricas] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/patologias`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
@@ -441,6 +444,8 @@ onMounted(async () => {
       console.warn("rutinaActual no tiene 'dias'");
     }
 
+    layoutStore.setTitle(`Bienvenido, ${user.value.nombre}!`);
+
     svgImc.value = user.genero === "Hombre" ? maleSvg : femaleSvg;
   } catch (error) {
     console.error("Error al cargar los datos:", error);
@@ -454,16 +459,21 @@ const marcarDiaComoCompletado = async () => {
 
   try {
     await axios.patch(
-      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/day/${rutinaActual.value.diaActual.id}/finalizar`,
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/day/${
+        rutinaActual.value.diaActual.id
+      }/finalizar`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
 
-    const responseDias = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${auth.getId()}/days`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const responseDias = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${auth.getId()}/days`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
     diasEntrenados.value = responseDias.data;
 
     // Actualizar el estado local

@@ -108,7 +108,7 @@
         </div>
 
         <!-- Botón -->
-        <button
+        <button id="register"
           type="submit"
           class="bg-tertiary-500 hover:bg-tertiary-600 transition-colores duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2"
         >
@@ -178,6 +178,7 @@ const register = async (event) => {
   event.preventDefault();
 
   try {
+    document.getElementById("register").disabled = true;
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
 
     const registerSchema = z.object({
@@ -214,6 +215,9 @@ const register = async (event) => {
     // Hacer la solicitud al backend
     const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/register`, user.value);
 
+    if(response.status !== 200) {
+      console.log(response.data);
+    }
     // Si la respuesta tiene un token, proceder con el login
     if (response.data.token) {
       auth.login(response.data.token);
@@ -235,6 +239,8 @@ const register = async (event) => {
     } else {
       errors.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
     }
+  } finally {
+    document.getElementById("register").disabled = false;
   }
 };
 </script>

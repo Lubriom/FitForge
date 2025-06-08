@@ -31,7 +31,10 @@
         />
 
         <!-- Ordenar por -->
-        <select v-model="filtros.ordenarPor" class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
+        <select
+          v-model="filtros.ordenarPor"
+          class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+        >
           <option disabled value="">Ordenar por...</option>
           <option value="id">ID</option>
           <option value="nombre">Nombre</option>
@@ -42,7 +45,10 @@
         </select>
 
         <!-- Dirección -->
-        <select v-model="filtros.direccion" class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
+        <select
+          v-model="filtros.direccion"
+          class="rounded-lg px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+        >
           <option value="asc">Ascendente</option>
           <option value="desc">Descendente</option>
         </select>
@@ -52,7 +58,7 @@
           type="submit"
           class="bg-tertiary-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 cursor-pointer"
         >
-          <span class="flex items-center gap-1"><Funnel/> Filtrar</span>
+          <span class="flex items-center gap-1"><Funnel /> Filtrar</span>
         </button>
 
         <!-- Botón Reset -->
@@ -70,7 +76,7 @@
       <table class="table-fixed bg-white rounded-lg">
         <thead class="sticky top-0">
           <tr class="bg-gray-100 text-left">
-            <th class="p-3  cursor-pointer w-1/12 sm:w-12">
+            <th class="p-3 cursor-pointer w-1/12 sm:w-12">
               <button @click="sortBy('id')">ID</button>
             </th>
             <th class="p-3 w-1/12 text-center">Foto</th>
@@ -96,7 +102,7 @@
               <div class="flex justify-center items-center">
                 <img
                   class="w-8 h-8 rounded-lg object-cover"
-                  :src="'http://localhost:8081/pfp/' + user.profile_img"
+                  :src="`${imagenUrl}/pfp/` + user.profile_img"
                   alt="Foto de perfil"
                 />
               </div>
@@ -148,9 +154,7 @@
       </table>
     </div>
     <!-- Paginación -->
-    <div
-      class="bg-gray-100 p-2 rounded-xl flex justify-between items-center "
-    >
+    <div class="bg-gray-100 p-2 rounded-xl flex justify-between items-center">
       <button
         @click="prevPage"
         :disabled="page <= 1"
@@ -177,7 +181,7 @@ import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
-
+const imagenUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}`;
 // Stores
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Lista de Usuarios");
@@ -223,7 +227,6 @@ const fetchUsers = async () => {
   } finally {
     emit("loading-end");
   }
-
 };
 
 // Orden desde headers de tabla
@@ -325,7 +328,7 @@ import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel } from "luci
 </script>
 
 <style scoped>
-.rotate:hover > *{
+.rotate:hover > * {
   transition: all 0.5s ease-in-out;
   transform: rotate(-360deg);
 }

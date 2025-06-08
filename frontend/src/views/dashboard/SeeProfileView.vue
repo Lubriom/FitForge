@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-col gap-6 h-full">
     <div class="bg-gray-100 p-4 rounded-2xl h-fit xl:h-full w-full flex flex-col xl:flex-row gap-4">
-      <div class="flex flex-row xl:flex-col gap-3 h-full w-full xl:w-1/3 justify-evenly items-center xl:justify-around">
+      <div
+        class="flex flex-col sm:flex-row xl:flex-col gap-3 h-full w-full xl:w-1/3 justify-evenly items-center xl:justify-around"
+      >
         <!-- Imagen de perfil y nombre -->
         <div class="flex flex-col items-center gap-4">
           <div class="relative w-64 h-64 rounded-full border-4 border-tertiary-500 overflow-hidden bg-white shadow-md">
@@ -433,11 +435,15 @@ onMounted(async () => {
 
   try {
     const [response, responseInfo, responseRutinas, responseDias, response7dias, responsePato] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
@@ -449,7 +455,9 @@ onMounted(async () => {
       })
     ]);
 
-    imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${response.data.profile_img}`;
+    imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${
+      response.data.profile_img
+    }`;
 
     user.value = response.data;
     userInfo.value = responseInfo.data;

@@ -37,8 +37,6 @@ onMounted(() => {
     const now = Math.floor(Date.now() / 1000);
     authStore.checkTokenExpiry(decoded.exp, now);
 
-    // Puedes añadir un console.log para debug:
-    console.log(`Token expira en ${decoded.exp - now} segundos`);
   }, 60 * 1000);
 });
 

@@ -40,7 +40,7 @@ export class AuthController {
     } catch (error) {
       res.status(500).json({ error: "Error interno" });
       console.log(error);
-    }
+    } 
   }
 
   static async login(req, res) {

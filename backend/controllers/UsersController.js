@@ -141,6 +141,7 @@ export class UserController {
       altura: parseFloat(req.body.altura / 100),
       discapacidad: req.body.discapacidad,
       imc: parseFloat((req.body.peso / (((req.body.altura / 100) * req.body.altura) / 100)).toFixed(2)),
+      rm: parseFloat(req.body.rm ?? null),
       fechaRegistro: new Date().toISOString()
     };
 

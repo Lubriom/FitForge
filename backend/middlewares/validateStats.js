@@ -5,15 +5,16 @@ const infoSchema = z.object({
     .number({ invalid_type_error: "Peso debe ser un número" })
     .min(1, "Peso debe ser mayor que 0")
     .max(500, "Peso demasiado alto"),
+
+  altura: z
+    .number({ invalid_type_error: "Altura debe ser un número" })
+    .min(30, "Altura demasiado baja")
+    .max(300, "Altura demasiado alta"),
+    
   rm: z
     .number({ invalid_type_error: "RM debe ser un número" })
     .min(0, "RM debe ser mayor o igual que 0")
     .max(500, "RM demasiado alto"),
-
-  altura: z
-    .number({ invalid_type_error: "Altura debe ser un número" })
-    .min(30, "La altura debe ser mayor que 30, y en cm")
-    .max(300, "Altura demasiado alta"),
 
   discapacidad: z.enum(["no", "0-32", "33-64", "65-100"], {
     errorMap: () => ({ message: "Selecciona un grado de discapacidad válido." })

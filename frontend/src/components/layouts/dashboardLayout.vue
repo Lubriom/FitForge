@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-screen">
+  <div class="flex flex-col h-[100dvh]">
     <transition name="fade-out">
       <div v-if="loading" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-90">
         <div class="w-16 h-16 border-4 border-tertiary-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -13,7 +13,7 @@
 
         <main class="w-full h-full flex flex-col gap-2 overflow-hidden">
           <div class="flex justify-between items-center px-2 pb-1">
-            <h1 class="text-black text-2xl font-bold">{{ layoutStore.title }}</h1>
+            <p class="text-black text-2xl font-bold">{{ layoutStore.title }}</p>
             <div class="flex bg-tertiary-500 p-1 rounded-full shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]">
               <div class="justify-center items-center px-4 hidden sm:flex">
                 <b class="mr-2">Rol:</b> {{ capitalizar(auth.getRole()) }}

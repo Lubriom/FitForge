@@ -5,6 +5,9 @@ import axios from "axios";
 import { useAuthStore } from "@/utils/Auth";
 import { LucideAirVent, Trash } from "lucide-vue-next";
 import { z } from "zod";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -69,11 +72,11 @@ onMounted(async () => {
 const addEjercicio = (dia) => {
   dia.ejercicios.push({
     id: Date.now(), // Temporal en frontend
-    ejercicioId: null,
-    series: null,
-    repeticiones: null,
-    peso: null,
-    descanso: null,
+    ejercicioId: 1,
+    series: "0",
+    repeticiones: "0",
+    peso: "0",
+    descanso: "0",
     ejercicioNombre: ""
   });
 };
@@ -197,7 +200,7 @@ const submit = async () => {
     if (err instanceof z.ZodError) {
       // Aquí puedes manejar errores para mostrar en UI
       console.error("Errores de validación:", err.errors);
-      alert("Hay errores en el formulario. Revisa los campos.");
+      toast.error(err.errors[0].message);
     } else {
       console.error("Error al guardar cambios:", err);
       alert("Error al guardar los cambios.");

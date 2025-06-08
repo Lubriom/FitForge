@@ -30,10 +30,11 @@
                 Fuerza (RM):
                 <input
                   type="text"
-                  v-model="form.rm"
+                  v-model.number="form.rm"
                   class="w-full rounded-xl px-4 py-2 mt-1 text-black bg-gray-200 outline-tertiary-500"
                   required
                 />
+                <span v-if="errors.rm" class="text-sm text-red-600">{{ errors.rm[0] }}</span>
               </label>
 
               <label class="w-full">
@@ -44,6 +45,7 @@
                   class="w-full rounded-xl px-4 py-2 mt-1 text-black bg-gray-200 outline-tertiary-500"
                   required
                 />
+                <span v-if="errors.peso" class="text-sm text-red-600">{{ errors.peso[0] }}</span>
               </label>
             </div>
             <div class="flex flex-row gap-4 mb-4">
@@ -55,6 +57,7 @@
                   class="w-full rounded-xl px-4 py-2 mt-1 text-black bg-gray-200 outline-tertiary-500"
                   required
                 />
+                <span v-if="errors.altura" class="text-sm text-red-600">{{ errors.altura[0] }}</span>
               </label>
               <label class="w-full">
                 Discapacidad reconocida:
@@ -68,6 +71,7 @@
                   <option value="33-64">Discapacidad reconocida entre el 33% y el 64%</option>
                   <option value="65-100">Discapacidad reconocida superior o igual al 65%</option>
                 </select>
+                <span v-if="errors.discapacidad" class="text-sm text-red-600">{{ errors.discapacidad[0] }}</span>
               </label>
             </div>
           </div>
@@ -96,6 +100,9 @@
                   </div>
                 </label>
               </div>
+              <span v-if="errors.patologiasSeleccionadas" class="text-sm text-red-600">{{
+                errors.patologiasSeleccionadas[0]
+              }}</span>
             </div>
           </div>
         </div>
@@ -178,8 +185,8 @@ const patologias = {
 
 const form = ref({
   rm: "0",
-  peso: "",
-  altura: "",
+  peso: "0",
+  altura: "0",
   discapacidad: null,
   patologiasSeleccionadas: []
 });
@@ -192,8 +199,59 @@ const errors = ref({
   patologiasSeleccionadas: ""
 });
 
+const infoSchema = z.object({
+  peso: z
+    .number({ invalid_type_error: "Peso debe ser un número" })
+    .min(1, "Peso debe ser mayor que 0")
+    .max(500, "Peso demasiado alto"),
+
+  altura: z
+    .number({ invalid_type_error: "Altura debe ser un número" })
+    .min(30, "Altura demasiado baja")
+    .max(300, "Altura demasiado alta"),
+
+  rm: z
+    .number({ invalid_type_error: "RM debe ser un número" })
+    .min(1, "RM demasiado baja")
+    .max(300, "RM demasiado alta"),
+
+  discapacidad: z.enum(["no", "0-32", "33-64", "65-100"], {
+    errorMap: () => ({ message: "Selecciona un grado de discapacidad válido." })
+  }),
+
+  patologiasSeleccionadas: z
+    .array(
+      z.enum([
+        "Cardíacas",
+        "Respiratorias",
+        "Metabólicas",
+        "Musculoesqueléticas",
+        "Neurológicas",
+        "Digestivas",
+        "Psicológicas"
+      ]),
+      {
+        errorMap: () => ({ message: "Selecciona al menos una patología válida." })
+      }
+    )
+    .optional()
+});
+
 const nextStep = () => {
-  if (step.value < 2) step.value++;
+  if (step.value === 1 && step.value < 2) {
+    try {
+      infoSchema.parse(form.value);
+      errors.value = {}; // Limpiar errores si todo va bien
+      step.value++;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        errors.value = err.flatten().fieldErrors;
+        return;
+      }
+    }
+  } else {
+    step.value++;
+  }
 };
 
 const prevStep = () => {
@@ -204,42 +262,6 @@ const enviarFormulario = async (event) => {
   event.preventDefault();
 
   try {
-    const infoSchema = z.object({
-      peso: z
-        .number({ invalid_type_error: "Peso debe ser un número" })
-        .min(1, "Peso debe ser mayor que 0")
-        .max(500, "Peso demasiado alto"),
-      rm: z
-        .number({ invalid_type_error: "RM debe ser un número" })
-        .min(0, "RM debe ser mayor o igual que 0")
-        .max(500, "RM demasiado alto"),
-      altura: z
-        .number({ invalid_type_error: "Altura debe ser un número" })
-        .min(30, "La altura debe ser mayor o igual que 0, y en cm")
-        .max(300, "Altura demasiado alta"),
-
-      discapacidad: z.enum(["no", "0-32", "33-64", "65-100"], {
-        errorMap: () => ({ message: "Selecciona un grado de discapacidad válido." })
-      }),
-
-      patologiasSeleccionadas: z
-        .array(
-          z.enum([
-            "Cardíacas",
-            "Respiratorias",
-            "Metabólicas",
-            "Musculoesqueléticas",
-            "Neurológicas",
-            "Digestivas",
-            "Psicológicas"
-          ]),
-          {
-            errorMap: () => ({ message: "Selecciona al menos una patología válida." })
-          }
-        )
-        .optional()
-    });
-
     infoSchema.parse(form.value);
     alert("Formulario enviado correctamente");
 
@@ -266,7 +288,9 @@ onMounted(async () => {
 
   try {
     const [responseUser, responseInfo, responsePato] = await Promise.all([
-      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      }),
       axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
@@ -276,11 +300,11 @@ onMounted(async () => {
     ]);
 
     form.value = {
-      peso: responseInfo.data.peso,
-      altura: responseInfo.data.altura * 100,
-      rm: responseInfo.data.rm || 0,
-      discapacidad: responseInfo.data.discapacidad,
-      patologiasSeleccionadas: responsePato.data.map((patologia) => patologia.patologia)
+      peso: responseInfo.data?.peso || 0,
+      altura: responseInfo.data?.altura * 100 || 0,
+      rm: responseInfo.data?.rm ?? 0,
+      discapacidad: responseInfo.data?.discapacidad || "no",
+      patologiasSeleccionadas: responsePato.data?.map((patologia) => patologia.patologia)
     };
   } catch (error) {
     console.error("Error al cargar la info del usuario:", error);

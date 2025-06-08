@@ -40,6 +40,10 @@ import Password from "../../components/auths/Password.vue";
 import BaseModal from "@/components/basics/Modal.vue";
 import { useLayoutStore } from "@/stores/layoutStore";
 
+const emit = defineEmits(["loading-start", "loading-end"]);
+
+emit("loading-start")
+
 const layoutStore = useLayoutStore();
 layoutStore.setTitle("Configuración");
 const titleModal = "¿Estás seguro que deseas eliminar tu cuenta?";
@@ -54,4 +58,7 @@ const openModal = () => {
   showModal.value = true;
 };
 
+setInterval(() => {
+  emit("loading-end");
+}, 2000);
 </script>

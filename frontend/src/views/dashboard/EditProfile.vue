@@ -192,12 +192,14 @@ onMounted(async () => {
   const token = auth.getToken();
 
   try {
-    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${route.params.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
+    // Carga usuario
+    const { data } = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${route.params.id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
     user.value = data;
-
     imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${data.profile_img}`;
 
     form.value = {
@@ -210,8 +212,19 @@ onMounted(async () => {
       role: data.role
     };
     layoutStore.setTitle("Datos de " + data.nombre + " " + data.apellido + " " + data.sapellido);
+
+    // Carga rutinas
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${route.params.id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+    rutinas.value = response.data;
   } catch (error) {
-    console.error("Error al cargar los datos del usuario:", error);
+    console.error("Error al cargar los datos o rutinas del usuario:", error);
+  } finally {
+    emit("loading-end");
   }
 });
 
@@ -269,9 +282,13 @@ const guardarCambios = async () => {
     userUpdateSchema.parse(form.value);
 
     // Llamada PATCH
-    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, form.value, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await axios.patch(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`,
+      form.value,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
 
     if (auth.getId() == route.params.id) auth.login(response.data.token); // si es estrictamente necesario
 
@@ -290,8 +307,6 @@ const guardarCambios = async () => {
     } else {
       console.error("Error al actualizar:", error);
     }
-  } finally {
-    emit("loading-end");
   }
 };
 
@@ -318,16 +333,12 @@ const changePass = async (event) => {
     }
 
     const passSchema = z.object({
-      password: z
-        .string()
-        .refine((val) => passwordRegex.test(val), {
-          message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
-        }),
-      respassword: z
-        .string()
-        .refine((val) => passwordRegex.test(val), {
-          message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
-        })
+      password: z.string().refine((val) => passwordRegex.test(val), {
+        message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+      }),
+      respassword: z.string().refine((val) => passwordRegex.test(val), {
+        message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
+      })
     });
 
     Object.keys(errorsPass.value).forEach((key) => (errorsPass.value[key] = ""));
@@ -338,9 +349,13 @@ const changePass = async (event) => {
       errorsPass.value.respassword = "Las contraseñas no coinciden";
       return;
     }
-    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, userPass.value, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const response = await axios.patch(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`,
+      userPass.value,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
     alert("Contraseña cambiada con éxito");
 
     if (response.data.message) alert(response.data.message);
@@ -382,46 +397,38 @@ async function uploadImage() {
     alert("Por favor, selecciona una imagen.");
     return;
   }
-
   const formData = new FormData();
   formData.append("profile_img", file);
 
   try {
     const token = auth.getToken();
 
-    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "multipart/form-data"
+    const response = await axios.patch(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
       }
-    });
+    );
 
     if (auth.getId() == route.params.id) auth.login(response.data.token);
 
     layoutStore.setTitle(`Datos de ${form.value.nombre} ${form.value.apellido} ${form.value.sapellido}`);
 
     alert("Imagen subida correctamente");
-    window.location.reload();
   } catch (error) {
     alert("Error al subir la imagen");
+  } finally {
+    window.location.reload();
   }
 }
 
 // Consultar rutinas
 
 const rutinas = ref([]);
-
-onMounted(async () => {
-  const token = auth.getToken();
-  try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${route.params.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    rutinas.value = response.data;
-  } catch (error) {
-    console.error("Error al cargar las rutinas del usuario:", error);
-  }
-});
 </script>
 
 <style scoped>
