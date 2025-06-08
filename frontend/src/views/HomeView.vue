@@ -2,22 +2,22 @@
   <div
     class="relative flex h-[35rem] justify-center flex-col w-full backface-hidden overflow-hidden text-white shadow-md"
   >
-    <div class="absolute bg-black inset-0">
+    <div class="absolute md:bg-black bg-transparent inset-0">
       <div class="absolute flex w-full bg-cover inset-0"></div>
       <!-- Fondo base (imagen a la derecha) -->
-      <div class="w-3/5 h-full bg-cover bg-no-repeat float-right bg-[url(/imgs/header.avif)]"></div>
+      <div class="w-full md:w-3/5 h-full bg-cover bg-no-repeat float-right bg-[url(/imgs/header.avif)]"></div>
 
       <!-- Capa superior con clip-path en curva -->
-      <div class="absolute inset-0 bg-linear-[90deg,#000000_40%,transparent_80%]"></div>
+      <div class="bg-black/50 md:flex absolute inset-0 md:bg-transparent md:bg-linear-[90deg,#000000_40%,transparent_80%]"></div>
     </div>
-    <div class="z-10 flex flex-col justify-center items-start px-10 gap-6 text-white w-1/2">
-      <h1 class="text-6xl font-light w-[500px] mt-6" style="font-family: var(--font-inter)">
+    <div class="z-10 flex flex-col justify-center items-center md:items-start px-10 gap-6 text-white w-full md:w-1/2">
+      <h1 class="text-4xl self-start md:text-6xl font-light md:w-[500px] mt-6" style="font-family: var(--font-inter)">
         Forja Disciplina. Construye Fuerza.
       </h1>
-      <p class="text-xl text-gray-300 font-light w-[600px]">
+      <p class="text-xl text-gray-300 font-light md:w-[600px]">
         En FitForge nos dedicamos a transformar tu vida llevando tus entrenamientos y rutinas a otro nivel.
       </p>
-      <div class="flex gap-4">
+      <div class="flex flex-col md:flex-row items-center gap-4">
         <router-link
           :to="{ name: 'Register' }"
           class="text-2xl bg-tertiary-500 text-white hover:bg-orange-700 p-4 px-6 font-bold brochazo-horizontal transition-all duration-300 anton"
@@ -55,7 +55,7 @@
       <h1 style="font-family: var(--font-anton)" class="text-4xl sm:text-5xl lg:text-6xl font-bold" data-aos="fade-up">
         ¿QUE ES FITFORGE?
       </h1>
-      <p class="text-base sm:text-lg text-gray-600 max-w-full lg:max-w-[90%]" data-aos="fade-up" data-aos-delay="100">
+      <p class="text-base text-justify sm:text-lg text-gray-600 max-w-full lg:max-w-[90%]" data-aos="fade-up" data-aos-delay="100">
         FitForge es tu aliado para forjar disciplina, mejorar tu rendimiento y transformar tu cuerpo. Crea planes
         personalizados, sigue tu progreso y lleva tu estilo de vida fitness al siguiente nivel.
       </p>
@@ -226,7 +226,7 @@
 
 <script setup>
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { onMounted, ref } from "vue";
 import {
   Dumbbell,

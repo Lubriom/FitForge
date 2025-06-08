@@ -380,7 +380,6 @@ const rutinaActual = ref({});
 const diasEntrenados = ref([]);
 const datosPeso = ref([]);
 
-const baseURL = "http://localhost:8081";
 const svgImc = ref("");
 const imageURL = ref("");
 
@@ -389,22 +388,22 @@ onMounted(async () => {
   const userId = auth.getId();
   const token = auth.getToken();
 
-  imageURL.value = `http://localhost:8081/pfp/${auth.getImage()}`;
+  imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${auth.getImage()}`;
 
   try {
     const [response, responseInfo, responsePato, responseRutinas, responseDias, responseMetricas] = await Promise.all([
-      axios.get(`http://localhost:8081/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`http://localhost:8081/users/get/${userId}/info/last`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/${userId}/patologias`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/patologias`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`http://localhost:8081/trains/user/${userId}/days`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/metrics/${userId}`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/metrics/${userId}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);
@@ -455,14 +454,14 @@ const marcarDiaComoCompletado = async () => {
 
   try {
     await axios.patch(
-      `http://localhost:8081/trains/day/${rutinaActual.value.diaActual.id}/finalizar`,
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/day/${rutinaActual.value.diaActual.id}/finalizar`,
       {},
       {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
 
-    const responseDias = await axios.get(`http://localhost:8081/trains/user/${auth.getId()}/days`, {
+    const responseDias = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${auth.getId()}/days`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     diasEntrenados.value = responseDias.data;
@@ -506,7 +505,7 @@ function getIMCPercentage(imc) {
 const playlists = {
   0: {
     name: "Domingo Chill",
-    url: "https://open.spotify.com/embed/playlist/37i9dQZF1DX3PIPIT6lEg5"
+    url: "https://open.spotify.com/embed/playlist/3FqbJH0iGpEo4hZDqsutKT?si=44c72e97a9c94934"
   },
   1: {
     name: "Motivation Monday",

@@ -118,7 +118,7 @@ import { LayoutDashboard } from "lucide-vue-next";
 import { Dumbbell } from "lucide-vue-next";
 import { BicepsFlexed } from "lucide-vue-next";
 import { Shield } from "lucide-vue-next";
-import { useAuthStore } from "@/utils/auth.js";
+import { useAuthStore } from "@/utils/Auth";
 import { ChartNoAxesCombined } from "lucide-vue-next";
 import logo from "/logov3.svg";
 
@@ -128,7 +128,7 @@ const expanded = ref(false);
 const dropdownOpen = ref(false);
 
 const imageURL = ref("");
-imageURL.value = `http://localhost:8081/pfp/${auth.getImage()}`;
+imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${auth.getImage()}`;
 
 function toggleDropdown() {
   dropdownOpen.value = !dropdownOpen.value;

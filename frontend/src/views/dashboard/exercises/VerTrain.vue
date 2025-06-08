@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useRouter, useRoute } from "vue-router";
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FileDown, SquarePen } from "lucide-vue-next";
@@ -45,7 +45,7 @@ async function fetchPlan() {
   error.value = "";
 
   try {
-    const res = await axios.get(`http://localhost:8081/trains/plan/${planId}`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
 

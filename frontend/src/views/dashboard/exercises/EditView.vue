@@ -128,7 +128,7 @@ import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Trash } from "lucide-vue-next";
 
@@ -220,7 +220,7 @@ const editarEjercicio = async () => {
     const token = auth.getToken();
     ejercicioSchema.parse(form.value);
 
-    await axios.patch(`http://localhost:8081/exercises/update/${ejercicioId}`, form.value, {
+    await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/update/${ejercicioId}`, form.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -244,7 +244,7 @@ onMounted(async () => {
 
   try {
     const ejercicioId = router.currentRoute.value.params.id;
-    const response = await axios.get(`http://localhost:8081/exercises/get/${ejercicioId}`);
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get/${ejercicioId}`);
 
     form.value = {
       nombre: response.data.nombre || "",
@@ -267,7 +267,7 @@ onMounted(async () => {
 const eliminarEjercicio = async () => {
   const ejercicioId = router.currentRoute.value.params.id;
   try {
-    await axios.delete(`http://localhost:8081/exercises/delete/${ejercicioId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/delete/${ejercicioId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
     alert("Ejercicio eliminado con exito");

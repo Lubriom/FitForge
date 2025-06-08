@@ -401,7 +401,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import { useLayoutStore } from "@/stores/layoutStore";
@@ -433,23 +433,23 @@ onMounted(async () => {
 
   try {
     const [response, responseInfo, responseRutinas, responseDias, response7dias, responsePato] = await Promise.all([
-      axios.get(`http://localhost:8081/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`http://localhost:8081/users/get/${userId}/info/last`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`http://localhost:8081/trains/user/${userId}/days`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/trains/user/${userId}/finish/days`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${userId}/finish/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/${userId}/patologias`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}/patologias`, {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);
 
-    imageURL.value = `http://localhost:8081/pfp/${response.data.profile_img}`;
+    imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${response.data.profile_img}`;
 
     user.value = response.data;
     userInfo.value = responseInfo.data;

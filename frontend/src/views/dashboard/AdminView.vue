@@ -173,7 +173,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
@@ -206,7 +206,7 @@ const fetchUsers = async () => {
       filtros.query = "";
     }
 
-    const res = await axios.get("http://localhost:8081/users/paginate", {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/paginate`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` },
       params: {
         page: page.value,
@@ -256,7 +256,7 @@ const nextPage = () => {
 const deleteUser = async (userId) => {
   try {
     if (auth.getId() === userId) return alert("No puedes borrar tu propio usuario.");
-    await axios.delete(`http://localhost:8081/users/delete/${userId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/delete/${userId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
     fetchUsers();
@@ -268,7 +268,7 @@ const deleteUser = async (userId) => {
 const activateUser = async (userId) => {
   try {
     await axios.patch(
-      `http://localhost:8081/users/update/${userId}`,
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${userId}`,
       { activo: 1 },
       {
         headers: { Authorization: `Bearer ${auth.getToken()}` }

@@ -157,7 +157,7 @@ import { z } from "zod";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 const emit = defineEmits(["loading-start", "loading-end"]);
 
 const auth = useAuthStore();
@@ -243,7 +243,7 @@ const enviarFormulario = async (event) => {
     infoSchema.parse(form.value);
     alert("Formulario enviado correctamente");
 
-    axios.post(`http://localhost:8081/users/stats/register`, form.value, {
+    axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/stats/register`, form.value, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }
@@ -266,11 +266,11 @@ onMounted(async () => {
 
   try {
     const [responseUser, responseInfo, responsePato] = await Promise.all([
-      axios.get(`http://localhost:8081/users/get/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
-      axios.get(`http://localhost:8081/users/get/${id}/info/last`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}`, { headers: { Authorization: `Bearer ${token}` } }),
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/${id}/patologias`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}/patologias`, {
         headers: { Authorization: `Bearer ${token}` }
       })
     ]);

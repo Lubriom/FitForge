@@ -193,7 +193,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import axios from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
 import PesoChart from "@/components/basics/PesoChart.vue";
@@ -222,16 +222,16 @@ onMounted(async () => {
 
   try {
     const [responseMetricas, responseUserInfo, response7dias, responseEstadisticas] = await Promise.all([
-      axios.get(`http://localhost:8081/users/get/metrics/${id}`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/metrics/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/${id}/info/last`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}/info/last`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/trains/user/${id}/finish/days`, {
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${id}/finish/days`, {
         headers: { Authorization: `Bearer ${token}` }
       }),
-      axios.get(`http://localhost:8081/users/get/${id}/estadisticas`, { headers: { Authorization: `Bearer ${token}` } })
+      axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${id}/estadisticas`, { headers: { Authorization: `Bearer ${token}` } })
     ]);
 
     responseMetricas.data.sort((a, b) => new Date(a.fechaRegistro) - new Date(b.fechaRegistro));

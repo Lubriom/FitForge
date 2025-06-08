@@ -5,7 +5,7 @@ import DefaultLayout from "../src/components/layouts/mainLayout.vue";
 import DashboardLayout from "../src/components/layouts/dashboardLayout.vue";
 import AuthLayout from "../src/components/layouts/authLayout.vue";
 import CleanLayout from "../src/components/layouts/cleanLayout.vue";
-import { useAuthStore, decodedToken } from "@/utils/auth.js";
+import { useAuthStore, decodedToken } from "@/utils/Auth.js";
 
 // Layout dinámico
 const route = useRoute();

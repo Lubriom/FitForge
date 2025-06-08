@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
@@ -41,7 +41,7 @@ const deleteUser = async () => {
   const token = auth.getToken();
 
   try {
-    const response = await axios.delete(`http://localhost:8081/users/delete/${route.params.id}`, {
+    const response = await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/delete/${route.params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     user.value = response.data;

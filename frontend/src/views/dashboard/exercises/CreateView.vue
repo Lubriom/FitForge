@@ -122,7 +122,7 @@ import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -198,7 +198,7 @@ const crearEjercicio = async () => {
     const token = auth.getToken();
     ejercicioSchema.parse(form.value);
 
-    await axios.post("http://localhost:8081/exercises/create", form.value, {
+    await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/create`, form.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

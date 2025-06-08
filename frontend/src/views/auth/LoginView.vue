@@ -68,7 +68,7 @@ import axios from "axios";
 import { ref, onMounted, computed } from "vue";
 import anime from "animejs";
 import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { Eye } from "lucide-vue-next";
 import { EyeClosed } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
@@ -136,7 +136,7 @@ const login = async (event) => {
     loginSchema.parse(user.value);
 
     // Llamada al backend
-    const response = await axios.post("http://localhost:8081/login", user.value);
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/login`, user.value);
 
     if (response.data.token) {
       auth.login(response.data.token);

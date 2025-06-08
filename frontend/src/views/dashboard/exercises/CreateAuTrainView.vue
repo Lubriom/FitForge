@@ -148,7 +148,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { z } from "zod";
 import { useRouter } from "vue-router";
 import { Info } from "lucide-vue-next";
@@ -177,7 +177,7 @@ onMounted(async () => {
 
   const token = auth.getToken();
   try {
-    const response = await axios.get(`http://localhost:8081/users/get/${auth.getId()}/info/last`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${auth.getId()}/info/last`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     form.rm = response.data.rm || null;
@@ -248,7 +248,7 @@ const enviarFormulario = async () => {
       usuarioId: auth.getId()
     };
 
-    const response = await axios.post("http://localhost:8081/trains/autocreate", payload, {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/autocreate`, payload, {
       headers: {
         Authorization: `Bearer ${auth.getToken()}`
       }

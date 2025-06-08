@@ -104,7 +104,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "@/utils/auth.js";
+import { useAuthStore } from "@/utils/Auth.js";
 
 const auth = useAuthStore();
 const router = useRouter();

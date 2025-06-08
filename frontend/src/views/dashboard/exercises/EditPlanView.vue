@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { LucideAirVent, Trash } from "lucide-vue-next";
 import { z } from "zod";
 
@@ -30,7 +30,7 @@ onMounted(async () => {
   emit("loading-start");
 
   try {
-    const res = await axios.get(`http://localhost:8081/trains/plan/${planId}`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
     const data = res.data;
@@ -57,7 +57,7 @@ onMounted(async () => {
       }))
     }));
 
-    const resEjercicios = await axios.get("http://localhost:8081/exercises/get");
+    const resEjercicios = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get`);
     ejerciciosDisponibles.value = resEjercicios.data;
   } catch (err) {
     console.error("Error cargando plan:", err);
@@ -189,7 +189,7 @@ const submit = async () => {
     planSchema.parse(planData);
     const userId = route.params.userId;
 
-    await axios.patch(`http://localhost:8081/trains/update/${planId}/user/${userId}`, planData, {
+    await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/update/${planId}/user/${userId}`, planData, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
     router.push("/dashboard/train");

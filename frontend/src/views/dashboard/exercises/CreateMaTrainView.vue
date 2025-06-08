@@ -100,7 +100,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { z } from "zod";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
@@ -129,7 +129,7 @@ onMounted(async () => {
   emit("loading-start");
 
   try {
-    const response = await axios.get(`http://localhost:8081/users/get/${idParam}`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${idParam}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }
@@ -182,7 +182,7 @@ const submitForm = async () => {
       usuarioId: auth.getId() == idParam ? auth.getId() : idParam
     };
     // POST al backend (ajusta URL y datos según tu API)
-    const response = await axios.post("http://localhost:8081/trains/create", payload, {
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/create`, payload, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }

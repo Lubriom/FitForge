@@ -59,7 +59,7 @@
 
 <script setup>
 import { ref } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
@@ -114,7 +114,7 @@ const changePass = async (event) => {
       errors.value.respassword = "Las contraseñas no coinciden";
       return;
     }
-    const response = await axios.patch(`http://localhost:8081/users/update/${userId}`, user.value, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${userId}`, user.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
     alert("Contraseña cambiada con éxito");

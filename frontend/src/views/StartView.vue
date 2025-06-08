@@ -314,7 +314,7 @@ const enviarFormulario = async (event) => {
     infoSchema.parse(form.value);
     alert("Formulario enviado correctamente");
 
-    axios.post("http://localhost:8081/users/start", form.value, {
+    axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/start`, form.value, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }

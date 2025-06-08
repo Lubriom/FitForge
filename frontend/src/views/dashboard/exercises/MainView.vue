@@ -165,7 +165,7 @@ import axios from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen } from "lucide-vue-next";
 import { computed } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -222,7 +222,7 @@ onMounted(async () => {
   emit("loading-start");
 
   try {
-    const response = await axios.get("http://localhost:8081/exercises/get");
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get`);
     originalData.value = response.data;
     exercises.value = response.data;
   } catch (error) {

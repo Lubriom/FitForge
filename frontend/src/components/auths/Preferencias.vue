@@ -67,7 +67,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import z from "zod";
@@ -101,11 +101,11 @@ onMounted(async () => {
   const token = auth.getToken();
 
   try {
-    const { data } = await axios.get(`http://localhost:8081/users/get/${userId}`, {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    imageURL.value = `http://localhost:8081/pfp/${data.profile_img}`;
+    imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${data.profile_img}`;
 
     form.value = {
       nombre: data.nombre || "",
@@ -167,7 +167,7 @@ const guardarCambios = async () => {
     userUpdateSchema.parse(form.value);
 
     // Llamada al backend
-    const response = await axios.patch(`http://localhost:8081/users/update/${userId}`, form.value, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${userId}`, form.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -223,7 +223,7 @@ async function uploadImage() {
     const userId = auth.getId();
     const token = auth.getToken();
 
-    const response = await axios.patch(`http://localhost:8081/users/update/${userId}`, formData, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${userId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"

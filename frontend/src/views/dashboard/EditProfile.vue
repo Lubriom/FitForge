@@ -142,7 +142,7 @@
 
 <script setup>
 import { ref, onMounted, defineAsyncComponent, markRaw } from "vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useRoute } from "vue-router";
 import axios from "axios";
 import z from "zod";
@@ -192,13 +192,13 @@ onMounted(async () => {
   const token = auth.getToken();
 
   try {
-    const { data } = await axios.get(`http://localhost:8081/users/get/${route.params.id}`, {
+    const { data } = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${route.params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     user.value = data;
 
-    imageURL.value = `http://localhost:8081/pfp/${data.profile_img}`;
+    imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${data.profile_img}`;
 
     form.value = {
       nombre: data.nombre || "",
@@ -269,7 +269,7 @@ const guardarCambios = async () => {
     userUpdateSchema.parse(form.value);
 
     // Llamada PATCH
-    const response = await axios.patch(`http://localhost:8081/users/update/${route.params.id}`, form.value, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, form.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -338,7 +338,7 @@ const changePass = async (event) => {
       errorsPass.value.respassword = "Las contraseñas no coinciden";
       return;
     }
-    const response = await axios.patch(`http://localhost:8081/users/update/${route.params.id}`, userPass.value, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, userPass.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
     alert("Contraseña cambiada con éxito");
@@ -389,7 +389,7 @@ async function uploadImage() {
   try {
     const token = auth.getToken();
 
-    const response = await axios.patch(`http://localhost:8081/users/update/${route.params.id}`, formData, {
+    const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${route.params.id}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data"
@@ -414,7 +414,7 @@ const rutinas = ref([]);
 onMounted(async () => {
   const token = auth.getToken();
   try {
-    const response = await axios.get(`http://localhost:8081/trains/user/${route.params.id}`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${route.params.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     rutinas.value = response.data;

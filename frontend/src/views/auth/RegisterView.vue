@@ -21,7 +21,7 @@
         </div>
 
         <!-- Apellidos -->
-        <div class="flex flex-row justify-stretch gap-3">
+        <div class="flex flex-col md:flex-row justify-stretch gap-3">
           <div class="flex flex-col gap-2">
             <label for="apellido" class="mb-1 font-semibold text-sm text-white">Primer Apellido</label>
             <input
@@ -60,7 +60,7 @@
         </div>
 
         <!-- Contraseña -->
-        <div class="flex flex-row justify-stretch gap-3">
+        <div class="flex flex-col sm:flex-row justify-stretch gap-3">
           <div class="flex flex-col w-full gap-2">
             <label for="password" class="mb-1 font-semibold text-sm text-white">Contraseña</label>
             <div class="relative">
@@ -129,7 +129,7 @@ import { z } from "zod";
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { Eye } from "lucide-vue-next";
 import { EyeClosed } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
@@ -212,8 +212,7 @@ const register = async (event) => {
     }
 
     // Hacer la solicitud al backend
-    const response = await axios.post("http://localhost:8081/register", user.value);
-    x;
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/register`, user.value);
 
     // Si la respuesta tiene un token, proceder con el login
     if (response.data.token) {

@@ -75,7 +75,7 @@
 <script setup>
 import Header from "../HeaderDash.vue";
 import Footer from "../FooterDash.vue";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { ref } from "vue";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useRouter } from "vue-router";
@@ -89,7 +89,7 @@ const loading = ref(true);
 const dropdownOpen = ref(false);
 
 const imageURL = ref("");
-imageURL.value = `http://localhost:8081/pfp/${auth.getImage()}`;
+imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${auth.getImage()}`;
 
 const logout = () => {
   auth.logout();

@@ -93,7 +93,7 @@
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
-import { useAuthStore } from "@/utils/auth";
+import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Plus, SquarePen, Trash } from "lucide-vue-next";
 
@@ -114,7 +114,7 @@ onMounted(async () => {
   const token = auth.getToken();
 
   try {
-    const response = await axios.get(`http://localhost:8081/trains/user/${auth.getId()}`, {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${auth.getId()}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     rutinas.value = response.data;
@@ -127,7 +127,7 @@ onMounted(async () => {
 
 const eliminarRutina = async (rutinaId) => {
   try {
-    await axios.delete(`http://localhost:8081/trains/delete/${rutinaId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/delete/${rutinaId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
 
@@ -142,7 +142,7 @@ const eliminarRutina = async (rutinaId) => {
 const toggleActivo = async (rutina) => {
   try {
     await axios.patch(
-      `http://localhost:8081/trains/user/${auth.getId()}/${rutina.id}/toggle`,
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${auth.getId()}/${rutina.id}/toggle`,
       {},
       {
         headers: {

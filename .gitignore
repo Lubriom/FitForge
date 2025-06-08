@@ -142,3 +142,4 @@ eslint.config.js
 
 Dockerfile
 docker-compose.yaml
+.dockerignore
