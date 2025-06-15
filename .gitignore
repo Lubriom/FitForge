@@ -141,3 +141,6 @@ eslint.config.js
 .vscode
 
 Dockerfile
+docker-compose.yaml
+.dockerignore
+backend/prisma/seeder/

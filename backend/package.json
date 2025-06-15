@@ -6,19 +6,26 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "seed": "node prisma/seeder/seed.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lubriom",
   "license": "ISC",
   "dependencies": {
+    "@prisma/client": "6.7.0",
+    "bcryptjs": "3.0.2",
     "cors": "2.8.5",
+    "date-fns": "4.1.0",
     "dotenv": "16.5.0",
     "express": "5.1.0",
+    "jsonwebtoken": "9.0.2",
+    "multer": "1.4.5-lts.2",
     "pg": "8.15.5",
     "zod": "3.24.3"
   },
   "devDependencies": {
-    "nodemon": "3.1.9"
+    "nodemon": "3.1.9",
+    "prisma": "npm6.7.0"
   }
 }
