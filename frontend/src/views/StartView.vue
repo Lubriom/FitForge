@@ -208,7 +208,7 @@
           id="enviarFormulario"
           v-else
           @click="enviarFormulario"
-          class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer"
+          class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Enviar
         </button>
@@ -322,7 +322,6 @@ const enviarFormulario = async (event) => {
 
     toast.success("Formulario enviado correctamente");
 
-    // Esperar 5 segundos antes de redirigir
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/start`, form.value, {

@@ -46,7 +46,8 @@
         <!-- Botón -->
         <button
           type="submit"
-          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colors duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2"
+          id="login"
+          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colors duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Iniciar Sesión
         </button>
@@ -118,6 +119,7 @@ onMounted(() => {
 });
 
 const login = async (event) => {
+  document.getElementById("login").disabled = true;
   event.preventDefault();
 
   errors.value = { correo: "", password: "", serverError: "" };
@@ -161,6 +163,8 @@ const login = async (event) => {
     } else {
       errors.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
     }
+  } finally {
+    document.getElementById("login").disabled = false;
   }
 };
 </script>

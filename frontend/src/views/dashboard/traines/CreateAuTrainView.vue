@@ -136,7 +136,7 @@
             v-else
             @click="enviarFormulario"
             id="enviarFormulario"
-            class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer disabled:opacity-50"
+            class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Crear plan
           </button>

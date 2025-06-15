@@ -142,7 +142,6 @@ export const useAuthStore = defineStore("auth", () => {
    */
   function getRole() {
     const decoded = decodedToken(localStorage.getItem("log_token"));
-    console.log(decoded.role);
     return decoded.role;
   }
 

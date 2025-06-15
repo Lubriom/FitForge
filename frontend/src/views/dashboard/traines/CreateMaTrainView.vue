@@ -86,7 +86,8 @@
 
           <button
             type="submit"
-            class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer"
+            id="submit"
+            class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Crear Plan
           </button>
@@ -147,6 +148,7 @@ onMounted(async () => {
 });
 
 const submitForm = async () => {
+  document.getElementById("submit").disabled = true;
   try {
     const planSchema = z.object({
       nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
@@ -196,6 +198,8 @@ const submitForm = async () => {
   } catch (error) {
     console.error(error);
     toast.error("Error al crear el plan");
+  } finally {
+    document.getElementById("submit").disabled = false;
   }
 };
 </script>

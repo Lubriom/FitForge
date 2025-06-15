@@ -110,7 +110,7 @@
         <!-- Botón -->
         <button id="register"
           type="submit"
-          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colores duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2"
+          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colores duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Registrarse
         </button>

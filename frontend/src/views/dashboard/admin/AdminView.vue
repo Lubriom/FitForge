@@ -135,14 +135,14 @@
                   <UserPen />
                 </router-link>
                 <button
-                  v-if="user.activo == 1"
+                  v-if="user.activo == 1 && auth.isAdmin()"
                   @click="deleteUser(user.id)"
                   class="bg-red-500 hover:bg-red-800 text-white rounded-md p-2 cursor-pointer"
                 >
                   <Trash2 />
                 </button>
                 <button
-                  v-if="user.activo == 0 "
+                  v-if="user.activo == 0 && auth.isAdmin()"
                   @click="activateUser(user.id)"
                   class="bg-blue-500 hover:bg-blue-800 text-white rounded-md p-2 cursor-pointer"
                 >
