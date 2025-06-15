@@ -21,12 +21,12 @@
         <router-link
           :to="{ name: 'Register' }"
           class="text-2xl bg-tertiary-500 text-white hover:bg-orange-700 p-4 px-6 font-bold brochazo-horizontal transition-all duration-300 anton"
-          >Comienza ahora</router-link
+          >COMIENZA AHORA</router-link
         >
         <a
           href="#know"
           class="text-2xl bg-quaternary-500 text-white hover:bg-gray-700 p-4 px-6 font-bold brochazo-horizontal transition-all duration-300 anton"
-          >SABER MAS</a
+          >SABER MÁS</a
         >
       </div>
     </div>

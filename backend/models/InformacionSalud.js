@@ -38,4 +38,12 @@ export class InformacionSaludModel {
       console.error("Error al crear la información del usuario:", error);
     }
   }
+
+  static async delete({ id }) {
+    try {
+      return await prisma.informacionSalud.delete({ where: { id: parseInt(id) } });
+    } catch (error) {
+      console.error("Error al eliminar la información del usuario:", error);
+    }
+  }
 }

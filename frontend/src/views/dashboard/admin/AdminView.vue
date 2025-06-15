@@ -109,7 +109,7 @@
             </td>
             <td class="p-3">{{ user.nombre }} {{ user.apellido }} {{ user.sapellido }}</td>
             <td class="p-3 hidden sm:table-cell">{{ user.correo }}</td>
-            <td class="p-3 hidden md:table-cell">{{ user.role }}</td>
+            <td class="p-3 hidden md:table-cell">{{ capitalizar(user.role) }}</td>
             <td class="p-3 hidden lg:table-cell">
               <div class="flex justify-center items-center h-full">
                 <span v-if="user.activo == 1" class="text-green-500 bg-green-300/50 rounded-2xl px-3 py-1">
@@ -120,7 +120,7 @@
             </td>
 
             <td class="pr-2">
-              <div class="flex justify-start items-center gap-1.5 h-full">
+              <div class="flex justify-center items-center gap-1.5 h-full">
                 <router-link
                   :to="{ name: 'DashboardSeeProfile', params: { id: user.id } }"
                   class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
@@ -128,20 +128,21 @@
                   <ContactRound />
                 </router-link>
                 <router-link
+                  v-if="auth.isAdmin()"
                   :to="{ name: 'DashboardAdminEdit', params: { id: user.id } }"
                   class="bg-green-500 hover:bg-green-800 text-white rounded-md p-2"
                 >
                   <UserPen />
                 </router-link>
                 <button
-                  v-if="user.activo == 1 && auth.isAdmin()"
+                  v-if="user.activo == 1"
                   @click="deleteUser(user.id)"
                   class="bg-red-500 hover:bg-red-800 text-white rounded-md p-2 cursor-pointer"
                 >
                   <Trash2 />
                 </button>
                 <button
-                  v-if="user.activo == 0 && auth.isAdmin()"
+                  v-if="user.activo == 0 "
                   @click="activateUser(user.id)"
                   class="bg-blue-500 hover:bg-blue-800 text-white rounded-md p-2 cursor-pointer"
                 >
@@ -177,8 +178,12 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
+import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel } from "lucide-vue-next";
 import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 const imagenUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}`;
@@ -203,7 +208,6 @@ const filtros = ref({
 
 // Fetch de usuarios con filtros aplicados
 const fetchUsers = async () => {
-  emit("loading-start");
 
   try {
     if (filtros.ordenarPor === "activo") {
@@ -224,8 +228,6 @@ const fetchUsers = async () => {
     totalPages.value = res.data.totalPages;
   } catch (err) {
     console.error("Error al cargar usuarios:", err);
-  } finally {
-    emit("loading-end");
   }
 };
 
@@ -258,7 +260,7 @@ const nextPage = () => {
 // Borrar usuario
 const deleteUser = async (userId) => {
   try {
-    if (auth.getId() === userId) return alert("No puedes borrar tu propio usuario.");
+    if (auth.getId() === userId) return toast.error("No puedes borrar tu propio usuario.");
     await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/delete/${userId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
@@ -301,8 +303,11 @@ const resetFiltros = () => {
   fetchUsers();
 };
 
-// Inicial
-onMounted(fetchUsers);
+onMounted(async () => {
+  emit("loading-start");
+  fetchUsers();
+  emit("loading-end");
+});
 
 watch(
   () => filtros.value.perPage,
@@ -323,8 +328,10 @@ watch(
   }
 );
 
-// Iconos
-import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel } from "lucide-vue-next";
+const capitalizar = (texto) => {
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+};
 </script>
 
 <style scoped>

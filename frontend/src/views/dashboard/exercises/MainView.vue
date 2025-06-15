@@ -2,7 +2,7 @@
   <div class="flex flex-col h-full gap-3">
     <div class="hidden md:flex flex-row justify-between items-center gap-3 ">
       <router-link
-        v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
+        v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesCreate' }"
         class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
       >
@@ -144,7 +144,7 @@
                 </div>
                 <div class="flex h-full items-end justify-end">
                   <router-link
-                    v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
+                    v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
                     class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
                     :to="{ name: 'ExercisesEdit', params: { id: exercise.id } }"
                     ><SquarePen
@@ -187,17 +187,19 @@ const toggleFlip = (id) => {
   } else {
     flippedExercises.value.add(id);
   }
-  // For Vue reactivity with Set:
+
   flippedExercises.value = new Set(flippedExercises.value);
 };
+
+const originalData = ref([]); // Guardar todos los ejercicios
+
+
 
 const filtros = ref({
   nombre: "",
   tipo: "",
   categoria: ""
 });
-
-const originalData = ref([]); // Guardar todos los ejercicios
 
 const emitirFiltros = () => {
   exercises.value = originalData.value.filter((ej) => {

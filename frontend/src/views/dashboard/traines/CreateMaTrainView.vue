@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full h-full p-6 p-y-10 flex justify-center items-center">
-    <div class="w-4/5 h-full p-3 bg-gray-100 rounded-2xl shadow">
+  <div class="w-full h-full p-0 md:p-6 p-y-10 flex justify-center items-center">
+    <div class="w-full lg:w-4/5 h-full lg:h-fit p-3 bg-gray-100 rounded-2xl shadow">
       <div class="h-full lg:h-fit p-3 overflow-y-auto pr-2">
         <h2 class="text-2xl font-bold mb-4 text-center" v-if="idParam == auth.getId()">Crea tu entrenamiento</h2>
         <h2 class="text-2xl font-bold mb-4 text-center" v-else-if="user">
@@ -102,6 +102,9 @@ import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/Auth";
 import { z } from "zod";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -188,15 +191,11 @@ const submitForm = async () => {
       }
     });
 
-    alert("Plan creado correctamente");
+    toast.success("Plan creado correctamente");
     router.push({ name: "ExercisesTrainEdit", params: { id: response.data.id, userId: response.data.usuarioId } });
   } catch (error) {
     console.error(error);
-    alert("Error al crear el plan");
+    toast.error("Error al crear el plan");
   }
 };
 </script>
-
-<style scoped>
-/* Tailwind ya aporta estilos, aquí puedes agregar personalización */
-</style>

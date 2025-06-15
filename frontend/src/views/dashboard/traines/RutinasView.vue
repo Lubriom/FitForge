@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-3 h-full">
     <div class="flex flex-row justify-evenly items-center">
       <router-link
-        v-if="auth.getRole() === 'admin' || auth.getRole() === 'trainer'"
+        v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesTrainCreateMA', params: { id: auth.getId() } }"
         class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
         ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Manualmente</span></router-link
@@ -38,6 +38,7 @@
                   ></div>
                 </label>
                 <router-link
+                v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
                   class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
                   :to="{ name: 'ExercisesTrainEdit', params: { id: rutina.id, userId: auth.getId() } }"
                 >
@@ -96,6 +97,9 @@ import axios from "axios";
 import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Plus, SquarePen, Trash } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -133,7 +137,7 @@ const eliminarRutina = async (rutinaId) => {
 
     rutinas.value = rutinas.value.filter((r) => r.id !== rutinaId);
 
-    alert("Rutina eliminada con éxito");
+    toast.success("Rutina eliminada con éxito");
   } catch (error) {
     console.error("Error al eliminar la rutina:", error);
   }
@@ -159,7 +163,7 @@ const toggleActivo = async (rutina) => {
     // Activar solo la rutina seleccionada
     rutina.activo = true;
   } catch (error) {
-    alert("Error al cambiar el estado de la rutina");
+    toast.error("Error al cambiar el estado de la rutina");
   }
 };
 

@@ -215,9 +215,6 @@ const register = async (event) => {
     // Hacer la solicitud al backend
     const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/register`, user.value);
 
-    if(response.status !== 200) {
-      console.log(response.data);
-    }
     // Si la respuesta tiene un token, proceder con el login
     if (response.data.token) {
       auth.login(response.data.token);
@@ -237,7 +234,7 @@ const register = async (event) => {
         }
       });
     } else {
-      errors.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
+      toast.error(error.response?.data?.error || "Ha ocurrido un error inesperado.");
     }
   } finally {
     document.getElementById("register").disabled = false;

@@ -17,6 +17,11 @@
   font-style: normal;
 }
 
+.revamped {
+  font-family: "Revamped";
+  font-weight: 100;
+}
+
 :root {
   --font-bebas: "Bebas Neue", cursive;
   --font-rr: "Road Rage", sans-serif;
@@ -25,10 +30,7 @@
   --font-anton: "Anton", sans-serif;
 }
 
-.revamped {
-  font-family: "Revamped";
-  font-weight: 100;
-}
+
 
 .anton {
   font-family: "Anton", sans-serif;

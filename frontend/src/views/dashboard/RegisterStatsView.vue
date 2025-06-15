@@ -1,11 +1,11 @@
 <template>
   <div class="w-full h-full flex items-center justify-center">
     <div class="w-fit h-fit bg-white p-3 shadow-amber-600/30 shadow-lg rounded-2xl">
-      <div class="min-w-[600px] max-h-[500px] w-[800px] mx-auto p-3 space-y-6 overflow-y-auto">
+      <div class=" max-h-[500px] w-fit lg:w-[800px] mx-auto p-3 space-y-6 overflow-y-auto">
         <!-- Paso 0: Introducción -->
         <div v-if="step === 0" class="text-center space-y-4 p-4">
           <h1 class="text-3xl font-bold">¡Registrar Información!</h1>
-          <p class="text-lg text-left">
+          <p class="text-lg text-justify">
             Ayúdanos a seguir tu progreso actualizando solo los campos en los que hayas notado cambios físicos.
           </p>
           <p class="text-md text-gray-600 text-left">Este proceso es rápido y no te tomará más que unos segundos.</p>
@@ -25,7 +25,7 @@
           <h1 class="text-2xl font-bold mb-2 text-center">Registrar Información física</h1>
 
           <div class="flex flex-col">
-            <div class="flex flex-row gap-4 mb-4">
+            <div class="flex flex-col md:flex-row gap-4 mb-4">
               <label class="w-full">
                 Fuerza (RM):
                 <input
@@ -48,7 +48,7 @@
                 <span v-if="errors.peso" class="text-sm text-red-600">{{ errors.peso[0] }}</span>
               </label>
             </div>
-            <div class="flex flex-row gap-4 mb-4">
+            <div class="flex flex-col md:flex-row gap-4 mb-4">
               <label class="w-full">
                 Altura (cm):
                 <input
@@ -119,7 +119,7 @@
             <li>
               <strong>Patologías:</strong>
               <span v-if="form.patologiasSeleccionadas.length">{{ form.patologiasSeleccionadas.join(", ") }}</span>
-              <span v-else>Ninguna</span>
+              <span v-else> Ninguna</span>
             </li>
           </ul>
         </div>
@@ -148,6 +148,7 @@
             <button
               v-else
               @click="enviarFormulario"
+              id="enviarFormulario"
               class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer"
             >
               Enviar
@@ -165,6 +166,10 @@ import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 import { useAuthStore } from "@/utils/Auth";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 const emit = defineEmits(["loading-start", "loading-end"]);
 
 const auth = useAuthStore();
@@ -246,6 +251,7 @@ const nextStep = () => {
     } catch (err) {
       if (err instanceof z.ZodError) {
         errors.value = err.flatten().fieldErrors;
+        toast.error("Hay errores en el formulario.");
         return;
       }
     }
@@ -259,25 +265,31 @@ const prevStep = () => {
 };
 
 const enviarFormulario = async (event) => {
+  document.getElementById("enviarFormulario").disabled = true;
   event.preventDefault();
 
   try {
     infoSchema.parse(form.value);
-    alert("Formulario enviado correctamente");
+    
 
     axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/stats/register`, form.value, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("log_token")}`
       }
     });
+
+    toast.success("Estadísticas registradas correctamente");
+
     router.push("/dashboard");
   } catch (error) {
     if (error instanceof z.ZodError) {
       errors.value = error.flatten().fieldErrors;
     } else {
       console.error(error);
-      alert("Ha ocurrido un error inesperado");
+      toast.error("Ha ocurrido un error inesperado");
     }
+  } finally {
+    document.getElementById("enviarFormulario").disabled = false;
   }
 };
 

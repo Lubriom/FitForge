@@ -21,6 +21,9 @@ import { ref } from "vue";
 import { useAuthStore } from "@/utils/Auth";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const showModal = ref(false);
 const loading = ref(false); // Estado para manejar la carga
@@ -49,7 +52,7 @@ const deleteUser = async () => {
     showModal.value = false;
   } catch (error) {
     console.error("Error al eliminar el usuario:", error);
-    alert("Hubo un error al eliminar la cuenta. Intenta nuevamente.");
+    toast.error("Hubo un error al eliminar la cuenta. Intenta nuevamente.");
   } finally {
     loading.value = false; // Termina la carga independientemente de si tuvo éxito o no
   }

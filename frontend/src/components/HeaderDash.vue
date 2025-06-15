@@ -4,13 +4,13 @@
       'bg-white rounded-2xl p-3 shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)] transition-all duration-100 ease-in-out',
       expanded ? 'md:w-64' : 'md:w-18'
     ]"
-    class="h-fit md:h-full flex flex-row md:flex-col w-full items-center gap-4 md:gap-0  pl-5 md:pl-3"
+    class="h-fit md:h-full flex flex-row md:flex-col w-full items-center gap-4 md:gap-0 pl-5 md:pl-3"
   >
     <!-- Título y botón -->
     <router-link to="/" class="flex flex-row items-center justify-start w-12 h-12 md:w-full mb-2">
       <img src="/logov3.svg" alt="Logo FitForge" class="w-12 h-12" />
       <div v-if="expanded" class="flex flex-row items-center">
-        <h1 class="text-black font-bold ml-2 text-3xl" style="font-family: var(--font-bangers)">FitForge</h1>
+        <h1 class="text-black font-bold ml-1 text-2xl revamped">FitForge</h1>
       </div>
     </router-link>
 
@@ -78,7 +78,7 @@
           </li>
           <li class="md:w-full">
             <router-link
-              v-if="auth.isAdmin()"
+              v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
               :to="{ name: 'DashboardAdmin' }"
               exact-active-class="active-link"
               class="hover:bg-gray-300 opacity-50 hover:opacity-100 w-full h-10 hidden md:flex items-center space-x-2 px-3 rounded-xl"
@@ -99,10 +99,10 @@
           title="Expandir"
         >
           <span v-if="!expanded">
-            <ChevronLeft class="text-slate-900" />
+            <ChevronRight class="text-slate-900" />
           </span>
           <span v-else>
-            <ChevronRight class="text-slate-900" />
+            <ChevronLeft class="text-slate-900" />
           </span>
         </button>
       </ul>

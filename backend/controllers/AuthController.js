@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 const SECRET = process.env.JWT_SECRET ?? "miclave";
 
 export class AuthController {
+
   static async register(req, res) {
     const { nombre, apellido, sapellido, correo, password, respassword } = req.body;
 
@@ -30,7 +31,7 @@ export class AuthController {
       const data = {
         id: user.id,
         nombre: user.nombre,
-        correo: user.correo,
+        profile_img: user.profile_img,
         role: user.role
       };
 
@@ -57,7 +58,6 @@ export class AuthController {
       const data = {
         id: user.id,
         nombre: user.nombre,
-        correo: user.correo,
         profile_img: user.profile_img,
         role: user.role
       };

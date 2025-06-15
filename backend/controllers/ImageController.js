@@ -7,6 +7,7 @@ const __dirname = path.dirname(__filename);
 const imgFolder = path.join(__dirname, "../public/uploads/pfp");
 
 export class ImageController {
+
   static async getImage(req, res) {
     try {
       const filename = req.params.filename;
@@ -22,4 +23,5 @@ export class ImageController {
       return res.status(500).send("Error al subir la imagen");
     }
   }
+  
 }

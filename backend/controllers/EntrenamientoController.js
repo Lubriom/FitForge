@@ -24,15 +24,6 @@ export class EntrenamientoController {
     }
   }
 
-  // Función auxiliar para obtener el próximo lunes (o el lunes actual si hoy ya es lunes)
-  static getNextMonday(date = new Date()) {
-    const day = date.getDay(); // 0 (domingo) a 6 (sábado)
-    const diff = day === 0 ? 1 : day === 1 ? 0 : 8 - day;
-    const monday = new Date(date);
-    monday.setDate(date.getDate() + diff);
-    monday.setHours(0, 0, 0, 0); // Resetear la hora
-    return monday;
-  }
 
   static async finalizarDia(req, res) {
     try {
@@ -71,7 +62,7 @@ export class EntrenamientoController {
 
       // Si se proporciona un nuevo RM, actualiza el último registro de InformaciónSalud
       let rmUsuario = infoUsuario ? infoUsuario.rm : null;
-      if (rm && typeof rm === "number") {
+      if (rm) {
         rmUsuario = rm;
 
         // Actualiza el último registro de InformaciónSalud
@@ -83,7 +74,7 @@ export class EntrenamientoController {
         if (ultimaInfoSalud) {
           await prisma.informacionSalud.update({
             where: { id: ultimaInfoSalud.id },
-            data: { rm: rmUsuario }
+            data: { rm: parseFloat(rmUsuario) }
           });
         }
       }

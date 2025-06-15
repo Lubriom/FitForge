@@ -5,6 +5,7 @@ import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useRouter, useRoute } from "vue-router";
 import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, FileDown, SquarePen } from "lucide-vue-next";
+import jsPDF from "jspdf";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -45,9 +46,12 @@ async function fetchPlan() {
   error.value = "";
 
   try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`, {
-      headers: { Authorization: `Bearer ${auth.getToken()}` }
-    });
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`,
+      {
+        headers: { Authorization: `Bearer ${auth.getToken()}` }
+      }
+    );
 
     plan.value = res.data;
     semanaActual.value = plan.value.dias;
@@ -59,7 +63,7 @@ async function fetchPlan() {
   } finally {
     loading.value = false;
     emit("loading-end");
-  } 
+  }
 }
 
 const capitalizar = (texto) => {
@@ -113,6 +117,78 @@ function abreviarDia(nombre) {
 onMounted(() => {
   fetchPlan();
 });
+
+// import autoTable from "jspdf-autotable"; // opcional si luego quieres tablas bonitas
+
+const exportarPDF = () => {
+  const doc = new jsPDF();
+  const margenIzquierdo = 15;
+  const anchoPagina = doc.internal.pageSize.getWidth();
+  const altoPagina = doc.internal.pageSize.getHeight();
+  const totalPaginas = plan.value.dias.length > 0 ? Math.ceil(plan.value.dias.length / 20) : 1;
+
+  let pagina = 1;
+  let y = 48; // más abajo para dejar sitio a la cabecera
+
+  const dibujarCabecera = () => {
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(18);
+    doc.setFont(undefined, "bold");
+    doc.addImage("/logov3.png", "PNG", 6, 6, 15, 15); // logo en esquina superior izquierda
+    doc.text("Mi Plan de Entrenamiento", 22, 16);
+    doc.setFontSize(12);
+    doc.setFont(undefined, "normal");
+    doc.text(`Nombre: ${plan.value.nombre}`, 15, 29);
+    doc.text(`Objetivo: ${capitalizar(plan.value.objetivo)}     Nivel: ${capitalizar(plan.value.nivel)}`, 15, 36);
+  };
+
+  const dibujarMarcaAgua = () => {
+    doc.addImage("/logov1_transparente.png", "PNG", 30, 80, 150, 150);
+  };
+
+  const dibujarFooter = () => {
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text(`Página ${pagina}`, anchoPagina - 30, altoPagina - 10);
+  };
+
+  dibujarCabecera();
+  dibujarMarcaAgua();
+
+  plan.value.dias.forEach((dia, i) => {
+    if (y > altoPagina - 40) {
+      dibujarFooter();
+      doc.addPage();
+      pagina++;
+      y = 50;
+      dibujarCabecera();
+      dibujarMarcaAgua();
+    }
+
+    const fechaDia = obtenerFechaDelDia(dia.diaNumero);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(0, 0, 0);
+    doc.text(`${i + 1}. Día - ${capitalizar(fechaDia)}`, margenIzquierdo, y);
+    y += 6;
+    doc.setFont(undefined, "normal");
+
+    if (!dia.ejercicios || dia.ejercicios.length === 0) {
+      doc.text("  Día de descanso", margenIzquierdo + 5, y);
+      y += 6;
+    } else {
+      dia.ejercicios.forEach((ejer) => {
+        const texto = `  • ${ejer.ejercicio.nombre} - ${ejer.series}x${ejer.repeticiones} reps - ${ejer.peso}kg`;
+        doc.text(texto, margenIzquierdo + 5, y);
+        y += 6;
+      });
+    }
+
+    y += 4;
+  });
+
+  dibujarFooter();
+  doc.save(`${plan.value.nombre}.pdf`);
+};
 </script>
 
 <template>
@@ -124,23 +200,25 @@ onMounted(() => {
       <div class="gap-2 flex flex-col">
         <div class="flex flex-row w-full justify-between items-center">
           <h2 class="text-xl font-semibold">
-            <b>Nombre: {{ plan.nombre }}</b>
+            <b><span class="hidden md:inline">Nombre:</span> {{ plan.nombre }}</b>
           </h2>
           <div class="flex flex-row gap-2">
             <button
+              @click="exportarPDF"
               class="text-md text-white bg-tertiary-500 hover:bg-orange-700 rounded-md p-2 cursor-pointer flex gap-1 items-center"
             >
-              Exportar PDF <FileDown />
+              <span class="hidden md:inline">Exportar PDF</span> <FileDown />
             </button>
             <router-link
+              v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
               :to="{ name: 'ExercisesTrainEdit', params: { id: plan.id, userId: auth.getId() } }"
               class="text-md text-white bg-tertiary-500 hover:bg-orange-700 rounded-md p-2 cursor-pointer flex gap-1 items-center"
             >
-              Editar <SquarePen />
+              <span class="hidden md:inline">Editar</span> <SquarePen />
             </router-link>
           </div>
         </div>
-        <div class="flex flex-row justify-between">
+        <div class="flex flex-col md:flex-row justify-between">
           <p class="text-gray-700"><b>Descripcion: </b>{{ plan.descripcion || "Sin descripción" }}</p>
           <div class="flex flex-col gap-2 text-sm text-gray-500 mb-1">
             <div class="flex flex-row gap-2">
@@ -186,7 +264,7 @@ onMounted(() => {
           <ChevronLeft />
         </button>
 
-        <div class="flex gap-2 w-full">
+        <div class="hidden lg:flex gap-2 w-full">
           <button
             v-if="diasPaginados.length > 0"
             v-for="(dia, index) in diasPaginados"
@@ -199,10 +277,24 @@ onMounted(() => {
                 : 'bg-gray-100 hover:bg-gray-200 flex flex-col items-center justify-center'
             ]"
           >
-            <p>{{ capitalizar(abreviarDia(obtenerFechaDelDia(dia.diaNumero))) + " " + formatFecha(dia.fecha) }}</p>
+            <p>
+              {{ capitalizar(abreviarDia(obtenerFechaDelDia(dia.diaNumero))) + " " + formatFecha(dia.fecha) }}
+            </p>
             <span class="text-xs text-gray-600">{{ capitalizar(dia.grupoMuscular) || "Descanso" }}</span>
           </button>
           <p v-else class="mx-auto">No hay dias para este entrenamiento</p>
+        </div>
+        <div
+          class="lg:hidden w-full p-3 rounded-md font-medium whitespace-nowrap cursor-pointer bg-tertiary-500 hover:bg-orange-600 text-white flex flex-col items-center justify-center"
+        >
+          <p>
+            {{
+              capitalizar(abreviarDia(obtenerFechaDelDia(diasPaginados[0].diaNumero))) +
+              " " +
+              formatFecha(diasPaginados[0].fecha)
+            }}
+          </p>
+          <span class="text-xs text-gray-600">{{ capitalizar(diasPaginados[0].grupoMuscular) || "Descanso" }}</span>
         </div>
 
         <button
@@ -238,8 +330,13 @@ onMounted(() => {
             >
               <div>
                 <p class="font-medium text-gray-900">{{ ej.ejercicio.nombre }}</p>
-                <p class="text-gray-600 text-sm">
+                <p class="hidden md:inline text-gray-600 text-sm">
                   Series: {{ ej.series }}, Repeticiones: {{ ej.repeticiones }}, Descanso: {{ ej.descanso }} seg
+                </p>
+                <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                  <span>Series: {{ ej.series }}</span>
+                  <span>Repeticiones: {{ ej.repeticiones }}</span>
+                  <span>Descanso: {{ ej.descanso }} seg</span>
                 </p>
               </div>
               <div class="text-tertiary-500 font-semibold">{{ ej.peso }} kg</div>
@@ -258,7 +355,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style>
-/* Tailwind incluido globalmente */
-</style>

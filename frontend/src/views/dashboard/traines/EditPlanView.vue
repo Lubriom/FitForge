@@ -198,12 +198,11 @@ const submit = async () => {
     router.push("/dashboard/train");
   } catch (err) {
     if (err instanceof z.ZodError) {
-      // Aquí puedes manejar errores para mostrar en UI
       console.error("Errores de validación:", err.errors);
       toast.error(err.errors[0].message);
     } else {
       console.error("Error al guardar cambios:", err);
-      alert("Error al guardar los cambios.");
+      toast.error("Error al guardar los cambios.");
     }
   }
 };
@@ -233,8 +232,8 @@ function moverEjercicioAbajo(index) {
 </script>
 
 <template>
-  <div class="mx-auto w-full flex flex-row gap-4 h-full">
-    <div class="w-1/2 bg-white p-2 rounded-2xl">
+  <div class="mx-auto w-full flex flex-col lg:flex-row gap-4 h-full">
+    <div class="w-full lg:w-1/2 bg-white p-2 rounded-2xl">
       <div class="flex flex-col h-full bg-white rounded-2xl p-4 overflow-y-auto">
         <div class="flex flex-row justify-between">
           <h2 class="text-2xl font-bold mb-4">Editar Plan</h2>
@@ -343,7 +342,7 @@ function moverEjercicioAbajo(index) {
         </form>
       </div>
     </div>
-    <div class="w-1/2 flex flex-col bg-white rounded-2xl h-full">
+    <div class="w-full lg:w-1/2 flex flex-col bg-white rounded-2xl h-full">
       <!-- Ejercicios del día seleccionado -->
       <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 rounded overflow-hidden">
         <!-- Cabecera -->
@@ -428,6 +427,10 @@ function moverEjercicioAbajo(index) {
         >
           + Añadir ejercicio
         </button>
+      </div>
+      <div v-else class="flex flex-col justify-center items-center h-full">
+        <p class="mb-2 italic text-gray-800 font-semibold">Selecciona un dia de entrenamiento</p>
+        <p class="italic text-sm text-gray-600">Se cargará la información de ese dia</p>
       </div>
     </div>
   </div>

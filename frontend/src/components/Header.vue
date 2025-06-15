@@ -66,7 +66,7 @@
               to="/about"
               active-class="router-link-active"
               class="block lg:inline bg-gray-600 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
-              >Sobre Nosotros</router-link
+              >SOBRE NOSOTROS</router-link
             >
           </li>
           <template v-if="auth.isLoggedIn">
@@ -74,7 +74,7 @@
               <router-link
                 to="/dashboard"
                 class="block lg:inline bg-gray-600 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-gray-700 brochazo-horizontal transition-all duration-300 anton"
-                >Dashboard</router-link
+                >DASHBOARD</router-link
               >
             </li>
             <li>
@@ -82,7 +82,7 @@
                 @click="logout"
                 class="block lg:inline bg-tertiary-500 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton cursor-pointer"
               >
-                Logout
+                LOGOUT
               </button>
             </li>
           </template>
@@ -91,7 +91,7 @@
               <router-link
                 to="/login"
                 class="block lg:inline bg-tertiary-500 text-white font-bold text-xl lg:text-2xl p-3 px-6 hover:bg-orange-700 brochazo-horizontal transition-all duration-300 anton"
-                >LOG IN</router-link
+                >LOGIN</router-link
               >
             </li>
           </template>

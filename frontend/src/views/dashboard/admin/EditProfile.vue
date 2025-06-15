@@ -2,7 +2,7 @@
   <div class="flex flex-col h-full rounded-2xl gap-3">
     <div class="bg-gray-100 p-4 rounded-2xl max-h-min w-full px-4">
       <div class="flex justify-between">
-        <h2 class="text-2xl font-semibold mb-3 pl-6">Datos Personales</h2>
+        <h2 class="text-2xl font-semibold mb-4 pl-6">Datos Personales</h2>
         <button
           v-if="user?.activo == 1"
           @click="openModal"
@@ -19,35 +19,54 @@
           class="absolute"
         />
       </div>
-      <form @submit.prevent="guardarCambios" class="w-full px-6">
-        <div class="flex flex-row gap-24">
-          <div class="flex flex-col w-full gap-3">
-            <div>
+      <form @submit.prevent="guardarCambios" class="w-full px-4">
+        <div class="flex flex-col-reverse md:flex-row gap-6 md:gap-12 lg:gap-24">
+          <div class="flex flex-col w-full gap-3 bg-gray-200 p-4 rounded-2xl">
+            <div class="space-y-2">
               <label class="block text-sm font-medium">Nombre</label>
-              <input type="text" v-model="form.nombre" class="input" />
+              <input
+                type="text"
+                v-model="form.nombre"
+                class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+              />
               <span v-if="errors.nombre" class="text-red-500 text-xs mt-1">{{ errors.nombre }}</span>
             </div>
-            <div class="flex flex-row gap-4">
-              <div class="w-1/2">
+            <div class="flex flex-col lg:flex-row gap-4">
+              <div class="w-full lg:w-1/2 space-y-2">
                 <label class="block text-sm font-medium">Apellido</label>
-                <input type="text" v-model="form.apellido" class="input" />
+                <input
+                  type="text"
+                  v-model="form.apellido"
+                  class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                />
                 <span v-if="errors.apellido" class="text-red-500 text-xs mt-1">{{ errors.apellido }}</span>
               </div>
-              <div class="w-1/2">
+              <div class="w-full lg:w-1/2 space-y-2">
                 <label class="block text-sm font-medium">Segundo apellido</label>
-                <input type="text" v-model="form.sapellido" class="input" />
+                <input
+                  type="text"
+                  v-model="form.sapellido"
+                  class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                />
                 <span v-if="errors.sapellido" class="text-red-500 text-xs mt-1">{{ errors.sapellido }}</span>
               </div>
             </div>
-            <div>
+            <div class="space-y-2">
               <label class="block text-sm font-medium">Correo electrónico</label>
-              <input type="email" v-model="form.correo" class="input" />
+              <input
+                type="email"
+                v-model="form.correo"
+                class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+              />
               <span v-if="errors.correo" class="text-red-500 text-xs mt-1">{{ errors.correo }}</span>
             </div>
-            <div class="flex flex-row gap-4">
-              <div class="w-full">
+            <div class="flex flex-col lg:flex-row gap-4">
+              <div class="w-full space-y-2">
                 <label class="block text-sm font-medium">Género</label>
-                <select v-model="form.genero" class="input">
+                <select
+                  v-model="form.genero"
+                  class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                >
                   <option value="">Selecciona una opción</option>
                   <option value="Hombre">Hombre</option>
                   <option value="Mujer">Mujer</option>
@@ -55,84 +74,142 @@
                 </select>
                 <span v-if="errors.genero" class="text-red-500 text-xs mt-1">{{ errors.genero }}</span>
               </div>
-              <div class="w-full">
+              <div class="w-full space-y-2">
                 <label class="block text-sm font-medium">Fecha de nacimiento</label>
-                <input type="date" v-model="form.fec_nac" class="input" />
+                <input
+                  type="date"
+                  v-model="form.fec_nac"
+                  class="rounded-xl px-4 py-2 w-full bg-white text-black border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+                />
                 <span v-if="errors.fec_nac" class="text-red-500 text-xs mt-1">{{ errors.fec_nac }}</span>
               </div>
             </div>
-            <div>
-              <label class="block text-sm font-medium">Rol</label>
-              <select v-model="form.role" class="input">
-                <option value="">Selecciona una opcion</option>
-                <option value="user">Usuario</option>
-                <option value="entrenador">Entrenador</option>
-                <option value="admin">Administrador</option>
-              </select>
-              <span v-if="errors.role" class="text-red-500 text-xs mt-1">{{ errors.role }}</span>
-            </div>
 
-            <button type="submit" class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 w-full rounded-full">
+            <button
+              type="submit"
+              class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 w-full rounded-full cursor-pointer transition"
+            >
               Guardar cambios
             </button>
           </div>
-          <div class="flex flex-col w-1/2 justify-center items-center mr-20 relative">
-            <div class="relative w-64 h-64 rounded-full overflow-hidden group cursor-pointer" @click="triggerFileInput">
-              <img :src="previewUrl || imageURL" alt="Foto de perfil" class="w-full h-full object-cover" />
+          <div class="flex flex-col w-full justify-center items-center md:mr-10 lg:mr-20 relative">
+            <div class="p-2 rounded-full bg-tertiary-500">
               <div
-                class="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                class="relative w-64 h-64 rounded-full overflow-hidden group cursor-pointer"
+                @click="triggerFileInput"
               >
-                Cambiar imagen
+                <img :src="previewUrl || imageURL" alt="Foto de perfil" class="w-full h-full object-cover" />
+                <div
+                  class="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                >
+                  Cambiar imagen
+                </div>
+                <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
               </div>
-              <input ref="fileInput" type="file" class="hidden" accept="image/*" @change="handleFileChange" />
             </div>
             <p class="mt-2 text-lg">Foto de perfil:</p>
           </div>
         </div>
       </form>
     </div>
-    <div class="flex flex-row gap-3">
-      <div class="bg-gray-100 p-4 rounded-2xl max-h-min w-full px-8">
+    <div class="flex flex-col sm:flex-row gap-3">
+      <div class="bg-primary-500 text-white p-4 rounded-2xl max-h-min w-full px-8">
         <div class="flex flex-col">
-          <h2 class="text-2xl font-semibold mb-3">Seguridad</h2>
+          <h2 class="text-xl font-semibold mb-6">Cambiar contraseña</h2>
 
           <div class="flex flex-row justify-between">
             <form @submit.prevent="changePass" class="flex flex-col gap-4 w-full">
-              <div class="flex flex-col justify-evenly gap-4 mx-1">
+              <div class="flex flex-col lg:flex-row justify-evenly gap-4 mx-1">
                 <div class="w-full">
-                  <label class="block text-sm font-medium">Contraseña</label>
-                  <input type="text" v-model="userPass.password" class="input" />
-                  <span v-if="errorsPass.password" class="text-red-500 text-xs mt-1">{{ errorsPass.password }}</span>
+                  <label class="block text-sm font-medium mb-2">Contraseña</label>
+                  <div class="relative">
+                    <input
+                      :type="isPasswordVisible0 ? 'text' : 'password'"
+                      id="password"
+                      v-model="userPass.password"
+                      placeholder="********"
+                      class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+                    />
+                    <button
+                      type="button"
+                      @click="togglePasswordVisibility"
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+                    >
+                      <span v-if="isPasswordVisible0"><Eye /></span>
+                      <span v-else><EyeClosed /></span>
+                    </button>
+                  </div>
+                  <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</span>
                 </div>
 
                 <div class="w-full">
-                  <label class="block text-sm font-medium">Repetir contraseña</label>
-                  <input type="text" v-model="userPass.respassword" class="input" />
-                  <span v-if="errorsPass.respassword" class="text-red-500 text-xs mt-1">{{
-                    errorsPass.respassword
-                  }}</span>
+                  <label class="block text-sm font-medium mb-2">Repetir contraseña</label>
+                  <div class="relative">
+                    <input
+                      :type="isPasswordVisible1 ? 'text' : 'password'"
+                      id="confirmPassword"
+                      v-model="userPass.respassword"
+                      placeholder="********"
+                      class="rounded-xl px-4 py-2 w-full bg-quaternary-500 text-white border border-gray-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-quaternary-500 transition-all"
+                    />
+                    <button
+                      type="button"
+                      @click="togglePasswordVisibility1"
+                      class="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+                    >
+                      <span v-if="isPasswordVisible1"><Eye /></span>
+                      <span v-else><EyeClosed /></span>
+                    </button>
+                  </div>
+                  <span v-if="errors.respassword" class="text-red-500 text-xs mt-1">{{ errors.respassword }}</span>
                 </div>
               </div>
-              <button type="submit" class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 rounded-full">
+              <button
+                type="submit"
+                class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-full cursor-pointer transition"
+              >
                 Cambiar Contraseña
               </button>
             </form>
           </div>
         </div>
       </div>
-      <div class="bg-gray-100 p-4 rounded-2xl max-h-min w-full px-8">
-        <h2 class="text-2xl font-semibold mb-3">Rutinas</h2>
+      <div class="bg-gray-100 p-4 rounded-2xl max-h-min w-full h-fit px-8">
+        <h2 class="text-2xl font-semibold mb-3">Rutina Actual</h2>
         <div class="flex flex-col gap-4">
-          <div v-if="rutinas.value">
-            <p>hola</p>
+          <div v-if="rutinas && rutinas.length > 0">
+            <div class="w-full flex flex-col gap-4 h-48 overflow-y-auto pr-3">
+              <router-link
+                v-for="rutina in rutinas"
+                :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }"
+                class="bg-white px-5 py-2 rounded-2xl w-full shadow-md hover:bg-gray-100 transition-all duration-300 text-black font-semibold flex flex-col justify-between h-full space-y-4"
+              >
+                <div class="flex flex-row gap-2 items-start justify-between">
+                  <div class="flex flex-col gap-1">
+                    <p class="text-xl font-bold">Nombre: {{ rutina.nombre }}</p>
+                    <p class="text-sm text-gray-700">{{ rutina.descripcion }}</p>
+                  </div>
+                  <div v-if="rutina.activo" class="flex rounded-2xl bg-green-500/50 p-2">Activo</div>
+                </div>
+
+                <div class="flex flex-row justify-between text-sm text-gray-800">
+                  <div class="flex justify-between w-full">
+                    <p><span class="font-semibold">Nivel:</span> {{ capitalizar(rutina.nivel) }}</p>
+                    <p><span class="font-semibold">Objetivo:</span> {{ capitalizar(rutina.objetivo) }}</p>
+                  </div>
+                  <div v-if="rutina.diaActual" class="text-right">
+                    <p><span class="font-semibold">Hoy:</span> {{ formatFecha2(rutina.diaActual.fecha) }}</p>
+                    <p><span class="font-semibold">Toca:</span> {{ capitalizar(rutina.diaActual.grupoMuscular) }}</p>
+                  </div>
+                </div>
+              </router-link>
+            </div>
           </div>
-          <div v-else>
-            <p>Este usuario aun no posee ninguna rutina</p>
-          </div>
+          <p v-else class="text-black/60 italic">Este usuario aún no tiene ninguna rutina registrada</p>
           <router-link
-            to="/dashboard/crear-rutina"
-            class="bg-orange-600 hover:bg-tertiary-500 text-white px-4 py-2 rounded-full"
-            >Crear Rutina</router-link
+            :to="{ name: 'ExercisesTrainCreateMA', params: { id: route.params.id } }"
+            class="bg-white hover:bg-gray-200 text-orange-400 font-medium px-4 py-2 rounded-xl shadow-md self-center w-fit"
+            ><span class="flex items-center gap-1"><Plus /> Nuevo Plan </span></router-link
           >
         </div>
       </div>
@@ -148,8 +225,22 @@ import axios from "axios";
 import z from "zod";
 import { useLayoutStore } from "@/stores/layoutStore";
 import BaseModal from "@/components/basics/Modal.vue";
-import { Trash } from "lucide-vue-next";
-import router from "../../routes/Router";
+import { Eye, EyeClosed, Plus, Trash } from "lucide-vue-next";
+import router from "@/routes/Router";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
+const isPasswordVisible0 = ref(false);
+const isPasswordVisible1 = ref(false);
+
+function togglePasswordVisibility() {
+  isPasswordVisible0.value = !isPasswordVisible0.value;
+}
+
+function togglePasswordVisibility1() {
+  isPasswordVisible1.value = !isPasswordVisible1.value;
+}
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 const showModal = ref(false);
@@ -176,6 +267,7 @@ const form = ref({
   fec_nac: "",
   role: ""
 });
+const rutinas = ref([]);
 
 const errors = ref({
   nombre: "",
@@ -201,7 +293,6 @@ onMounted(async () => {
     );
     user.value = data;
     imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/pfp/${data.profile_img}`;
-
     form.value = {
       nombre: data.nombre || "",
       apellido: data.apellido || "",
@@ -213,14 +304,16 @@ onMounted(async () => {
     };
     layoutStore.setTitle("Datos de " + data.nombre + " " + data.apellido + " " + data.sapellido);
 
-    // Carga rutinas
     const response = await axios.get(
       `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/user/${route.params.id}`,
       {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
+    console.log(response.data);
     rutinas.value = response.data;
+    // rutinaActual.value = response.data.find((rutina) => rutina.activo === true) || null;
+    // console.log(rutinaActual.value);
   } catch (error) {
     console.error("Error al cargar los datos o rutinas del usuario:", error);
   } finally {
@@ -247,18 +340,6 @@ const guardarCambios = async () => {
         apellido: z.string().min(3, { message: "El primer apellido es requerido" }).optional(),
         sapellido: z.string().min(3, { message: "El segundo apellido es requerido" }).optional(),
         correo: z.string().email("Email no válido").optional(),
-        password: z
-          .string()
-          .refine((val) => passwordRegex.test(val), {
-            message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
-          })
-          .optional(),
-        respassword: z
-          .string()
-          .refine((val) => passwordRegex.test(val), {
-            message: "La contraseña debe tener mínimo 7 caracteres, una letra, un número y un carácter especial"
-          })
-          .optional(),
         fec_nac: z
           .string()
           .refine(validarFechaNac, {
@@ -294,7 +375,7 @@ const guardarCambios = async () => {
 
     layoutStore.setTitle(`Datos de ${form.value.nombre} ${form.value.apellido} ${form.value.sapellido}`);
 
-    alert("Cambios guardados correctamente.");
+    toast.success("Datos actualizados correctamente.");
     window.location.reload();
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -356,9 +437,9 @@ const changePass = async (event) => {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
-    alert("Contraseña cambiada con éxito");
+    toast.success("Contraseña actualizada correctamente.");
 
-    if (response.data.message) alert(response.data.message);
+    if (response.data.message) toast.error(response.data.message);
   } catch (error) {
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {
@@ -394,7 +475,7 @@ function handleFileChange(event) {
 async function uploadImage() {
   const file = fileInput.value?.files[0];
   if (!file) {
-    alert("Por favor, selecciona una imagen.");
+    toast.error("Por favor, selecciona una imagen.");
     return;
   }
   const formData = new FormData();
@@ -418,17 +499,29 @@ async function uploadImage() {
 
     layoutStore.setTitle(`Datos de ${form.value.nombre} ${form.value.apellido} ${form.value.sapellido}`);
 
-    alert("Imagen subida correctamente");
+    toast.success("Imagen subida correctamente");
   } catch (error) {
-    alert("Error al subir la imagen");
+    toast.error("Error al subir la imagen");
   } finally {
     window.location.reload();
   }
 }
 
-// Consultar rutinas
+const capitalizar = (texto) => {
+  if (!texto) return "";
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+};
 
-const rutinas = ref([]);
+function formatFecha2(fecha) {
+  if (!fecha) return "";
+  const opciones = { day: "2-digit", month: "2-digit" };
+  return new Intl.DateTimeFormat("es-ES", opciones).format(new Date(fecha));
+}
+
+function formatFecha(fechaStr, formato) {
+  const date = parseISO(fechaStr);
+  return format(date, formato, { locale: es });
+}
 </script>
 
 <style scoped>

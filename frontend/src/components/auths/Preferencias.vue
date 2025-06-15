@@ -72,6 +72,10 @@ import { useRouter } from "vue-router";
 import axios from "axios";
 import z from "zod";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 const emit = defineEmits(["loading-start", "loading-end"]);
 
 const router = useRouter();
@@ -173,7 +177,7 @@ const guardarCambios = async () => {
 
     auth.login(response.data.token);
 
-    alert("Cambios guardados correctamente.");
+    toast.success("Datos actualizados correctamente.");
 
     window.location.reload();
   } catch (error) {
@@ -212,7 +216,7 @@ function handleFileChange(event) {
 async function uploadImage() {
   const file = fileInput.value?.files[0];
   if (!file) {
-    alert("Por favor, selecciona una imagen.");
+    toast.error("Por favor, selecciona una imagen.");
     return;
   }
 
@@ -231,10 +235,10 @@ async function uploadImage() {
     });
 
     auth.login(response.data.token);
-    alert("Imagen subida correctamente");
+    toast.success("Imagen subida correctamente");
     window.location.reload();
   } catch (error) {
-    alert("Error al subir la imagen");
+    toast.error("Error al subir la imagen");
   }
 }
 </script>

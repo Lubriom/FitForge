@@ -1,16 +1,11 @@
 <template>
-  <div class="w-fit max-w-[800px] mx-auto bg-white/90 shadow-lg p-6 rounded-2xl space-y-6 shadow-amber-600">
+  <div class="w-full max-w-[800px] mx-auto bg-white/90 shadow-lg p-6 rounded-2xl space-y-6 shadow-amber-600">
     <!-- Paso 0: Introducción -->
     <div v-if="step === 0" class="text-center space-y-4 p-4">
       <h1 class="text-3xl font-bold">¡Completar Perfil!</h1>
       <p class="text-lg text-left">Ha llegado la hora de comenzar tu aventura en FitForge completemos tu perfil.</p>
       <p class="text-md text-gray-600 text-left">¡Este proceso tomará solo unos minutos de tu tiempo!</p>
-      <div class="flex flex-row justify-between">
-        <router-link
-          :to="{ name: 'Dashboard' }"
-          class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 cursor-pointer"
-          >Omitir</router-link
-        >
+      <div class="flex flex-row justify-end">
         <button
           @click="step++"
           class="bg-tertiary-500 hover:bg-orange-700 text-white px-6 py-2 rounded-xl hover:bg-tertiary-600 transition-all cursor-pointer"
@@ -22,7 +17,7 @@
 
     <!-- Formulario multipasos -->
     <!-- Paso 1 -->
-    <div v-if="step === 1" class="flex flex-col gap-4 w-fit ">
+    <div v-if="step === 1" class="flex flex-col gap-4 w-fit">
       <h1 class="text-2xl font-bold mb-2 text-center">Datos personales</h1>
       <div class="flex flex-col md:flex-row gap-8 justify-center items-center p-0 md:px-4 w-fit">
         <div class="flex flex-col w-full md:w-1/2 gap-3">
@@ -169,9 +164,10 @@
     </div>
 
     <!-- Paso 5 -->
-    <div v-if="step === 5" class="w-fit sm:w-[500px]">
+    <div v-if="step === 5" class="w-full flex justify-center items-center flex-col">
       <h1 class="text-2xl font-bold mb-2 text-center">Revisión de datos</h1>
-      <ul class="bg-gray-800 p-4 rounded text-white space-y-1">
+      <h1 class="text-lg text-gray-600 mb-4 text-center">¿Estos datos son correctos? Verifica 2 veces antes de enviar</h1>
+      <ul class="bg-gray-800 p-4 rounded text-white space-y-1 w-full">
         <li><strong>Fecha de Nacimiento:</strong> {{ form.fec_nac || "N/A" }}</li>
         <li><strong>Género:</strong> {{ form.genero || "N/A" }}</li>
         <li><strong>Peso:</strong> {{ form.peso !== "" && form.peso !== undefined ? form.peso + " kg" : "N/A" }}</li>
@@ -182,7 +178,7 @@
         <li>
           <strong>Patologías:</strong>
           <span v-if="form.patologiasSeleccionadas.length">{{ form.patologiasSeleccionadas.join(", ") }}</span>
-          <span v-else>Ninguna</span>
+          <span v-else> Ninguna</span>
         </li>
       </ul>
     </div>
@@ -209,6 +205,7 @@
         </button>
 
         <button
+          id="enviarFormulario"
           v-else
           @click="enviarFormulario"
           class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer"
@@ -223,13 +220,22 @@
 <script setup>
 import { z } from "zod";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import axios from "axios";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const router = useRouter();
+const route = useRoute();
 
 const step = ref(0);
 const totalSteps = 5;
+
+const rutasPermitidas = () => {
+  const rutasOcultas = ["/start"];
+  return rutasOcultas.includes(route.path);
+};
 
 const patologias = {
   Cardíacas: "Como por ejemplo: hipertensión arterial, angina, infarto, etc.",
@@ -259,6 +265,7 @@ const prevStep = () => {
 };
 
 const enviarFormulario = async (event) => {
+  document.getElementById("enviarFormulario").disabled = true;
   event.preventDefault();
 
   try {
@@ -312,7 +319,11 @@ const enviarFormulario = async (event) => {
     });
 
     infoSchema.parse(form.value);
-    alert("Formulario enviado correctamente");
+
+    toast.success("Formulario enviado correctamente");
+
+    // Esperar 5 segundos antes de redirigir
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/start`, form.value, {
       headers: {
@@ -322,11 +333,13 @@ const enviarFormulario = async (event) => {
     router.push("/dashboard");
   } catch (error) {
     if (error instanceof z.ZodError) {
-      alert("Error de validación front:" + error.errors[0].message);
+      toast.error(error.issues[0].message);
     } else {
       console.error(error);
-      alert("Ha ocurrido un error inesperado");
+      toast.error("Ha ocurrido un error inesperado")
     }
+  } finally {
+    document.getElementById("enviarFormulario").disabled = false;
   }
 };
 </script>

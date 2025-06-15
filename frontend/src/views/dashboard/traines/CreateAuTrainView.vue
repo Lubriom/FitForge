@@ -135,7 +135,8 @@
           <button
             v-else
             @click="enviarFormulario"
-            class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer"
+            id="enviarFormulario"
+            class="bg-tertiary-500 hover:bg-orange-700 text-white px-4 py-2 rounded-md hover:bg-tertiary-600 cursor-pointer disabled:opacity-50"
           >
             Crear plan
           </button>
@@ -152,6 +153,9 @@ import { useAuthStore } from "@/utils/Auth";
 import { z } from "zod";
 import { useRouter } from "vue-router";
 import { Info } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -233,6 +237,7 @@ const handleNext = () => {
 };
 
 const enviarFormulario = async () => {
+  document.getElementById("enviarFormulario").disabled = true;
   errors.value = {};
   const result = schemaPaso3.safeParse(form.value);
   if (!result.success) {
@@ -254,11 +259,13 @@ const enviarFormulario = async () => {
       }
     });
 
+    toast.success("Plan creado correctamente");
     router.push("/dashboard/train/get/" + response.data.planId);
   } catch (error) {
     console.error("Error al enviar el formulario:", error);
-    alert("Hubo un error al crear el plan. Intenta de nuevo.");
+    toast.error("Hubo un error al crear el plan. Intenta de nuevo.");
   } finally {
+    document.getElementById("enviarFormulario").disabled = false;
     isLoading.value = false; // termina la carga
   }
 };

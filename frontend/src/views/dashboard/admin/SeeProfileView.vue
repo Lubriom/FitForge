@@ -294,13 +294,13 @@
                     </div>
                   </router-link>
                 </div>
-                <router-link
-                  :to="{ name: 'ExercisesTrainCreateAU' }"
-                  class="bg-white hover:bg-gray-200 text-orange-400 font-medium px-4 py-2 rounded-xl shadow-md w-fit"
-                  ><span class="flex items-center gap-1"><Plus /> Nuevo Plan </span></router-link
-                >
               </div>
               <p v-else class="text-black/60 italic">Este usuario aún no tiene ninguna rutina registrada</p>
+              <router-link
+                :to="{ name: 'ExercisesTrainCreateMA', params: { id: route.params.id } }"
+                class="bg-white hover:bg-gray-200 text-orange-400 font-medium px-4 py-2 rounded-xl shadow-md self-center   w-fit"
+                ><span class="flex items-center gap-1"><Plus /> Nuevo Plan </span></router-link
+              >
             </div>
           </div>
 

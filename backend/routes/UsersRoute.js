@@ -8,22 +8,23 @@ import { validateStats } from "../middlewares/validateStats.js";
 import { validateToken } from "../middlewares/validateToken.js";
 import { InfoController } from "../controllers/InfoController.js";
 import { uploadImage } from "../middlewares/validateImage.js";
+import { validateRole } from "../middlewares/validateRoles.js";
 
 export const userRouter = Router();
 
-userRouter.get("/get", UserController.getAll);
+userRouter.get("/get", validateToken, UserController.getAll);
 userRouter.get("/paginate", validateToken, UserController.getPaginate);
 userRouter.get("/get/:id", validateToken, validateId, UserController.getById);
 userRouter.get("/get/:id/info/all", validateToken, validateId, InfoController.getAll);
 userRouter.get("/get/:id/info/last", validateToken, validateId, InfoController.getLast);
-userRouter.get("/get/metrics/:id", validateToken, validateId, UserController.obtenerMetricas);
+userRouter.get("/get/metrics/:id", validateToken, validateId, InfoController.getMetricas);
 userRouter.get("/get/:id/patologias", validateToken, validateId, InfoController.getPatologias);
-userRouter.get("/get/:id/estadisticas", validateToken, validateId, UserController.getEstadisticas);
+userRouter.get("/get/:id/estadisticas", validateToken, validateId, InfoController.getEstadisticas);
 
-userRouter.post("/start", validateToken, validateInfo, UserController.updateInfo);
+userRouter.post("/start", validateToken, validateInfo, InfoController.updateInfo);
 userRouter.post("/create", validateToken, validateUserCreate, UserController.create);
-userRouter.post("/stats/register", validateToken, validateStats, UserController.updateInfo);
+userRouter.post("/stats/register", validateToken, validateStats, InfoController.updateInfo);
 
-userRouter.delete("/delete/:id", validateToken, validateId ,UserController.delete);
+userRouter.delete("/delete/:id", validateToken, validateRole("admin"), validateId ,UserController.delete);
 
-userRouter.patch("/update/:id", validateToken, validateId, uploadImage ,validateUserUpdate, UserController.update);
+userRouter.patch("/update/:id", validateToken, validateRole("admin"), validateId, uploadImage ,validateUserUpdate, UserController.update);

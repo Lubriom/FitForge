@@ -64,6 +64,9 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
 import { Eye, EyeClosed } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -117,9 +120,9 @@ const changePass = async (event) => {
     const response = await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/update/${userId}`, user.value, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    alert("Contraseña cambiada con éxito");
+    toast.success("Contraseña actualizada correctamente");
 
-    if (response.data.message) alert(response.data.message);
+    if (response.data.message) toast.error(response.data.message);
   } catch (error) {
     if (error instanceof z.ZodError) {
       error.errors.forEach((err) => {

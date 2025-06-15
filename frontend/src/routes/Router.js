@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { isTokenValid } from "@/utils/Auth.js";
+import { useAuthStore } from "@/utils/Auth.js";
 
 // Importar los componentes que vas a mostrar en las rutas
 import FaqView from "@/views/FaqView.vue";
@@ -50,21 +51,47 @@ const routes = [
     component: RegisterView,
     meta: { layout: "auth" }
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFoundView.vue"),
+  },
+  
   ...DashboardRoutes,
   ...ExercisesRoutes
 ];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  }
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isTokenValid()) {
-    next("/login");
-  } else {
-    next();
+  const auth = useAuthStore();
+  const tokenValid = isTokenValid();
+
+  if (to.meta.requiresAuth && !tokenValid) {
+    return next("/login");
   }
+
+  if (to.meta.requiresRole && tokenValid) {
+    const role = auth.getRole();
+
+    const accessMatrix = {
+      admin: ["admin", "both", "all"],
+      entrenador: ["both", "all"],
+      user: ["all"]
+    };
+
+    if (!accessMatrix[role]?.includes(to.meta.requiresRole)) {
+      return next("/dashboard");
+    }
+  }
+
+  next();
 });
 
 export default router;

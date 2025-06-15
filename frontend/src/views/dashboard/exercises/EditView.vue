@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col w-full h-full gap-3 justify-center items-center">
-    <div class="flex flex-col h-fit gap-3 p-6 pr-2 shadow-md bg-white rounded-2xl min-w-[360px] w-fit lg:w-1/2 mx-auto">
+    <div class="flex flex-col h-fit gap-3 p-6 pr-2 shadow-md bg-white rounded-2xl w-full lg:w-1/2 mx-auto">
       <div class="flex flex-row justify-between p-3 pb-0">
         <h2 class="text-2xl font-semibold text-center text-tertiary-600">
           Editando: <span class="text-tertiary-600">{{ form.nombre }}</span>
@@ -116,7 +116,7 @@
         <span class="text-red-500 text-center block">{{ errors.serverError }}</span>
 
         <button type="submit" class="bg-tertiary-500 hover:bg-tertiary-600 text-white py-2 px-4 rounded-lg w-full">
-          Crear Ejercicio
+          Modificar Ejercicio
         </button>
       </form>
     </div>
@@ -131,6 +131,9 @@ import { z } from "zod";
 import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Trash } from "lucide-vue-next";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 
@@ -224,7 +227,7 @@ const editarEjercicio = async () => {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    alert("Ejercicio modificado con exito");
+    toast.success("Ejercicio modificado con exito");
     router.push({ name: "Exercises" });
   } catch (err) {
     if (err instanceof z.ZodError) {
@@ -234,6 +237,7 @@ const editarEjercicio = async () => {
         }
       });
     } else {
+      toast.error(err.response?.data?.error || "Ha ocurrido un error inesperado.");toast.error(err)
       errors.value.serverError = err.response?.data?.error || "Error inesperado al modificar el ejercicio.";
     }
   }
@@ -270,7 +274,7 @@ const eliminarEjercicio = async () => {
     await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/delete/${ejercicioId}`, {
       headers: { Authorization: `Bearer ${auth.getToken()}` }
     });
-    alert("Ejercicio eliminado con exito");
+    toast.success("Ejercicio eliminado con exito");
     router.push({ name: "Exercises" });
   } catch (error) {
     console.error("Error al eliminar el ejercicio:", error);
