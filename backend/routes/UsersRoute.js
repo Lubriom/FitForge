@@ -27,4 +27,4 @@ userRouter.post("/stats/register", validateToken, validateStats, InfoController.
 
 userRouter.delete("/delete/:id", validateToken, validateRole("admin"), validateId ,UserController.delete);
 
-userRouter.patch("/update/:id", validateToken, validateRole("admin"), validateId, uploadImage ,validateUserUpdate, UserController.update);
+userRouter.patch("/update/:id", validateToken, validateId, uploadImage ,validateUserUpdate, UserController.update);
