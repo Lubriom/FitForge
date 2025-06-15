@@ -14,7 +14,7 @@
     "aos": "2.3.4",
     "axios": "1.9.0",
     "date-fns": "4.1.0",
-    "html2pdf.js": "^0.10.3",
+    "html2pdf.js": "0.10.3",
     "jspdf": "^3.0.1",
     "lucide-vue-next": "0.509.0",
     "pinia": "3.0.2",

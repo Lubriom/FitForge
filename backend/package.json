@@ -10,7 +10,7 @@
     "seed": "node prisma/seeder/seed.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lubriom",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "6.7.0",
