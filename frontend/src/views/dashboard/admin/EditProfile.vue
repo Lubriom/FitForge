@@ -139,7 +139,7 @@
                       <span v-else><EyeClosed /></span>
                     </button>
                   </div>
-                  <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{ errors.password }}</span>
+                  <span v-if="errorsPass.password" class="text-red-500 text-xs mt-1">{{ errorsPass.password }}</span>
                 </div>
 
                 <div class="w-full">
@@ -161,7 +161,7 @@
                       <span v-else><EyeClosed /></span>
                     </button>
                   </div>
-                  <span v-if="errors.respassword" class="text-red-500 text-xs mt-1">{{ errors.respassword }}</span>
+                  <span v-if="errorsPass.respassword" class="text-red-500 text-xs mt-1">{{ errorsPass.respassword }}</span>
                 </div>
               </div>
               <button
@@ -310,9 +310,7 @@ onMounted(async () => {
         headers: { Authorization: `Bearer ${token}` }
       }
     );
-    console.log(response.data);
     rutinas.value = response.data;
-    // rutinaActual.value = response.data.find((rutina) => rutina.activo === true) || null;
     // console.log(rutinaActual.value);
   } catch (error) {
     console.error("Error al cargar los datos o rutinas del usuario:", error);
@@ -331,8 +329,6 @@ const guardarCambios = async () => {
       const hace120Anios = new Date(hoy.getFullYear() - 120, hoy.getMonth(), hoy.getDate());
       return !isNaN(fecha.getTime()) && fecha <= hoy && fecha >= hace120Anios;
     };
-
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
 
     const userUpdateSchema = z
       .object({
@@ -412,6 +408,7 @@ const changePass = async (event) => {
       errorsPass.value.respassword = "Las contraseñas no coinciden.";
       return;
     }
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{7,}$/;
 
     const passSchema = z.object({
       password: z.string().refine((val) => passwordRegex.test(val), {
@@ -447,6 +444,7 @@ const changePass = async (event) => {
           errorsPass.value[err.path[0]] = err.message;
         }
       });
+      toast.error(error.errors[0].message);
     } else {
       errorsPass.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
     }

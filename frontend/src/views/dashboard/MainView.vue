@@ -446,7 +446,7 @@ onMounted(async () => {
 
     layoutStore.setTitle(`Bienvenido, ${user.value.nombre}!`);
 
-    svgImc.value = user.genero === "Hombre" ? maleSvg : femaleSvg;
+    svgImc.value = user.value.genero === "Hombre" ? maleSvg : femaleSvg;
   } catch (error) {
     console.error("Error al cargar los datos:", error);
   } finally {
