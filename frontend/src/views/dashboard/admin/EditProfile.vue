@@ -444,7 +444,6 @@ const changePass = async (event) => {
           errorsPass.value[err.path[0]] = err.message;
         }
       });
-      toast.error(error.errors[0].message);
     } else {
       errorsPass.value.serverError = error.response?.data?.error || "Ha ocurrido un error inesperado.";
     }
