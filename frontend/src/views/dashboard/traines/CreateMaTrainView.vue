@@ -133,11 +133,14 @@ onMounted(async () => {
   emit("loading-start");
 
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${idParam}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("log_token")}`
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/users/get/${idParam}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("log_token")}`
+        }
       }
-    });
+    );
 
     user.value = response.data;
   } catch (error) {
@@ -184,14 +187,18 @@ const submitForm = async () => {
 
     const payload = {
       ...form.value,
-      usuarioId: auth.getId() == idParam ? auth.getId() : idParam
+      usuarioId: auth.getId() == idParam ? auth.getId() : parseInt(idParam)
     };
     // POST al backend (ajusta URL y datos según tu API)
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/create`, payload, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("log_token")}`
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/create`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("log_token")}`
+        }
       }
-    });
+    );
 
     toast.success("Plan creado correctamente");
     router.push({ name: "ExercisesTrainEdit", params: { id: response.data.id, userId: response.data.usuarioId } });
