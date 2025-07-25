@@ -1,16 +1,16 @@
 <template>
   <div class="flex flex-col h-full gap-3">
-    <div class="hidden md:flex flex-row justify-between items-center gap-3 ">
+    <div class="hidden md:flex flex-row justify-between items-center gap-3">
       <router-link
         v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesCreate' }"
-        class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
+        class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
       >
         <span class="flex items-center gap-1"><Plus /> Nuevo</span>
       </router-link>
       <form
         @submit.prevent="emitirFiltros"
-        class="w-full flex flex-wrap gap-3 bg-gray-100 p-2 rounded-xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
+        class="w-full flex flex-wrap gap-3 items-center bg-gray-100 p-2 rounded-xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
       >
         <!-- Nombre -->
         <input
@@ -21,7 +21,10 @@
         />
 
         <!-- Tipo -->
-        <select v-model="filtros.tipo" class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
+        <select
+          v-model="filtros.tipo"
+          class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+        >
           <option disabled value="">Filtrar por tipo</option>
           <option value="pull">Pull</option>
           <option value="press">Press</option>
@@ -32,7 +35,10 @@
         </select>
 
         <!-- Categoría -->
-        <select v-model="filtros.categoria" class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all">
+        <select
+          v-model="filtros.categoria"
+          class="rounded-xl px-4 py-2 bg-white text-black border border-gray-300 hover:border-tertiary-500 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
+        >
           <option disabled value="">Filtrar por categoría</option>
           <option value="piernas">Pierna</option>
           <option value="pecho">Pecho</option>
@@ -46,7 +52,7 @@
         <!-- Botón Filtrar -->
         <button
           type="submit"
-          class="bg-tertiary-500 hover:bg-orange-700 text-white py-2 px-4 rounded-lg hover:bg-tertiary-600 cursor-pointer"
+          class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
         >
           <span class="flex items-center gap-1"><Funnel /> Filtrar</span>
         </button>
@@ -55,7 +61,7 @@
         <button
           type="button"
           @click="resetFiltros"
-          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer rotate"
+          class="bg-gray-500 h-full flex text-white font-medium p-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-gray-700 active:text-gray-200 hover:bg-gray-600 hover:inset-shadow-gray-400 active:inset-shadow-gray-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-gray-300 rotate"
         >
           <RotateCcw />
         </button>
@@ -94,7 +100,7 @@
                 <h2 class="max-w-[150px] text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
                 <button
                   @click="toggleFlip(exercise.id)"
-                  class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
+                  class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium p-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
                 >
                   <BadgeInfo />
                 </button>
@@ -131,7 +137,7 @@
                 <h2 class="max-w-[150px] text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
                 <button
                   @click="toggleFlip(exercise.id)"
-                  class="bg-gray-500 hover:bg-gray-600 text-white font-medium p-1.5 rounded-xl z-15 cursor-pointer"
+                  class="bg-gray-500 flex text-white font-medium p-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-gray-700 active:text-tertiary-200 hover:bg-gray-600 hover:inset-shadow-gray-400 active:inset-shadow-gray-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-gray-300"
                 >
                   <Undo2 />
                 </button>
@@ -145,7 +151,7 @@
                 <div class="flex h-full items-end justify-end">
                   <router-link
                     v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
-                    class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium p-1.5 rounded-xl cursor-pointer"
+                    class="bg-tertiary-500 hover:bg-tertiary-600 flex text-white font-medium p-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
                     :to="{ name: 'ExercisesEdit', params: { id: exercise.id } }"
                     ><SquarePen
                   /></router-link>
@@ -192,8 +198,6 @@ const toggleFlip = (id) => {
 };
 
 const originalData = ref([]); // Guardar todos los ejercicios
-
-
 
 const filtros = ref({
   nombre: "",
@@ -257,7 +261,7 @@ const capitalizar = (texto) => {
   transform-style: preserve-3d;
 }
 
-.rotate:hover > *{
+.rotate:hover > * {
   transition: all 0.5s ease-in-out;
   transform: rotate(-360deg);
 }

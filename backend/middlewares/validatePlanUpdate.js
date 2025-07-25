@@ -44,7 +44,7 @@ const diaSchema = z.object({
 const planUpdateSchema = z.object({
   nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
   descripcion: z.string().max(500).optional(),
-  nivel: z.enum(["basico", "avanzado", "personalizado"]),
+  nivel: z.enum(["basico", "intermedio" ,"avanzado", "personalizado"]),
   objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"]),
   activo: z.boolean(),
   dias: z.array(diaSchema).min(1, "Debe haber al menos un día en el plan")

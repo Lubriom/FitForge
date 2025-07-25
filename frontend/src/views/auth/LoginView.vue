@@ -1,14 +1,11 @@
 <template>
-  <div
-    ref="formRef"
-    class="flex flex-col py-5 px-5 w-sm bg-gray-200/20 rounded-2xl shadow-[0px_10px_10px_-5px_rgba(0,0,0,0.3)]"
-  >
-    <div class="flex flex-col py-5 px-4 max-w-lg">
+  <div ref="formRef" class="flex flex-col py-5 px-5 w-sm bg-zinc-800 rounded-2xl inset-shadow-sm inset-shadow-white/20">
+    <div class="flex flex-col py-5 px-5 max-w-lg">
       <h1 class="text-white self-center text-3xl font-bold mb-6">Iniciar Sesión</h1>
 
       <form @submit="login" class="flex flex-col text-white gap-4">
         <!-- Email -->
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-2">
           <label for="email" class="mb-1 font-semibold text-sm text-white">Correo electrónico</label>
           <input
             type="text"
@@ -21,7 +18,7 @@
         </div>
 
         <!-- Password -->
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-2">
           <label for="password" class="mb-1 font-semibold text-sm text-white">Contraseña</label>
           <div class="relative">
             <input
@@ -44,19 +41,13 @@
         </div>
 
         <!-- Botón -->
-        <button
-          type="submit"
-          id="login"
-          class="bg-tertiary-500 hover:bg-tertiary-600 transition-colors duration-200 text-white font-semibold py-2 px-4 rounded-xl mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Iniciar Sesión
-        </button>
+        <PrimaryButton label="Iniciar Sesión" @click="login" id="login" />
       </form>
 
       <!-- Error del servidor -->
       <span v-if="errors.serverError" class="text-red-500 text-sm mt-4 text-center">{{ errors.serverError }}</span>
     </div>
-    <button @click="swapSides" class="cursor-pointer opacity-70 hover:opacity-100 text-white">
+    <button @click="swapSides" class="cursor-pointer opacity-60 hover:opacity-100 text-white text-sm">
       <span v-if="isLogin">¿No tienes cuenta? Regístrate</span>
       <span v-else>¿Ya tienes cuenta? Inicia sesión</span>
     </button>
@@ -73,6 +64,7 @@ import { useAuthStore } from "@/utils/Auth";
 import { Eye } from "lucide-vue-next";
 import { EyeClosed } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
+import PrimaryButton from "@/components/basics/PrimaryButton.vue";
 
 const toast = useToast();
 
@@ -138,7 +130,10 @@ const login = async (event) => {
     loginSchema.parse(user.value);
 
     // Llamada al backend
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/login`, user.value);
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/login`,
+      user.value
+    );
 
     if (response.data.token) {
       auth.login(response.data.token);
@@ -147,7 +142,7 @@ const login = async (event) => {
 
       // Esperar 5 segundos antes de redirigir
       await new Promise((resolve) => setTimeout(resolve, 3000));
-      
+
       router.push("/dashboard");
     } else {
       errors.value.serverError = response.data.error;

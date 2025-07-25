@@ -1,125 +1,16 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 import { useAuthStore } from "@/utils/Auth";
 import { LucideAirVent, Trash } from "lucide-vue-next";
 import { z } from "zod";
 import { useToast } from "vue-toastification";
+import PrimaryButton from "@/components/basics/PrimaryButton.vue";
 
 const toast = useToast();
 
 const emit = defineEmits(["loading-start", "loading-end"]);
-
-const auth = useAuthStore();
-
-const route = useRoute();
-const router = useRouter();
-const planId = parseInt(route.params.id);
-
-const form = ref({
-  nombre: "",
-  descripcion: "",
-  nivel: "",
-  objetivo: "",
-  activo: false
-});
-
-const dias = ref([]);
-const ejerciciosDisponibles = ref([]);
-const diaSeleccionado = ref(null);
-
-onMounted(async () => {
-  emit("loading-start");
-
-  try {
-    const res = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`, {
-      headers: { Authorization: `Bearer ${auth.getToken()}` }
-    });
-    const data = res.data;
-
-    form.value = {
-      nombre: String(data.nombre ?? ""),
-      descripcion: String(data.descripcion ?? ""),
-      nivel: String(data.nivel ?? ""), // Convertir a string
-      objetivo: String(data.objetivo ?? ""), // Convertir a string
-      activo: Boolean(data.activo ?? false), // Asegurar booleano
-      fechaInicio: data.fechaInicio ? data.fechaInicio.slice(0, 10) : "", // Fecha como string yyyy-mm-dd
-      fechaFin: data.fechaFin ? data.fechaFin.slice(0, 10) : ""
-    };
-
-    dias.value = data.dias.map((dia) => ({
-      ...dia,
-      fecha: dia.fecha.slice(0, 10),
-      ejercicios: dia.ejercicios.map((e) => ({
-        ...e,
-        peso: String(e.peso ?? 0),
-        descanso: String(e.descanso ?? 0),
-        series: String(e.series ?? 0),
-        repeticiones: String(e.repeticiones ?? 0)
-      }))
-    }));
-
-    const resEjercicios = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get`);
-    ejerciciosDisponibles.value = resEjercicios.data;
-  } catch (err) {
-    console.error("Error cargando plan:", err);
-  } finally {
-    emit("loading-end");
-  }
-});
-
-const addEjercicio = (dia) => {
-  dia.ejercicios.push({
-    id: Date.now(), // Temporal en frontend
-    ejercicioId: 1,
-    series: "0",
-    repeticiones: "0",
-    peso: "0",
-    descanso: "0",
-    ejercicioNombre: ""
-  });
-};
-
-function eliminarEjercicio(dia, index) {
-  dia.ejercicios.splice(index, 1);
-}
-
-function añadirDia() {
-  let nuevoDiaNumero = 1;
-  let nuevaFecha = new Date();
-
-  if (dias.value.length > 0) {
-    // Obtener el último día
-    const ultimoDia = dias.value[dias.value.length - 1];
-
-    // Día siguiente para diaNumero
-    nuevoDiaNumero = ultimoDia.diaNumero + 1;
-
-    // Fecha siguiente al último día
-    const fechaUltimoDia = new Date(ultimoDia.fecha);
-    fechaUltimoDia.setDate(fechaUltimoDia.getDate() + 1);
-    nuevaFecha = fechaUltimoDia;
-  }
-
-  const nuevoDia = {
-    diaNumero: nuevoDiaNumero,
-    grupoMuscular: "",
-    ejercicios: [],
-    fecha: nuevaFecha.toISOString()
-  };
-
-  dias.value.push(nuevoDia);
-  diaSeleccionado.value = nuevoDia;
-}
-
-function eliminarUltimoDia() {
-  if (dias.length === 0) return;
-  const eliminado = dias.value.pop();
-  // deseleccionar si justo eliminaste el que estaba seleccionado
-  if (diaSeleccionado?.id === eliminado.id) diaSeleccionado = dias[dias.length - 1] ?? null;
-  contadorDia = dias.length > 0 ? Math.max(...dias.map((d) => d.diaNumero)) + 1 : 1;
-}
 
 const submit = async () => {
   const ejercicioSchema = z.object({
@@ -164,7 +55,7 @@ const submit = async () => {
   const planSchema = z.object({
     nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
     descripcion: z.string().max(500).optional(),
-    nivel: z.enum(["basico", "avanzado", "personalizado"]),
+    nivel: z.enum(["basico", "intermedio", "avanzado", "personalizado"]),
     objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"]),
     activo: z.boolean(),
     dias: z.array(diaSchema).min(1, "Debe haber al menos un día en el plan")
@@ -192,10 +83,13 @@ const submit = async () => {
     planSchema.parse(planData);
     const userId = route.params.userId;
 
-    await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/update/${planId}/user/${userId}`, planData, {
-      headers: { Authorization: `Bearer ${auth.getToken()}` }
-    });
-    router.push("/dashboard/train");
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/update/${planId}/user/${userId}`,
+      planData,
+      {
+        headers: { Authorization: `Bearer ${auth.getToken()}` }
+      }
+    );
   } catch (err) {
     if (err instanceof z.ZodError) {
       console.error("Errores de validación:", err.errors);
@@ -204,6 +98,8 @@ const submit = async () => {
       console.error("Error al guardar cambios:", err);
       toast.error("Error al guardar los cambios.");
     }
+  } finally {
+    toast.success("Cambios guardados correctamente.");
   }
 };
 
@@ -211,6 +107,138 @@ const capitalizar = (texto) => {
   if (!texto) return "";
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 };
+
+const auth = useAuthStore();
+
+const route = useRoute();
+const router = useRouter();
+const planId = parseInt(route.params.id);
+
+const form = ref({
+  nombre: "",
+  descripcion: "",
+  nivel: "",
+  objetivo: "",
+  activo: false
+});
+
+const dias = ref([]);
+const ejercicios = ref([]);
+const ejerciciosDisponibles = ref([]);
+const ejerciciosExtras = ref([]);
+const diaSeleccionado = ref(null);
+
+onMounted(async () => {
+  emit("loading-start");
+
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/trains/plan/${planId}`,
+      {
+        headers: { Authorization: `Bearer ${auth.getToken()}` }
+      }
+    );
+    const data = res.data;
+
+    form.value = {
+      nombre: String(data.nombre ?? ""),
+      descripcion: String(data.descripcion ?? ""),
+      nivel: String(data.nivel ?? ""), // Convertir a string
+      objetivo: String(data.objetivo ?? ""), // Convertir a string
+      activo: Boolean(data.activo ?? false), // Asegurar booleano
+      fechaInicio: data.fechaInicio ? data.fechaInicio.slice(0, 10) : "", // Fecha como string yyyy-mm-dd
+      fechaFin: data.fechaFin ? data.fechaFin.slice(0, 10) : ""
+    };
+
+    dias.value = data.dias.map((dia) => ({
+      ...dia,
+      fecha: dia.fecha.slice(0, 10),
+      ejercicios: dia.ejercicios.map((e) => ({
+        ...e,
+        peso: String(e.peso ?? 0),
+        descanso: String(e.descanso ?? 0),
+        series: String(e.series ?? 0),
+        repeticiones: String(e.repeticiones ?? 0)
+      }))
+    }));
+
+    const resEjercicios = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get`
+    );
+    ejercicios.value = resEjercicios.data;
+  } catch (err) {
+    console.error("Error cargando plan:", err);
+  } finally {
+    emit("loading-end");
+  }
+});
+
+const addEjercicio = (dia) => {
+  dia.ejercicios.push({
+    id: Date.now(), // Temporal en frontend
+    ejercicioId: "",
+    series: "0",
+    repeticiones: "0",
+    peso: "0",
+    descanso: "0",
+    ejercicioNombre: "",
+    orden: dia.ejercicios.length + 1
+  });
+};
+
+watch(
+  () => diaSeleccionado.value?.grupoMuscular,
+  (nuevoValor, valorAnterior) => {
+    console.log(`Grupo muscular cambiado de "${valorAnterior}" a "${nuevoValor}"`);
+
+    console.log(diaSeleccionado.value.ejercicios.forEach((e) => console.log(e.ejercicioId)));
+    console.log(diaSeleccionado.value.ejercicios.forEach((e) => e.ejercicioId == ""));
+    ejerciciosDisponibles.value = ejercicios.value.filter((e) => e.categoria === nuevoValor);
+
+    let ejerciciosLimpios = ejercicios.value.filter((e) => e.categoria != nuevoValor);
+    ejerciciosExtras.value = ejerciciosLimpios;
+  }
+);
+
+function eliminarEjercicio(dia, index) {
+  dia.ejercicios.splice(index, 1);
+}
+
+function añadirDia() {
+  let nuevoDiaNumero = 1;
+  let nuevaFecha = new Date();
+
+  if (dias.value.length > 0) {
+    // Obtener el último día
+    const ultimoDia = dias.value[dias.value.length - 1];
+
+    // Día siguiente para diaNumero
+    nuevoDiaNumero = ultimoDia.diaNumero + 1;
+
+    // Fecha siguiente al último día
+    const fechaUltimoDia = new Date(ultimoDia.fecha);
+    fechaUltimoDia.setDate(fechaUltimoDia.getDate() + 1);
+    nuevaFecha = fechaUltimoDia;
+  }
+
+  const nuevoDia = {
+    diaNumero: nuevoDiaNumero,
+    grupoMuscular: "",
+    ejercicios: [],
+    fecha: nuevaFecha.toISOString()
+  };
+
+  dias.value.push(nuevoDia);
+  diaSeleccionado.value = nuevoDia;
+}
+
+function eliminarUltimoDia() {
+  if (dias.length === 0) return;
+  const eliminado = dias.value.pop();
+  // deseleccionar si justo eliminaste el que estaba seleccionado
+  if (diaSeleccionado?.id === eliminado.id) diaSeleccionado = dias[dias.length - 1] ?? null;
+  contadorDia = dias.length > 0 ? Math.max(...dias.map((d) => d.diaNumero)) + 1 : 1;
+}
 
 function formatFecha(fecha) {
   if (!fecha) return "";
@@ -233,6 +261,7 @@ function moverEjercicioAbajo(index) {
 
 <template>
   <div class="mx-auto w-full flex flex-col lg:flex-row gap-4 h-full">
+    <!-- Seccion de dias -->
     <div class="w-full lg:w-1/2 bg-white p-2 rounded-2xl">
       <div class="flex flex-col h-full bg-white rounded-2xl p-4 overflow-y-auto">
         <div class="flex flex-row justify-between">
@@ -254,163 +283,231 @@ function moverEjercicioAbajo(index) {
           </label>
         </div>
 
-        <!-- 📝 Formulario del plan -->
-        <form @submit.prevent="submit" class="space-y-4">
-          <div>
-            <label for="nombre" class="block text-gray-700 font-semibold mb-2">Nombre del plan</label>
-            <input v-model="form.nombre" placeholder="Nombre" class="border rounded p-2 w-full" />
-          </div>
-          <div>
-            <label for="descripcion" class="block text-gray-700 font-semibold mb-2">Descripción</label>
-            <textarea v-model="form.descripcion" placeholder="Descripción" class="border rounded p-2 w-full" />
-          </div>
-          <div class="flex flex-row gap-2">
-            <div class="w-1/2">
-              <label class="block">
-                Nivel:
-                <select v-model="form.nivel" required class="w-full rounded border px-3 py-2 mt-1">
-                  <option value="" disabled>Selecciona nivel</option>
-                  <option value="basico">Basico</option>
-                  <option value="avanzado">Avanzado</option>
-                  <option value="personalizado">Personalizado</option>
-                </select>
-              </label>
-            </div>
-            <div class="w-1/2">
-              <label class="block">
-                Objetivo:
-                <select v-model="form.objetivo" required class="w-full rounded border px-3 py-2 mt-1">
-                  <option value="" disabled>Selecciona objetivo</option>
-                  <option value="hipertrofia">Hipertrofia</option>
-                  <option value="fuerza">Fuerza</option>
-                  <option value="personalizado">Personalizado</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          <!-- 📆 Lista de días para seleccionar -->
-          <div class="flex flex-col gap-2">
-            <label>Dias del plan</label>
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[250px] p-2 bg-gray-100 rounded"
-            >
-              <div
-                v-for="(dia, index) in dias"
-                :key="dia.id"
-                @click="diaSeleccionado = dia"
-                class="p-3 shadow-md rounded cursor-pointer hover:inset-shadow-sm transition relative"
-                :class="[
-                  diaSeleccionado?.id === dia.id ? 'bg-orange-400 hover:bg-orange-500' : 'bg-white hover:bg-gray-200'
-                ]"
-              >
-                <div class="flex flex-row gap-2 items-center justify-between">
-                  <div class="flex flex-col justify-between">
-                    Día {{ dia.diaNumero }} ({{ new Date(dia.fecha).toLocaleDateString() }})
-                    <span class="text-sm text-gray-500 block">{{ dia.grupoMuscular || "Sin grupo" }}</span>
-                  </div>
-
-                  <!-- Botón eliminar solo en el último día -->
-                  <button
-                    v-if="index === dias.length - 1"
-                    @click.stop.prevent="eliminarUltimoDia()"
-                    class="bg-red-500 hover:bg-red-600 text-white w-fit h-fit p-1 rounded text-xs"
-                    :disabled="dias.length === 0"
-                    title="Eliminar último día"
-                  >
-                    <Trash />
-                  </button>
+        <!-- Formulario del plan -->
+        <form @submit.prevent="submit" class="flex flex-col gap-4 h-full justify-between">
+          <div class="flex flex-col gap-4">
+            <div class="flex flex-row gap-2">
+              <div class="flex flex-col gap-2 w-1/2">
+                <div>
+                  <label for="nombre" class="block text-gray-700 font-semibold mb-1">Nombre del plan</label>
+                  <input v-model="form.nombre" placeholder="Nombre" class="border rounded p-2 w-full" />
+                </div>
+                <div>
+                  <label for="descripcion" class="block text-gray-700 font-semibold mb-1">Descripción</label>
+                  <textarea v-model="form.descripcion" placeholder="Descripción" class="border rounded p-2 w-full" />
                 </div>
               </div>
+              <div class="flex flex-col gap-2 w-1/2">
+                <div>
+                  <label class="block">
+                    Nivel:
+                    <select v-model="form.nivel" required class="w-full rounded border px-3 py-2 mt-1">
+                      <option value="" disabled>Selecciona nivel</option>
+                      <option value="basico">Basico</option>
+                      <option value="intermedio">Intermedio</option>
+                      <option value="avanzado">Avanzado</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+                  </label>
+                </div>
+                <div>
+                  <label class="block">
+                    Objetivo:
+                    <select v-model="form.objetivo" required class="w-full rounded border px-3 py-2 mt-1">
+                      <option value="" disabled>Selecciona objetivo</option>
+                      <option value="hipertrofia">Hipertrofia</option>
+                      <option value="fuerza">Fuerza</option>
+                      <option value="personalizado">Personalizado</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
 
-              <!-- “Día” para añadir nuevo día, dentro del grid -->
+            <!-- Lista de días para seleccionar -->
+            <div class="flex flex-col gap-2">
+              <!-- <label>Dias del plan</label> -->
               <div
-                @click.prevent="añadirDia()"
-                class="p-3 cursor-pointer rounded border-dashed border-2 border-gray-300 flex items-center justify-center text-green-600 hover:bg-green-100 hover:border-green-400"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[250px] p-2 bg-gray-100 rounded-lg shadow"
               >
-                + Añadir Día
+                <div
+                  v-for="(dia, index) in dias"
+                  :key="dia.id"
+                  @click="diaSeleccionado = dia"
+                  class="p-3 shadow-md rounded-lg cursor-pointer hover:inset-shadow-sm transition relative"
+                  :class="[
+                    diaSeleccionado?.id === dia.id
+                      ? 'bg-tertiary-500 inset-shadow-sm inset-shadow-orange-950'
+                      : 'bg-gray-50 hover:bg-gray-200 active:bg-gray-300 active:inset-shadow-gray-950'
+                  ]"
+                >
+                  <div class="flex flex-row gap-2 items-center justify-between">
+                    <div class="flex flex-col justify-between">
+                      Día {{ dia.diaNumero }} ({{ new Date(dia.fecha).toLocaleDateString() }})
+                      <span class="text-sm text-gray-500 block">{{
+                        capitalizar(dia.grupoMuscular) || "Sin grupo"
+                      }}</span>
+                    </div>
+
+                    <!-- Botón eliminar solo en el último día -->
+                    <button
+                      v-if="index === dias.length - 1"
+                      @click.stop.prevent="eliminarUltimoDia()"
+                      class="bg-red-600 hover:bg-red-700 text-white w-fit h-fit p-1 rounded-lg text-xs"
+                      :disabled="dias.length === 0"
+                      title="Eliminar último día"
+                    >
+                      <Trash />
+                    </button>
+                  </div>
+                </div>
+
+                <!-- “Día” para añadir nuevo día, dentro del grid -->
+                <div
+                  @click.prevent="añadirDia()"
+                  class="p-3 cursor-pointer rounded border-dashed border-2 border-gray-300 flex items-center justify-center text-green-600 hover:bg-green-100 hover:border-green-400"
+                >
+                  + Añadir Día
+                </div>
               </div>
             </div>
           </div>
 
-          <button
-            type="submit"
-            class="px-4 py-2 rounded bg-tertiary-500 hover:bg-orange-700 cursor-pointer text-white w-full mt-6"
-          >
-            Guardar Cambios
-          </button>
+          <div class="flex flex-row">
+            <button
+              type="submit"
+              class="bg-tertiary-500 hover:bg-tertiary-600 flex w-full justify-center text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+            >
+              <p>Guardar Cambios</p>
+            </button>
+          </div>
         </form>
       </div>
     </div>
+
+    <!-- Sección de ejercicios -->
     <div class="w-full lg:w-1/2 flex flex-col bg-white rounded-2xl h-full">
       <!-- Ejercicios del día seleccionado -->
-      <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 rounded overflow-hidden">
+      <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 px-6 rounded overflow-hidden gap-2">
         <!-- Cabecera -->
-        <h3 class="font-semibold text-xl mb-2">
-          Día {{ diaSeleccionado.diaNumero + " (" + new Date(diaSeleccionado.fecha).toLocaleDateString() + ")" }}
-        </h3>
+        <div class="flex flex-row-reverse justify-between items-center gap-2">
+          <div class="flex flex-row justify-between items-center flex-1/2 bg-gray-200 p-2 px-3 rounded-2xl gap-4">
+            <label>Grupo Muscular</label>
 
-        <select v-model="diaSeleccionado.grupoMuscular" class="p-2 border rounded-lg w-full mb-4">
-          <option disabled value="">No asignado</option>
-          <option value="piernas">Pierna</option>
-          <option value="pecho">Pecho</option>
-          <option value="espalda">Espalda</option>
-          <option value="hombros">Hombros</option>
-          <option value="brazos">Brazos</option>
-          <option value="abdomen">Abdomen</option>
-          <option value="full body">Full Body</option>
-        </select>
+            <select
+              v-model="diaSeleccionado.grupoMuscular"
+              id=""
+              class="block flex-1/2 px-4 py-2 text-sm text-black bg-gray-50 border border-[#f56e0f] rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f56e0f] cursor-pointer"
+            >
+              <option value="">No asignado</option>
+              <option value="piernas">Pierna</option>
+              <option value="pecho">Pecho</option>
+              <option value="espalda">Espalda</option>
+              <option value="hombros">Hombros</option>
+              <option value="brazos">Brazos</option>
+              <option value="abdomen">Abdomen</option>
+              <option value="full body">Full Body</option>
+            </select>
+          </div>
+
+          <div class="bg-tertiary-500 p-2 px-4 rounded-2xl h-full flex items-center">
+            <h3 class="font-semibold text-lg">
+              Día {{ diaSeleccionado.diaNumero + " (" + new Date(diaSeleccionado.fecha).toLocaleDateString() + ")" }}
+            </h3>
+          </div>
+        </div>
 
         <!-- Lista de ejercicios scrolleable -->
-        <label class="mb-2">Ejercicios</label>
-        <div class="flex-1 overflow-y-auto pr-2 space-y-2 p-2 bg-gray-100 rounded-md">
+        <div class="flex-1 overflow-y-auto pr-2 mr-2 space-y-2 p-2 bg-gray-100 rounded-2xl">
           <transition-group name="move" tag="div" class="space-y-2">
-            <div class="grid grid-cols-6 gap-2">
-              <p class="col-span-2 pl-1 text-sm">Ejercicios</p>
-              <p class="pl-1 text-sm">Series</p>
-              <p class="pl-1 text-sm">Repeticiones</p>
-              <p class="pl-1 text-sm">Peso</p>
-              <p class="pl-1 text-sm">Descanso</p>
-            </div>
+            <!-- Ejercicios -->
             <div
               v-for="(ej, j) in diaSeleccionado.ejercicios"
               :key="ej.id ?? j"
-              class="grid grid-cols-6 gap-2 bg-white p-2 rounded-xl shadow-lg items-center transition-all duration-200 ease-in-out"
+              class="flex gap-2 bg-white p-2 rounded-xl shadow-lg items-center transition-all duration-200 ease-in-out"
             >
-              <select v-model="ej.ejercicioId" class="border rounded p-2 w-full col-span-2">
-                <option :value="null" disabled>Selecciona un ejercicio</option>
-                <option v-for="e in ejerciciosDisponibles" :key="e.id" :value="e.id">
-                  {{ e.nombre }} - ({{ capitalizar(e.categoria) }})
-                </option>
-              </select>
-              <input v-model="ej.series" type="text" placeholder="Series" class="border rounded p-2 w-full" />
-              <input v-model="ej.repeticiones" type="text" placeholder="Reps" class="border rounded p-2 w-full" />
-              <input v-model="ej.peso" type="text" placeholder="Peso" class="border rounded p-2 w-full" />
-              <input v-model="ej.descanso" type="text" placeholder="Descanso" class="border rounded p-2 w-full" />
-              <div class="flex flex-row gap-1 w-fit h-fit">
+              <div class="flex flex-col gap-2 w-fit h-fit">
                 <button
                   @click="moverEjercicioArriba(j)"
                   :disabled="j === 0"
-                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded p-1 w-fit h-fit cursor-pointer"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer"
                   title="Mover arriba"
                 >
                   ▲
                 </button>
+
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  v-model="ej.orden"
+                  class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-12"
+                />
                 <button
                   @click="moverEjercicioAbajo(j)"
                   :disabled="j === diaSeleccionado.ejercicios.length - 1"
-                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded p-1"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer"
                   title="Mover abajo"
                 >
                   ▼
                 </button>
-                <button
-                  @click="eliminarEjercicio(diaSeleccionado, j)"
-                  class="bg-red-600 hover:bg-red-800 text-white transition p-1 w-fit rounded-lg cursor-pointer"
-                  title="Eliminar ejercicio"
-                >
-                  <Trash />
-                </button>
+              </div>
+
+              <div class="flex flex-col w-full gap-1 h-full">
+                <div class="flex flex-row gap-2">
+                  <select v-model="ej.ejercicioId" class="border-2 border-gray-400 rounded-lg p-2 w-full">
+                    <option value="" disabled>Selecciona un ejercicio</option>
+                    <option v-for="e in ejerciciosDisponibles" :key="e.id" :value="e.id">
+                      {{ e.nombre }} - ({{ capitalizar(e.categoria) }})
+                    </option>
+                    <optgroup label="Variados">
+                      <option v-for="e in ejerciciosExtras" :key="e.id" :value="e.id">
+                        {{ e.nombre }} - ({{ capitalizar(e.categoria) }})
+                      </option>
+                    </optgroup>
+                  </select>
+                  <button
+                    @click="eliminarEjercicio(diaSeleccionado, j)"
+                    class="bg-red-600 hover:bg-red-800 text-white transition p-2 w-fit rounded-lg cursor-pointer"
+                    title="Eliminar ejercicio"
+                  >
+                    <Trash />
+                  </button>
+                </div>
+                <div class="grid grid-cols-4">
+                  <p class="pl-1 text-sm">Series</p>
+                  <p class="pl-1 text-sm hidden xl:inline">Repeticiones</p>
+                  <p class="pl-1 text-sm xl:hidden">Rep</p>
+                  <p class="pl-1 text-sm">Peso</p>
+                  <p class="pl-1 text-sm hidden xl:inline">Descanso</p>
+                  <p class="pl-1 text-sm xl:hidden">Des</p>
+                </div>
+                <div class="flex flex-row gap-2">
+                  <input
+                    v-model="ej.series"
+                    type="text"
+                    placeholder="Series"
+                    class="border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                  <input
+                    v-model="ej.repeticiones"
+                    type="text"
+                    placeholder="Reps"
+                    class="border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                  <input
+                    v-model="ej.peso"
+                    type="text"
+                    placeholder="Peso"
+                    class="border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                  <input
+                    v-model="ej.descanso"
+                    type="text"
+                    placeholder="Descanso"
+                    class="border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                </div>
               </div>
             </div>
           </transition-group>
@@ -423,7 +520,7 @@ function moverEjercicioAbajo(index) {
         <!-- Botón fijo abajo -->
         <button
           @click.prevent="addEjercicio(diaSeleccionado)"
-          class="bg-tertiary-500 hover:bg-orange-700 cursor-pointer text-white px-4 py-2 rounded text-sm mt-4 self-start"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
         >
           + Añadir ejercicio
         </button>

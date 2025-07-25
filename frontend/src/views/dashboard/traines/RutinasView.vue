@@ -4,12 +4,12 @@
       <router-link
         v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesTrainCreateMA', params: { id: auth.getId() } }"
-        class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
+        class="bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
         ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Manualmente</span></router-link
       >
       <router-link
         :to="{ name: 'ExercisesTrainCreateAU' }"
-        class="bg-tertiary-500 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3"
+        class="bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
         ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Automatico</span></router-link
       >
     </div>
@@ -17,13 +17,12 @@
     <div v-if="rutinas.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-3 overflow-y-auto">
       <div  v-for="rutina in rutinas" :key="rutina.id">
         <div
-          class="flex flex-col bg-white hover:bg-gray-200 shadow-md hover:shadow-lg transition-shadow rounded-2xl p-6 border border-gray-200 gap-2"
+          class="flex flex-col bg-white hover:bg-gray-200 shadow-md hover:shadow-lg transition-shadow rounded-2xl p-4 border border-gray-200 gap-2"
         >
-          <div class="flex flex-col items-center justify-between gap-1">
+          <div class="flex flex-col items-center justify-between gap-1 px-0">
             <div class="flex flex-row justify-between w-full items-center">
-              <!-- SOLO el nombre es clicable para navegar -->
               <router-link :to="{ name: 'ExercisesTrainInfo', params: { id: rutina.id } }" class="w-full">
-                <div class="text-xl font-semibold text-gray-800 w-full">Nombre: {{ rutina.nombre }}</div>
+                <div class="text-xl font-semibold text-gray-800 w-full">{{ rutina.nombre }}</div>
               </router-link>
 
               <div class="flex flex-row gap-2 items-center">
@@ -39,14 +38,14 @@
                 </label>
                 <router-link
                 v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
-                  class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
+                class="bg-tertiary-500 text-white font-semibold p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
                   :to="{ name: 'ExercisesTrainEdit', params: { id: rutina.id, userId: auth.getId() } }"
                 >
                   <SquarePen />
                 </router-link>
 
                 <button
-                  class="bg-red-500 hover:bg-red-800 text-white rounded-md p-2 cursor-pointer"
+                class="bg-red-500 text-white font-semibold p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-red-700 active:text-tertiary-200 hover:bg-red-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
                   type="button"
                   @click="eliminarRutina(rutina.id)"
                 >

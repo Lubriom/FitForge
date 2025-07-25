@@ -42,6 +42,7 @@
                 >
                   <option value="" disabled>Selecciona nivel</option>
                   <option value="basico">Basico</option>
+                  <option value="intermedio">Intermedio</option>
                   <option value="avanzado">Avanzado</option>
                   <option value="personalizado">Personalizado</option>
                 </select>
@@ -156,7 +157,7 @@ const submitForm = async () => {
     const planSchema = z.object({
       nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
       descripcion: z.string().optional(),
-      nivel: z.enum(["basico", "avanzado", "personalizado"], {
+      nivel: z.enum(["basico", "intermedio" , "avanzado", "personalizado"], {
         errorMap: () => ({ message: "Selecciona un nivel válido" })
       }),
       objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"], {

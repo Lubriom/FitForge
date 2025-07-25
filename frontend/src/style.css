@@ -162,6 +162,20 @@
   background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 0%, black 10%, black 90%, rgba(0, 0, 0, 0.1) 100%);
 }
 
+.custom-select {
+  appearance: none; /* Quita el estilo por defecto */
+  background-color: lightgrey;
+  border: 2px solid #f56e0f;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 14px;
+  color: #333;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="orange" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }
