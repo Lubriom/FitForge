@@ -29,7 +29,9 @@ const ejercicioSchema = z.object({
     .nonempty("El peso es obligatorio")
     .refine((val) => /^\d{1,3}(\.\d{1,2})?$/.test(val.toString()), {
       message: "Peso debe ser un número válido (hasta 2 decimales)."
-    })
+    }),
+
+  orden: z.number("El orden debe ser un número").int().min(1, "El orden debe ser mayor que 0")
 });
 
 const diaSchema = z.object({
@@ -44,7 +46,7 @@ const diaSchema = z.object({
 const planUpdateSchema = z.object({
   nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
   descripcion: z.string().max(500).optional(),
-  nivel: z.enum(["basico", "intermedio" ,"avanzado", "personalizado"]),
+  nivel: z.enum(["basico", "intermedio", "avanzado", "personalizado"]),
   objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"]),
   activo: z.boolean(),
   dias: z.array(diaSchema).min(1, "Debe haber al menos un día en el plan")

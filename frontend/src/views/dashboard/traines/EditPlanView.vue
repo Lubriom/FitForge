@@ -40,7 +40,8 @@ const submit = async () => {
       .nonempty("El peso es obligatorio")
       .refine((val) => /^\d{1,3}(\.\d{1,2})?$/.test(val.toString()), {
         message: "Peso debe ser un número válido (hasta 2 decimales)."
-      })
+      }),
+    orden: z.number("El orden debe ser un número").int().min(1, "El orden debe ser mayor que 0")
   });
 
   const diaSchema = z.object({
@@ -75,7 +76,8 @@ const submit = async () => {
           series: e.series,
           repeticiones: e.repeticiones,
           peso: e.peso,
-          descanso: e.descanso
+          descanso: e.descanso,
+          orden: e.orden
         }))
       }))
     };
@@ -189,16 +191,23 @@ const addEjercicio = (dia) => {
 watch(
   () => diaSeleccionado.value?.grupoMuscular,
   (nuevoValor, valorAnterior) => {
-    console.log(`Grupo muscular cambiado de "${valorAnterior}" a "${nuevoValor}"`);
+    // console.log(`Grupo muscular cambiado de "${valorAnterior}" a "${nuevoValor}"`);
 
-    console.log(diaSeleccionado.value.ejercicios.forEach((e) => console.log(e.ejercicioId)));
-    console.log(diaSeleccionado.value.ejercicios.forEach((e) => e.ejercicioId == ""));
+    // console.log(diaSeleccionado.value.ejercicios.forEach((e) => console.log(e.ejercicioId)));
+    // console.log(diaSeleccionado.value.ejercicios.forEach((e) => e.ejercicioId == ""));
     ejerciciosDisponibles.value = ejercicios.value.filter((e) => e.categoria === nuevoValor);
 
     let ejerciciosLimpios = ejercicios.value.filter((e) => e.categoria != nuevoValor);
     ejerciciosExtras.value = ejerciciosLimpios;
   }
 );
+
+// Ordenamos los ejercicios para mostrarlos en el orden correcto
+watch(diaSeleccionado, () => {
+  if (diaSeleccionado.value) {
+    diaSeleccionado.value.ejercicios.sort((a, b) => a.orden - b.orden);
+  }
+});
 
 function eliminarEjercicio(dia, index) {
   dia.ejercicios.splice(index, 1);
@@ -247,15 +256,15 @@ function formatFecha(fecha) {
 }
 
 function moverEjercicioArriba(index) {
-  if (index === 0) return; // ya está arriba
-  const ejercicios = diaSeleccionado.value.ejercicios;
-  [ejercicios[index - 1], ejercicios[index]] = [ejercicios[index], ejercicios[index - 1]];
+  diaSeleccionado.value.ejercicios[index - 1].orden = index - 1;
+  diaSeleccionado.value.ejercicios[index - 2].orden = index;
+  diaSeleccionado.value?.ejercicios.sort((a, b) => a.orden - b.orden);
 }
 
 function moverEjercicioAbajo(index) {
-  const ejercicios = diaSeleccionado.value.ejercicios;
-  if (index === ejercicios.length - 1) return; // ya está abajo
-  [ejercicios[index], ejercicios[index + 1]] = [ejercicios[index + 1], ejercicios[index]];
+  diaSeleccionado.value.ejercicios[index - 1].orden = index + 1;
+  diaSeleccionado.value.ejercicios[index].orden = index;
+  diaSeleccionado.value?.ejercicios.sort((a, b) => a.orden - b.orden);
 }
 </script>
 
@@ -286,40 +295,52 @@ function moverEjercicioAbajo(index) {
         <!-- Formulario del plan -->
         <form @submit.prevent="submit" class="flex flex-col gap-4 h-full justify-between">
           <div class="flex flex-col gap-4">
-            <div class="flex flex-row gap-2">
-              <div class="flex flex-col gap-2 w-1/2">
+            <div class="flex flex-col md:flex-row gap-2">
+              <div class="flex flex-col gap-2 w-full md:w-1/2">
                 <div>
                   <label for="nombre" class="block text-gray-700 font-semibold mb-1">Nombre del plan</label>
-                  <input v-model="form.nombre" placeholder="Nombre" class="border rounded p-2 w-full" />
+                  <input
+                    v-model="form.nombre"
+                    placeholder="Nombre"
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
                 </div>
                 <div>
                   <label for="descripcion" class="block text-gray-700 font-semibold mb-1">Descripción</label>
-                  <textarea v-model="form.descripcion" placeholder="Descripción" class="border rounded p-2 w-full" />
+                  <textarea
+                    v-model="form.descripcion"
+                    placeholder="Descripción"
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
                 </div>
               </div>
-              <div class="flex flex-col gap-2 w-1/2">
+              <div class="flex flex-col gap-2 w-full md:w-1/2">
                 <div>
-                  <label class="block">
-                    Nivel:
-                    <select v-model="form.nivel" required class="w-full rounded border px-3 py-2 mt-1">
-                      <option value="" disabled>Selecciona nivel</option>
-                      <option value="basico">Basico</option>
-                      <option value="intermedio">Intermedio</option>
-                      <option value="avanzado">Avanzado</option>
-                      <option value="personalizado">Personalizado</option>
-                    </select>
-                  </label>
+                  <label class="block text-gray-700 font-semibold mb-1"> Nivel: </label>
+                  <select
+                    v-model="form.nivel"
+                    required
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  >
+                    <option value="" disabled>Selecciona nivel</option>
+                    <option value="basico">Basico</option>
+                    <option value="intermedio">Intermedio</option>
+                    <option value="avanzado">Avanzado</option>
+                    <option value="personalizado">Personalizado</option>
+                  </select>
                 </div>
                 <div>
-                  <label class="block">
-                    Objetivo:
-                    <select v-model="form.objetivo" required class="w-full rounded border px-3 py-2 mt-1">
-                      <option value="" disabled>Selecciona objetivo</option>
-                      <option value="hipertrofia">Hipertrofia</option>
-                      <option value="fuerza">Fuerza</option>
-                      <option value="personalizado">Personalizado</option>
-                    </select>
-                  </label>
+                  <label class="block text-gray-700 font-semibold mb-1"> Objetivo: </label>
+                  <select
+                    v-model="form.objetivo"
+                    required
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  >
+                    <option value="" disabled>Selecciona objetivo</option>
+                    <option value="hipertrofia">Hipertrofia</option>
+                    <option value="fuerza">Fuerza</option>
+                    <option value="personalizado">Personalizado</option>
+                  </select>
                 </div>
               </div>
             </div>
@@ -328,7 +349,7 @@ function moverEjercicioAbajo(index) {
             <div class="flex flex-col gap-2">
               <!-- <label>Dias del plan</label> -->
               <div
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[250px] p-2 bg-gray-100 rounded-lg shadow"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[225px] p-2 bg-gray-100 rounded-lg shadow-inner"
               >
                 <div
                   v-for="(dia, index) in dias"
@@ -338,7 +359,7 @@ function moverEjercicioAbajo(index) {
                   :class="[
                     diaSeleccionado?.id === dia.id
                       ? 'bg-tertiary-500 inset-shadow-sm inset-shadow-orange-950'
-                      : 'bg-gray-50 hover:bg-gray-200 active:bg-gray-300 active:inset-shadow-gray-950'
+                      : 'bg-white hover:bg-gray-100 active:bg-gray-300 active:inset-shadow-gray-950'
                   ]"
                 >
                   <div class="flex flex-row gap-2 items-center justify-between">
@@ -390,8 +411,8 @@ function moverEjercicioAbajo(index) {
       <!-- Ejercicios del día seleccionado -->
       <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 px-6 rounded overflow-hidden gap-2">
         <!-- Cabecera -->
-        <div class="flex flex-row-reverse justify-between items-center gap-2">
-          <div class="flex flex-row justify-between items-center flex-1/2 bg-gray-200 p-2 px-3 rounded-2xl gap-4">
+        <div class="flex flex-col-reverse sm:flex-row-reverse justify-between items-center gap-2">
+          <div class="flex flex-row justify-between items-center w-full sm:flex-1/2 bg-gray-200 p-2 px-3 rounded-2xl gap-4">
             <label>Grupo Muscular</label>
 
             <select
@@ -410,7 +431,7 @@ function moverEjercicioAbajo(index) {
             </select>
           </div>
 
-          <div class="bg-tertiary-500 p-2 px-4 rounded-2xl h-full flex items-center">
+          <div class="bg-tertiary-500 p-2 px-4 rounded-2xl w-full sm:w-fit h-full flex items-center">
             <h3 class="font-semibold text-lg">
               Día {{ diaSeleccionado.diaNumero + " (" + new Date(diaSeleccionado.fecha).toLocaleDateString() + ")" }}
             </h3>
@@ -422,15 +443,15 @@ function moverEjercicioAbajo(index) {
           <transition-group name="move" tag="div" class="space-y-2">
             <!-- Ejercicios -->
             <div
-              v-for="(ej, j) in diaSeleccionado.ejercicios"
-              :key="ej.id ?? j"
+              v-for="ej in diaSeleccionado.ejercicios"
+              :key="ej.id"
               class="flex gap-2 bg-white p-2 rounded-xl shadow-lg items-center transition-all duration-200 ease-in-out"
             >
               <div class="flex flex-col gap-2 w-fit h-fit">
                 <button
-                  @click="moverEjercicioArriba(j)"
-                  :disabled="j === 0"
-                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer"
+                  @click="moverEjercicioArriba(ej.orden)"
+                  :disabled="ej.orden === 1"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer disabled:opacity-50"
                   title="Mover arriba"
                 >
                   ▲
@@ -439,14 +460,14 @@ function moverEjercicioAbajo(index) {
                 <input
                   type="number"
                   min="1"
-                  max="100"
+                  disabled
                   v-model="ej.orden"
                   class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-12"
                 />
                 <button
-                  @click="moverEjercicioAbajo(j)"
-                  :disabled="j === diaSeleccionado.ejercicios.length - 1"
-                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer"
+                  @click="moverEjercicioAbajo(ej.orden)"
+                  :disabled="ej.orden === diaSeleccionado.ejercicios.length"
+                  class="bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md p-1 cursor-pointer disabled:opacity-50"
                   title="Mover abajo"
                 >
                   ▼

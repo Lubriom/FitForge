@@ -328,6 +328,10 @@ const exportarPDF = () => {
               :key="ej.id"
               class="bg-white rounded-2xl p-3 flex justify-between items-center shadow-lg"
             >
+            <div class="flex flex-row gap-2 items-center">
+            <div class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center">
+              {{ ej.orden }}
+            </div>
               <div>
                 <p class="font-medium text-gray-900">{{ ej.ejercicio.nombre }}</p>
                 <p class="hidden md:inline text-gray-600 text-sm">
@@ -339,6 +343,7 @@ const exportarPDF = () => {
                   <span>Descanso: {{ ej.descanso }} seg</span>
                 </p>
               </div>
+            </div>
               <div class="text-tertiary-500 font-semibold">{{ ej.peso }} kg</div>
             </div>
           </div>

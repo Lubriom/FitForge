@@ -263,7 +263,8 @@ export class EntrenamientoController {
           peso: parseFloat(ejercicio.peso) || 0,
           repeticiones: parseInt(ejercicio.repeticiones) || 0,
           series: parseInt(ejercicio.series) || 0,
-          descanso: parseInt(ejercicio.descanso) || 0
+          descanso: parseInt(ejercicio.descanso) || 0,
+          orden: parseInt(ejercicio.orden) || 0
         }))
       }));
     }

@@ -98,7 +98,8 @@ export class PlanEntrenamientoModel {
                   descanso: ej.descanso,
                   series: ej.series,
                   repeticiones: ej.repeticiones,
-                  peso: ej.peso
+                  peso: ej.peso,
+                  orden: ej.orden
                 }))
               }
             }))
