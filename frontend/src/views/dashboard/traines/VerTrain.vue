@@ -27,6 +27,7 @@ const diaSeleccionado = ref(null);
 function seleccionarDia(index) {
   diaSeleccionadoIndex.value = index;
   diaSeleccionado.value = diasSemanaActual.value[index];
+  diaSeleccionado.value.ejercicios.sort((a, b) => a.orden - b.orden);
 }
 
 function obtenerFechaDelDia(diaNumero) {
@@ -118,7 +119,6 @@ onMounted(() => {
   fetchPlan();
 });
 
-// import autoTable from "jspdf-autotable"; // opcional si luego quieres tablas bonitas
 
 const exportarPDF = () => {
   const doc = new jsPDF();
@@ -205,14 +205,14 @@ const exportarPDF = () => {
           <div class="flex flex-row gap-2">
             <button
               @click="exportarPDF"
-              class="text-md text-white bg-tertiary-500 hover:bg-orange-700 rounded-md p-2 cursor-pointer flex gap-1 items-center"
+              class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
             >
               <span class="hidden md:inline">Exportar PDF</span> <FileDown />
             </button>
             <router-link
               v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
               :to="{ name: 'ExercisesTrainEdit', params: { id: plan.id, userId: auth.getId() } }"
-              class="text-md text-white bg-tertiary-500 hover:bg-orange-700 rounded-md p-2 cursor-pointer flex gap-1 items-center"
+              class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
             >
               <span class="hidden md:inline">Editar</span> <SquarePen />
             </router-link>
@@ -250,7 +250,7 @@ const exportarPDF = () => {
         <button
           @click="irPagina(0)"
           :disabled="paginaActual === 0"
-          class="p-2 rounded-md bg-tertiary-500 hover:bg-orange-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white h-full"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Primera página"
         >
           <ChevronFirst />
@@ -258,7 +258,7 @@ const exportarPDF = () => {
         <button
           @click="paginaAnterior"
           :disabled="paginaActual === 0"
-          class="p-2 rounded-md bg-tertiary-500 hover:bg-orange-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white h-full"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Página anterior"
         >
           <ChevronLeft />
@@ -271,10 +271,10 @@ const exportarPDF = () => {
             :key="paginaActual * diasPorPagina + index"
             @click="seleccionarDia(paginaActual * diasPorPagina + index)"
             :class="[
-              'w-full p-3 rounded-md font-medium whitespace-nowrap cursor-pointer',
+              'w-full p-3 font-semibold whitespace-nowrap cursor-pointer px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed shadow-sm',
               diaSeleccionadoIndex === paginaActual * diasPorPagina + index
-                ? 'bg-tertiary-500 hover:bg-orange-600 text-white flex flex-col items-center justify-center'
-                : 'bg-gray-100 hover:bg-gray-200 flex flex-col items-center justify-center'
+                ? 'bg-tertiary-500 hover:bg-orange-600 text-white flex flex-col items-center justify-center inset-shadow-sm inset-shadow-orange-950'
+                : 'bg-gray-200 hover:bg-gray-300 flex flex-col items-center justify-center active:inset-shadow-sm active:inset-shadow-gray-600'
             ]"
           >
             <p>
@@ -300,7 +300,7 @@ const exportarPDF = () => {
         <button
           @click="siguientePagina"
           :disabled="paginaActual === totalPaginas - 1"
-          class="p-2 rounded-md bg-tertiary-500 hover:bg-orange-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white h-full"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Página siguiente"
         >
           <ChevronRight />
@@ -308,16 +308,16 @@ const exportarPDF = () => {
         <button
           @click="irPagina(totalPaginas - 1)"
           :disabled="paginaActual === totalPaginas - 1"
-          class="p-2 rounded-md bg-tertiary-500 hover:bg-orange-700 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white h-full"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Última página"
         >
           <ChevronLast />
         </button>
       </div>
 
-      <div class="bg-gray-50 p-4 rounded-lg shadow-inner flex flex-col overflow-y-auto max-h-full gap-2">
+      <div class="bg-gray-50 p-4 rounded-lg shadow-inner flex flex-col overflow-y-auto max-h-full gap-2 h-full">
         <template v-if="diaSeleccionado && diaSeleccionado.ejercicios.length > 0">
-          <h3 class="text-lg font-semibold px-2">
+          <h3 class="text-md font-semibold px-2">
             {{ capitalizar(obtenerFechaDelDia(diaSeleccionado.diaNumero)) }} -
             {{ capitalizar(diaSeleccionado.grupoMuscular) || "Sin grupo muscular" }}
           </h3>
@@ -328,29 +328,29 @@ const exportarPDF = () => {
               :key="ej.id"
               class="bg-white rounded-2xl p-3 flex justify-between items-center shadow-lg"
             >
-            <div class="flex flex-row gap-2 items-center">
-            <div class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center">
-              {{ ej.orden }}
-            </div>
-              <div>
-                <p class="font-medium text-gray-900">{{ ej.ejercicio.nombre }}</p>
-                <p class="hidden md:inline text-gray-600 text-sm">
-                  Series: {{ ej.series }}, Repeticiones: {{ ej.repeticiones }}, Descanso: {{ ej.descanso }} seg
-                </p>
-                <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
-                  <span>Series: {{ ej.series }}</span>
-                  <span>Repeticiones: {{ ej.repeticiones }}</span>
-                  <span>Descanso: {{ ej.descanso }} seg</span>
-                </p>
+              <div class="flex flex-row gap-2 items-center">
+                <div class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center">
+                  {{ ej.orden }}
+                </div>
+                <div>
+                  <p class="font-medium text-gray-900">{{ ej.ejercicio.nombre }}</p>
+                  <p class="hidden md:inline text-gray-600 text-sm">
+                    Series: {{ ej.series }}, Repeticiones: {{ ej.repeticiones }}, Descanso: {{ ej.descanso }} seg
+                  </p>
+                  <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                    <span>Series: {{ ej.series }}</span>
+                    <span>Repeticiones: {{ ej.repeticiones }}</span>
+                    <span>Descanso: {{ ej.descanso }} seg</span>
+                  </p>
+                </div>
               </div>
-            </div>
               <div class="text-tertiary-500 font-semibold">{{ ej.peso }} kg</div>
             </div>
           </div>
         </template>
 
         <template v-else-if="diaSeleccionado && diaSeleccionado.ejercicios.length === 0">
-          <p class="text-center text-gray-500 text-lg">Este día puedes descansar 😌</p>
+          <p class="text-center text-gray-500 text-lg my-auto">Este día puedes descansar 😌</p>
         </template>
 
         <template v-else>

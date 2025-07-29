@@ -3,6 +3,11 @@ import { z } from "zod";
 // Definiciones de opciones permitidas
 
 const ejercicioSchema = z.object({
+  ejercicioId: z
+      .number()
+      .refine((val) => /^\d+$/.test(val.toString()) && Number(val) >= 1, {
+        message: "Por favor seleccione un ejercicio."
+      }),
   descanso: z
     .string()
     .nonempty("El descanso es obligatorio")

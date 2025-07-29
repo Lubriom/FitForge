@@ -14,6 +14,11 @@ const emit = defineEmits(["loading-start", "loading-end"]);
 
 const submit = async () => {
   const ejercicioSchema = z.object({
+    ejercicioId: z
+      .number()
+      .refine((val) => /^\d+$/.test(val.toString()) && Number(val) >= 1, {
+        message: "Por favor seleccione un ejercicio."
+      }),
     descanso: z
       .string()
       .nonempty("El descanso es obligatorio")
@@ -92,6 +97,8 @@ const submit = async () => {
         headers: { Authorization: `Bearer ${auth.getToken()}` }
       }
     );
+
+    toast.success("Cambios guardados correctamente.");
   } catch (err) {
     if (err instanceof z.ZodError) {
       console.error("Errores de validación:", err.errors);
@@ -100,8 +107,6 @@ const submit = async () => {
       console.error("Error al guardar cambios:", err);
       toast.error("Error al guardar los cambios.");
     }
-  } finally {
-    toast.success("Cambios guardados correctamente.");
   }
 };
 
@@ -178,7 +183,7 @@ onMounted(async () => {
 const addEjercicio = (dia) => {
   dia.ejercicios.push({
     id: Date.now(), // Temporal en frontend
-    ejercicioId: "",
+    ejercicioId: 0,
     series: "0",
     repeticiones: "0",
     peso: "0",
@@ -412,7 +417,9 @@ function moverEjercicioAbajo(index) {
       <div v-if="diaSeleccionado" class="flex flex-col flex-1 p-6 px-6 rounded overflow-hidden gap-2">
         <!-- Cabecera -->
         <div class="flex flex-col-reverse sm:flex-row-reverse justify-between items-center gap-2">
-          <div class="flex flex-row justify-between items-center w-full sm:flex-1/2 bg-gray-200 p-2 px-3 rounded-2xl gap-4">
+          <div
+            class="flex flex-row justify-between items-center w-full sm:flex-1/2 bg-gray-200 p-2 px-3 rounded-2xl gap-4"
+          >
             <label>Grupo Muscular</label>
 
             <select
@@ -457,13 +464,9 @@ function moverEjercicioAbajo(index) {
                   ▲
                 </button>
 
-                <input
-                  type="number"
-                  min="1"
-                  disabled
-                  v-model="ej.orden"
-                  class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-12"
-                />
+                <div class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-12">
+                  {{ ej.orden }}
+                </div>
                 <button
                   @click="moverEjercicioAbajo(ej.orden)"
                   :disabled="ej.orden === diaSeleccionado.ejercicios.length"
@@ -477,7 +480,7 @@ function moverEjercicioAbajo(index) {
               <div class="flex flex-col w-full gap-1 h-full">
                 <div class="flex flex-row gap-2">
                   <select v-model="ej.ejercicioId" class="border-2 border-gray-400 rounded-lg p-2 w-full">
-                    <option value="" disabled>Selecciona un ejercicio</option>
+                    <option value="0" disabled>Selecciona un ejercicio</option>
                     <option v-for="e in ejerciciosDisponibles" :key="e.id" :value="e.id">
                       {{ e.nombre }} - ({{ capitalizar(e.categoria) }})
                     </option>

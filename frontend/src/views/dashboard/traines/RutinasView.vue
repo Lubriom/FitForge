@@ -1,16 +1,16 @@
 <template>
   <div class="flex flex-col gap-3 h-full">
-    <div class="flex flex-row justify-evenly items-center">
+    <div class="flex flex-row justify-evenly items-center gap-2">
       <router-link
         v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesTrainCreateMA', params: { id: auth.getId() } }"
-        class="bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
-        ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Manualmente</span></router-link
+        class="flex justify-center w-full items-center gap-1 bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+        ><Plus />Nuevo Plan Manualmente</router-link
       >
       <router-link
         :to="{ name: 'ExercisesTrainCreateAU' }"
-        class="bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
-        ><span class="flex items-center gap-1"><Plus /> Nuevo Plan Automatico</span></router-link
+        class="flex justify-center w-full items-center gap-1 bg-tertiary-500 hover:bg-tertiary-600 text-white font-semibold py-2 px-4 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+        ><Plus />Nuevo Plan Automatico</router-link
       >
     </div>
 

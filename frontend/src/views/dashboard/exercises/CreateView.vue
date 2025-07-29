@@ -46,7 +46,7 @@
               <option value="piernas">Pierna</option>
               <option value="pecho">Pecho</option>
               <option value="espalda">Espalda</option>
-              <option value="hombro">Hombro</option>
+              <option value="hombros">Hombros</option>
               <option value="brazos">Brazos</option>
               <option value="abdomen">Abdomen</option>
               <option value="full body">Full Body</option>
