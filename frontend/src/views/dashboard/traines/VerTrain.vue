@@ -206,14 +206,16 @@ const exportarPDF = () => {
             <button
               @click="exportarPDF"
               class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
-            >
+              title="Descargar Plan"
+              >
               <span class="hidden md:inline">Exportar PDF</span> <FileDown />
             </button>
             <router-link
               v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
               :to="{ name: 'ExercisesTrainEdit', params: { id: plan.id, userId: auth.getId() } }"
               class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
-            >
+              title="Editar plan"
+              >
               <span class="hidden md:inline">Editar</span> <SquarePen />
             </router-link>
           </div>
@@ -285,7 +287,7 @@ const exportarPDF = () => {
           <p v-else class="mx-auto">No hay dias para este entrenamiento</p>
         </div>
         <div
-          class="lg:hidden w-full p-3 rounded-md font-medium whitespace-nowrap cursor-pointer bg-tertiary-500 hover:bg-orange-600 text-white flex flex-col items-center justify-center"
+          class="lg:hidden w-full p-3 rounded-xl font-medium whitespace-nowrap cursor-pointer bg-tertiary-500 hover:bg-orange-600 text-white flex flex-col items-center justify-center inset-shadow-sm inset-shadow-orange-950"
         >
           <p>
             {{

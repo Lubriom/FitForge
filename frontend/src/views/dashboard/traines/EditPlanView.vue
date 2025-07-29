@@ -278,8 +278,8 @@ function moverEjercicioAbajo(index) {
     <!-- Seccion de dias -->
     <div class="w-full lg:w-1/2 bg-white p-2 rounded-2xl">
       <div class="flex flex-col h-full bg-white rounded-2xl p-4 overflow-y-auto">
-        <div class="flex flex-row justify-between">
-          <h2 class="text-2xl font-bold mb-4">Editar Plan</h2>
+        <div class="flex flex-row justify-between items-center mb-2">
+          <h2 class="text-xl font-bold">Editar Plan</h2>
           <label class="flex items-center gap-2 cursor-pointer select-none">
             <span class="text-gray-700 font-semibold">Activo</span>
             <div
@@ -321,7 +321,7 @@ function moverEjercicioAbajo(index) {
               </div>
               <div class="flex flex-col gap-2 w-full md:w-1/2">
                 <div>
-                  <label class="block text-gray-700 font-semibold mb-1"> Nivel: </label>
+                  <label for="nivel" class="block text-gray-700 font-semibold mb-1"> Nivel: </label>
                   <select
                     v-model="form.nivel"
                     required
@@ -464,7 +464,7 @@ function moverEjercicioAbajo(index) {
                   ▲
                 </button>
 
-                <div class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-12">
+                <div class="border-gray-400 text-center border-2 rounded-md p-1 appearance-none w-10">
                   {{ ej.orden }}
                 </div>
                 <button
@@ -549,7 +549,7 @@ function moverEjercicioAbajo(index) {
           + Añadir ejercicio
         </button>
       </div>
-      <div v-else class="flex flex-col justify-center items-center h-full">
+      <div v-else class="flex flex-col justify-center items-center h-full min-h-[200px]">
         <p class="mb-2 italic text-gray-800 font-semibold">Selecciona un dia de entrenamiento</p>
         <p class="italic text-sm text-gray-600">Se cargará la información de ese dia</p>
       </div>

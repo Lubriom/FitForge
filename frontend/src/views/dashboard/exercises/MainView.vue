@@ -1,10 +1,11 @@
 <template>
   <div class="flex flex-col h-full gap-3">
+    <!-- Filtros y crear ejercicio PC -->
     <div class="hidden md:flex flex-row justify-between items-center gap-3">
       <router-link
         v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
         :to="{ name: 'ExercisesCreate' }"
-        class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+        class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
       >
         <span class="flex items-center gap-1"><Plus /> Nuevo</span>
       </router-link>
@@ -68,6 +69,25 @@
       </form>
     </div>
 
+    <!-- Filtros y crear ejercicio MOBILE -->
+    <button
+      class="md:hidden absolute z-10 bg-gray-500 flex text-white font-medium p-4 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-gray-700 active:text-tertiary-200 hover:bg-gray-600 hover:inset-shadow-gray-400 active:inset-shadow-gray-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-gray-300"
+      :class="{'bottom-26 right-7' : auth.getRole() === 'user'},
+      {'bottom-42 right-7' : auth.getRole() === 'admin' || auth.getRole() === 'entrenador'}"
+      >
+    <Search /></button>
+    <router-link
+      v-if="auth.getRole() === 'admin' || auth.getRole() === 'entrenador'"
+      :to="{ name: 'ExercisesCreate' }"
+      class="md:hidden bottom-26 right-7 absolute z-10 h-fit bg-tertiary-500 hover:bg-tertiary-600 flex text-white font-medium p-4 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+      :class="{
+        'hidden': auth.getRole() === 'admin' || auth.getRole() === 'entrenador',
+        hidden: auth.getRole() !== 'admin' && auth.getRole() !== 'entrenador'
+      }"
+    >
+      <span class="flex items-center gap-1"><Plus /></span>
+    </router-link>
+
     <div class="bg-quaternary-500 px-4 p-2 rounded-2xl text-gray-100 text-sm">
       <p>Listando {{ exercises.length }} ejercicios</p>
     </div>
@@ -100,7 +120,7 @@
                 <h2 class="max-w-[150px] text-xl font-semibold text-tertiary-600">{{ exercise.nombre }}</h2>
                 <button
                   @click="toggleFlip(exercise.id)"
-                  class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium p-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+                  class="bg-tertiary-500 hover:bg-tertiary-600 h-fit self-start flex text-white font-medium p-2 rounded-xl shadow-md ml-3 disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
                 >
                   <BadgeInfo />
                 </button>
@@ -169,7 +189,7 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { useLayoutStore } from "@/stores/layoutStore";
-import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen } from "lucide-vue-next";
+import { BadgeInfo, Undo2, RotateCcw, Plus, Funnel, SquarePen, Search } from "lucide-vue-next";
 import { computed } from "vue";
 import { useAuthStore } from "@/utils/Auth";
 
