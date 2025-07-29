@@ -1,15 +1,15 @@
 <template>
   <div class="flex flex-col w-full h-full gap-3 justify-center items-center">
-    <div class="flex flex-col h-fit gap-3 p-6 pr-2 shadow-md bg-white rounded-2xl w-full lg:w-1/2 mx-auto">
-      <div class="flex flex-row justify-between p-3 pb-0">
-        <h2 class="text-2xl font-semibold text-center text-tertiary-600">
-          Editando: <span class="text-tertiary-600">{{ form.nombre }}</span>
-        </h2>
-        <button @click="eliminarEjercicio" class="bg-red-500 hover:bg-red-800 text-white p-2 rounded-lg">
-          <Trash />
-        </button>
-      </div>
-      <form @submit.prevent="editarEjercicio" class="space-y-4 pr-2 w-full h-[400px] sm:h-fit overflow-y-auto">
+    <div class="flex flex-col h-fit gap-3 p-6 px-4 shadow-md bg-white rounded-xl w-full md:w-fit lg:w-1/2 mx-auto">
+      <form @submit.prevent="editarEjercicio" class="space-y-4 px-2 w-full h-[450px] sm:h-fit overflow-y-auto">
+        <div class="flex flex-row justify-between">
+          <h2 class="text-xl font-semibold text-center text-tertiary-600">
+            Editando: <span class="text-tertiary-600">{{ form.nombre }}</span>
+          </h2>
+          <button @click="eliminarEjercicio" class="bg-red-500 hover:bg-red-800 text-white p-2 rounded-lg">
+            <Trash />
+          </button>
+        </div>
         <div class="flex flex-col">
           <label for="nombre" class="font-medium">Nombre</label>
           <input
