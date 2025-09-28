@@ -121,10 +121,6 @@ watch(expanded, (newVal) => {
   direction.value = newVal ? "right" : "left";
 });
 
-watch(expanded, () => {
-  console.log(expanded.value);
-});
-
 watch(route, () => {
   expanded.value = !expanded;
 });

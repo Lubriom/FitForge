@@ -157,7 +157,7 @@
       <div class="hidden items-center gap-2 lg:flex">
         <button
           @click="irPagina(0)"
-          :disabled="semanaIndex === 0"
+          :disabled="semanaIndex === 0 || plan.dias.length === 0"
           class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Primera página"
         >
@@ -165,7 +165,7 @@
         </button>
         <button
           @click="anteriorPagina"
-          :disabled="semanaIndex === 0"
+          :disabled="semanaIndex === 0 || plan.dias.length === 0"
           class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Página anterior"
         >
@@ -201,11 +201,12 @@
                 >{{ capitalizar(dia.grupoMuscular) || "Descanso" }}</span
               >
             </button>
+            <p v-else class="text-center bg-gray-200 w-full text-black text-lg mx-auto py-3.5 rounded-2xl">No hay ningún dia en el plan</p>
           </div>
         </div>
         <button
           @click="siguientePagina"
-          :disabled="semanaIndex === totalsemanas - 1"
+          :disabled="semanaIndex === totalsemanas - 1 || plan.dias.length === 0"
           class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Página siguiente"
         >
@@ -213,7 +214,7 @@
         </button>
         <button
           @click="irPagina(totalsemanas - 1)"
-          :disabled="semanaIndex === totalsemanas - 1"
+          :disabled="semanaIndex === totalsemanas - 1 || plan.dias.length === 0"
           class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
           title="Última página"
         >
@@ -226,7 +227,7 @@
         <div class="flex h-full flex-col sm:flex-row gap-2">
           <button
             @click="anteriorDia()"
-            :disabled="diaSeleccionado.diaNumero === 1"
+            :disabled="diaSeleccionado?.diaNumero === 1 || plan.dias.length === 0"
             class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
             title="Día Anterior"
           >
@@ -234,14 +235,14 @@
           </button>
           <button
             @click="primerDia()"
-            :disabled="diaSeleccionado.diaNumero === 1"
+            :disabled="diaSeleccionado?.diaNumero === 1 || plan.dias.length === 0"
             class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
             title="Primer Día"
           >
             <ChevronFirst />
           </button>
         </div>
-        <div class="w-full gap-2 flex flex-col items-center">
+        <div class="w-full gap-2 flex flex-col items-center" v-if="diaSeleccionado">
           <div class="w-full bg-gray-400 text-xs font-semibold p-1 rounded-lg text-white text-center">
             Dia {{ diaSeleccionado.diaNumero }} de {{ plan.dias.length }}
           </div>
@@ -301,10 +302,13 @@
             </div>
           </div>
         </div>
+
+        <p v-else class="w-full bg-gray-200 text-black text-md p-2 mx-auto py-5 rounded-2xl items-center text-center align-middle">No hay ningún día en el plan</p>
+
         <div class="flex h-full flex-col sm:flex-row gap-2">
           <button
             @click="siguienteDia()"
-            :disabled="diaSeleccionado.diaNumero === plan.dias.length"
+            :disabled="diaSeleccionado?.diaNumero === plan.dias.length || plan.dias.length === 0"
             class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
             title="Día Siguiente"
           >
@@ -312,7 +316,7 @@
           </button>
           <button
             @click="ultimoDia()"
-            :disabled="diaSeleccionado.diaNumero === plan.dias.length"
+            :disabled="diaSeleccionado?.diaNumero === plan.dias.length || plan.dias.length === 0"
             class="bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center px-3 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 h-full"
             title="Último Día"
           >

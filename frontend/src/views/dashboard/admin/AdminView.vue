@@ -140,7 +140,6 @@
                 <button
                   v-if="user.activo == 1 && auth.isAdmin()"
                   @click="deleteUser(user.id)"
-                  data-aos="fade-out"
                   title="Desactivar usuario"
                   class="bg-red-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-red-700 active:text-red-200 hover:bg-red-600 hover:inset-shadow-red-400 active:inset-shadow-red-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-red-200 shadow-md shadow-black/20"
                 >
@@ -149,7 +148,6 @@
                 <button
                   v-if="user.activo == 0 && auth.isAdmin()"
                   @click="activateUser(user.id)"
-                  data-aos="fade-out"
                   title="Activar usuario"
                   class="bg-blue-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-blue-700 active:text-blue-200 hover:bg-blue-600 hover:inset-shadow-blue-400 active:inset-shadow-blue-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-blue-200 shadow-md shadow-black/20"
                 >
