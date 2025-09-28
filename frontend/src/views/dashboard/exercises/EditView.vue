@@ -6,7 +6,10 @@
           <h2 class="text-xl font-semibold text-center text-tertiary-600">
             Editando: <span class="text-tertiary-600">{{ form.nombre }}</span>
           </h2>
-          <button @click="eliminarEjercicio" class="bg-red-500 hover:bg-red-800 text-white p-2 rounded-lg">
+          <button
+            @click="eliminarEjercicio"
+            class="bg-red-500 text-white font-semibold p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-red-700 active:text-tertiary-200 hover:bg-red-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-red-200"
+          >
             <Trash />
           </button>
         </div>
@@ -115,9 +118,7 @@
 
         <span class="text-red-500 text-center block">{{ errors.serverError }}</span>
 
-        <button type="submit" class="bg-tertiary-500 hover:bg-tertiary-600 text-white py-2 px-4 rounded-lg w-full">
-          Modificar Ejercicio
-        </button>
+        <PrimaryButton type="submit" label="Modificar Ejercicio" />
       </form>
     </div>
   </div>
@@ -132,6 +133,7 @@ import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { Trash } from "lucide-vue-next";
 import { useToast } from "vue-toastification";
+import PrimaryButton from "@/components/basics/PrimaryButton.vue";
 
 const toast = useToast();
 
@@ -223,9 +225,13 @@ const editarEjercicio = async () => {
     const token = auth.getToken();
     ejercicioSchema.parse(form.value);
 
-    await axios.patch(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/update/${ejercicioId}`, form.value, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/update/${ejercicioId}`,
+      form.value,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
 
     toast.success("Ejercicio modificado con exito");
     router.push({ name: "Exercises" });
@@ -237,7 +243,8 @@ const editarEjercicio = async () => {
         }
       });
     } else {
-      toast.error(err.response?.data?.error || "Ha ocurrido un error inesperado.");toast.error(err)
+      toast.error(err.response?.data?.error || "Ha ocurrido un error inesperado.");
+      toast.error(err);
       errors.value.serverError = err.response?.data?.error || "Error inesperado al modificar el ejercicio.";
     }
   }
@@ -248,7 +255,9 @@ onMounted(async () => {
 
   try {
     const ejercicioId = router.currentRoute.value.params.id;
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get/${ejercicioId}`);
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/get/${ejercicioId}`
+    );
 
     form.value = {
       nombre: response.data.nombre || "",
@@ -259,7 +268,6 @@ onMounted(async () => {
       repeticiones: response.data.repeticiones?.toString() || "",
       peso: response.data.peso?.toString() || ""
     };
-    
   } catch (error) {
     console.error("Error al cargar el ejercicio:", error);
     errors.value.serverError = "No se pudo cargar el ejercicio.";
@@ -271,9 +279,12 @@ onMounted(async () => {
 const eliminarEjercicio = async () => {
   const ejercicioId = router.currentRoute.value.params.id;
   try {
-    await axios.delete(`${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/delete/${ejercicioId}`, {
-      headers: { Authorization: `Bearer ${auth.getToken()}` }
-    });
+    await axios.delete(
+      `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/exercises/delete/${ejercicioId}`,
+      {
+        headers: { Authorization: `Bearer ${auth.getToken()}` }
+      }
+    );
     toast.success("Ejercicio eliminado con exito");
     router.push({ name: "Exercises" });
   } catch (error) {

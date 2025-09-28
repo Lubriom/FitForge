@@ -103,7 +103,7 @@ model EjerciciosDia {
   id            Int               @id @default(autoincrement())
   diaId         Int
   ejercicioId   Int
-  orden         Int               @db.Integer()
+  orden         Int?              @db.Integer() @default(0)
   descanso      Int?              @db.Integer()
   series        Int?              @db.Integer()
   repeticiones  Int?              @db.Integer()

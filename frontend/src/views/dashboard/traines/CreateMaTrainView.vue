@@ -68,6 +68,7 @@
                 <input
                   v-model="form.fechaInicio"
                   type="date"
+                  :min="new Date().toISOString().split('T')[0]"
                   class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
                 />
                 <p class="text-red-500 text-sm" v-if="errors.fechaInicio">{{ errors.fechaInicio[0] }}</p>
@@ -78,6 +79,7 @@
                 <input
                   v-model="form.fechaFin"
                   type="date"
+                  :min="new Date().toISOString().split('T')[0]"
                   class="w-full hover:border-tertiary-500 rounded-xl px-4 py-2 bg-white text-black border border-gray-300 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:border-tertiary-500 focus:ring-offset-1 focus:ring-offset-white transition-all"
                 />
                 <p class="text-red-500 text-sm" v-if="errors.fechaFin">{{ errors.fechaFin[0] }}</p>
@@ -85,13 +87,7 @@
             </div>
           </div>
 
-          <button
-            type="submit"
-            id="submit"
-            class="bg-tertiary-500 text-white px-6 py-2 rounded-2xl hover:bg-orange-700 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Crear Plan
-          </button>
+          <PrimaryButton type="submit" id="submit" label="Crear Plan" />
         </form>
       </div>
     </div>
@@ -105,6 +101,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@/utils/Auth";
 import { z } from "zod";
 import { useToast } from "vue-toastification";
+import PrimaryButton from "../../../components/basics/PrimaryButton.vue";
 
 const toast = useToast();
 
@@ -157,19 +154,19 @@ const submitForm = async () => {
     const planSchema = z.object({
       nombre: z.string().min(3, "El nombre debe tener al menos 3 caracteres"),
       descripcion: z.string().optional(),
-      nivel: z.enum(["basico", "intermedio" , "avanzado", "personalizado"], {
+      nivel: z.enum(["basico", "intermedio", "avanzado", "personalizado"], {
         errorMap: () => ({ message: "Selecciona un nivel válido" })
       }),
       objetivo: z.enum(["hipertrofia", "fuerza", "personalizado"], {
         errorMap: () => ({ message: "Selecciona un objetivo válido" })
       }),
-      fechaInicio: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      fechaInicio: z.string().refine((val) => !isNaN(Date.parse(val)) && new Date(val) >= new Date().setHours(0, 0, 0, 0), {
         message: "La fecha de inicio no es válida"
       }),
-      fechaFin: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      fechaFin: z.string().refine((val) => !isNaN(Date.parse(val)) && new Date(val) >= new Date(form.value.fechaInicio), {
         message: "La fecha final no es válida"
       })
-    });
+    }); 
 
     const validation = planSchema.safeParse(form.value);
 

@@ -444,7 +444,7 @@ onMounted(async () => {
       console.warn("rutinaActual no tiene 'dias'");
     }
 
-    layoutStore.setTitle(`Bienvenido, ${user.value.nombre}!`);
+    layoutStore.setTitle("Dashboard");
 
     svgImc.value = user.value.genero === "Hombre" ? maleSvg : femaleSvg;
   } catch (error) {

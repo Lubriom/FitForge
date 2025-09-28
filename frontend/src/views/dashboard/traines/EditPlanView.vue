@@ -14,11 +14,9 @@ const emit = defineEmits(["loading-start", "loading-end"]);
 
 const submit = async () => {
   const ejercicioSchema = z.object({
-    ejercicioId: z
-      .number()
-      .refine((val) => /^\d+$/.test(val.toString()) && Number(val) >= 1, {
-        message: "Por favor seleccione un ejercicio."
-      }),
+    ejercicioId: z.number().refine((val) => /^\d+$/.test(val.toString()) && Number(val) >= 1, {
+      message: "Por favor seleccione un ejercicio."
+    }),
     descanso: z
       .string()
       .nonempty("El descanso es obligatorio")
@@ -51,7 +49,9 @@ const submit = async () => {
 
   const diaSchema = z.object({
     diaNumero: z.number().int().positive(),
-    grupoMuscular: z.string().optional().nullable(),
+    grupoMuscular: z.enum(["pecho", "brazos", "hombros", "full body", "espalda", "abdomen", "piernas"], {
+      message: "Grupo muscular inválido"
+    }),
     fecha: z.string().refine((date) => !isNaN(Date.parse(date)), {
       message: "Fecha inválida"
     }),
@@ -101,10 +101,10 @@ const submit = async () => {
     toast.success("Cambios guardados correctamente.");
   } catch (err) {
     if (err instanceof z.ZodError) {
-      console.error("Errores de validación:", err.errors);
+      // console.error("Errores de validación:", err.errors);
       toast.error(err.errors[0].message);
     } else {
-      console.error("Error al guardar cambios:", err);
+      // console.error("Error al guardar cambios:", err);
       toast.error("Error al guardar los cambios.");
     }
   }
@@ -196,10 +196,6 @@ const addEjercicio = (dia) => {
 watch(
   () => diaSeleccionado.value?.grupoMuscular,
   (nuevoValor, valorAnterior) => {
-    // console.log(`Grupo muscular cambiado de "${valorAnterior}" a "${nuevoValor}"`);
-
-    // console.log(diaSeleccionado.value.ejercicios.forEach((e) => console.log(e.ejercicioId)));
-    // console.log(diaSeleccionado.value.ejercicios.forEach((e) => e.ejercicioId == ""));
     ejerciciosDisponibles.value = ejercicios.value.filter((e) => e.categoria === nuevoValor);
 
     let ejerciciosLimpios = ejercicios.value.filter((e) => e.categoria != nuevoValor);
@@ -207,10 +203,40 @@ watch(
   }
 );
 
+watch(
+  () => diaSeleccionado.value?.fecha,
+  () => {
+    // Reordenar todos los días por fecha
+    dias.value.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+    // Reasignar diaNumero secuencialmente
+    dias.value.forEach((dia, index) => {
+      dia.diaNumero = index + 1;
+    });
+  },
+  { deep: true }
+);
+
 // Ordenamos los ejercicios para mostrarlos en el orden correcto
 watch(diaSeleccionado, () => {
+  if (diaSeleccionado.value === null) return;
+
   if (diaSeleccionado.value) {
     diaSeleccionado.value.ejercicios.sort((a, b) => a.orden - b.orden);
+  }
+
+  // Corregimos el orden si no tenia orden antes
+  let ordenado = true;
+  diaSeleccionado.value.ejercicios.forEach((e) => {
+    if (e.orden == 0) {
+      ordenado = false;
+    }
+  });
+
+  if (!ordenado) {
+    for (let i = 0; i < diaSeleccionado.value.ejercicios.length; i++) {
+      diaSeleccionado.value.ejercicios[i].orden = i + 1;
+    }
   }
 });
 
@@ -239,7 +265,7 @@ function añadirDia() {
     diaNumero: nuevoDiaNumero,
     grupoMuscular: "",
     ejercicios: [],
-    fecha: nuevaFecha.toISOString()
+    fecha: nuevaFecha.toISOString().split("T")[0]
   };
 
   dias.value.push(nuevoDia);
@@ -248,10 +274,9 @@ function añadirDia() {
 
 function eliminarUltimoDia() {
   if (dias.length === 0) return;
-  const eliminado = dias.value.pop();
-  // deseleccionar si justo eliminaste el que estaba seleccionado
-  if (diaSeleccionado?.id === eliminado.id) diaSeleccionado = dias[dias.length - 1] ?? null;
-  contadorDia = dias.length > 0 ? Math.max(...dias.map((d) => d.diaNumero)) + 1 : 1;
+  let eliminado = dias.value.pop();
+
+  if (diaSeleccionado.value.id === eliminado.id) diaSeleccionado.value = dias.value[dias.value.length - 1] ?? null;
 }
 
 function formatFecha(fecha) {
@@ -348,11 +373,29 @@ function moverEjercicioAbajo(index) {
                   </select>
                 </div>
               </div>
+              <div class="flex flex-col gap-2 w-full md:w-1/2">
+                <div>
+                  <label for="fechaInicio" class="block text-gray-700 font-semibold mb-1">Fec Inicio</label>
+                  <input
+                    v-model="form.fechaInicio"
+                    type="date"
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                </div>
+                <div>
+                  <label for="fechaInicio" class="block text-gray-700 font-semibold mb-1">Fec Final</label>
+                  <input
+                    v-model="form.fechaFin"
+                    type="date"
+                    :min="new Date(form.fechaInicio)"
+                    class="px-3 py-2 mt-1 border-2 border-gray-400 rounded-lg p-2 w-full"
+                  />
+                </div>
+              </div>
             </div>
 
             <!-- Lista de días para seleccionar -->
             <div class="flex flex-col gap-2">
-              <!-- <label>Dias del plan</label> -->
               <div
                 class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 overflow-y-auto max-h-[225px] p-2 bg-gray-100 rounded-lg shadow-inner"
               >
@@ -362,17 +405,19 @@ function moverEjercicioAbajo(index) {
                   @click="diaSeleccionado = dia"
                   class="p-3 shadow-md rounded-lg cursor-pointer hover:inset-shadow-sm transition relative"
                   :class="[
-                    diaSeleccionado?.id === dia.id
+                    diaSeleccionado === dia
                       ? 'bg-tertiary-500 inset-shadow-sm inset-shadow-orange-950'
                       : 'bg-white hover:bg-gray-100 active:bg-gray-300 active:inset-shadow-gray-950'
                   ]"
                 >
                   <div class="flex flex-row gap-2 items-center justify-between">
                     <div class="flex flex-col justify-between">
-                      Día {{ dia.diaNumero }} ({{ new Date(dia.fecha).toLocaleDateString() }})
-                      <span class="text-sm text-gray-500 block">{{
-                        capitalizar(dia.grupoMuscular) || "Sin grupo"
-                      }}</span>
+                      <div class="flex items-center gap-2">Día {{ dia.diaNumero }} <span class="text-xs font-semibold items-start">({{ new Date(dia.fecha).toISOString().split("T")[0] }})</span></div>
+                      <span
+                        class="text-xs font-semibold text-orange-700 block"
+                        :class="diaSeleccionado === dia ? 'text-white' : ''"
+                        >{{ capitalizar(dia.grupoMuscular) || "Sin grupo" }}</span
+                      >
                     </div>
 
                     <!-- Botón eliminar solo en el último día -->
@@ -402,7 +447,7 @@ function moverEjercicioAbajo(index) {
           <div class="flex flex-row">
             <button
               type="submit"
-              class="bg-tertiary-500 hover:bg-tertiary-600 flex w-full justify-center text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+              class="bg-tertiary-500 hover:bg-tertiary-600 flex w-full justify-center text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200"
             >
               <p>Guardar Cambios</p>
             </button>
@@ -438,10 +483,14 @@ function moverEjercicioAbajo(index) {
             </select>
           </div>
 
-          <div class="bg-tertiary-500 p-2 px-4 rounded-2xl w-full sm:w-fit h-full flex items-center">
-            <h3 class="font-semibold text-lg">
-              Día {{ diaSeleccionado.diaNumero + " (" + new Date(diaSeleccionado.fecha).toLocaleDateString() + ")" }}
-            </h3>
+          <div class="bg-tertiary-500 p-2 pl-4 pr-2 rounded-2xl w-full sm:w-fit h-full flex items-center gap-3">
+            <h3 class="font-semibold text-lg">Día {{ diaSeleccionado.diaNumero }}</h3>
+            <input
+              v-model="diaSeleccionado.fecha"
+              type="date"
+              :min="new Date().toISOString().split('T')[0]"
+              class="flex-1/2 p-2 text-sm text-black bg-gray-50 border border-[#f56e0f] rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f56e0f] cursor-pointer"
+            />
           </div>
         </div>
 
@@ -492,7 +541,7 @@ function moverEjercicioAbajo(index) {
                   </select>
                   <button
                     @click="eliminarEjercicio(diaSeleccionado, j)"
-                    class="bg-red-600 hover:bg-red-800 text-white transition p-2 w-fit rounded-lg cursor-pointer"
+                    class="bg-red-500 text-white font-semibold p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-red-700 active:text-tertiary-200 hover:bg-red-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-red-200"
                     title="Eliminar ejercicio"
                   >
                     <Trash />
@@ -544,7 +593,7 @@ function moverEjercicioAbajo(index) {
         <!-- Botón fijo abajo -->
         <button
           @click.prevent="addEjercicio(diaSeleccionado)"
-          class="bg-tertiary-500 hover:bg-tertiary-600 flex text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+          class="bg-tertiary-500 hover:bg-tertiary-600 flex text-white font-medium px-4 py-2 rounded-xl shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200"
         >
           + Añadir ejercicio
         </button>

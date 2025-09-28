@@ -4,6 +4,7 @@ import { validateToken } from "../middlewares/validateToken.js";
 import { validatePlanUpdate } from "../middlewares/validatePlanUpdate.js";
 import { EntrenamientoController } from "../controllers/EntrenamientoController.js";
 import { validateRole } from "../middlewares/validateRoles.js";
+import { validatePlanCreate } from "../middlewares/validatePlanCreate.js";
 
 export const trainRouter = Router();
 
@@ -13,7 +14,7 @@ trainRouter.get("/user/:id/days", validateId , validateToken, EntrenamientoContr
 trainRouter.get("/user/:id/finish/days", validateId, validateToken, EntrenamientoController.getDiasEntrenadosUltimos7)
 
 trainRouter.post("/autocreate", validateToken, EntrenamientoController.createAutoPlan);
-trainRouter.post("/create", validateToken, validateRole("admin", "entrenador"), EntrenamientoController.createPlan);
+trainRouter.post("/create", validateToken, validateRole("admin", "entrenador"), validatePlanCreate, EntrenamientoController.createPlan);
 
 trainRouter.patch("/day/:id/finalizar", validateToken, validateId, EntrenamientoController.finalizarDia);
 trainRouter.patch("/update/:id/user/:userId", validateToken, validateRole("admin", "entrenador"), validateId, validatePlanUpdate, EntrenamientoController.update);
