@@ -24,7 +24,6 @@ export class EntrenamientoController {
     }
   }
 
-
   static async finalizarDia(req, res) {
     try {
       const { id } = req.params;
@@ -186,17 +185,27 @@ export class EntrenamientoController {
 
           let reps = repeticion;
 
-          if (nombreEjercicio.includes("flexiones") && nombreEjercicio.includes("palmada") && nombreEjercicio.includes("mountain") && nombreEjercicio.includes("abdominal") && nombreEjercicio.includes("sentadillas con salto")) {
+          if (
+            nombreEjercicio.includes("flexiones") &&
+            nombreEjercicio.includes("palmada") &&
+            nombreEjercicio.includes("mountain") &&
+            nombreEjercicio.includes("abdominal") &&
+            nombreEjercicio.includes("sentadillas con salto")
+          ) {
             peso = 0;
             reps = nivel === "basico" ? 10 : 15;
           }
 
-          if (nombreEjercicio.includes("sentadillas") && nombreEjercicio.includes("zancadas") && !nombreEjercicio.includes("planchas")) {
+          if (
+            nombreEjercicio.includes("sentadillas") &&
+            nombreEjercicio.includes("zancadas") &&
+            !nombreEjercicio.includes("planchas")
+          ) {
             peso = rmFinal * 0.3;
             reps = nivel === "basico" ? 10 : 15;
           }
 
-          await prisma.ejerciciosDia.create({
+          await prisma.elementoDia.create({
             data: {
               dia: { connect: { id: diaEntrenamiento.id } },
               ejercicio: { connect: { id: ejercicio.id } },
@@ -255,29 +264,96 @@ export class EntrenamientoController {
     const { id: planId, userId } = req.params;
     const data = req.body;
 
-    if (data.dias && Array.isArray(data.dias)) {
-      data.dias = data.dias.map((dia) => ({
-        ...dia,
-        ejercicios: dia.ejercicios.map((ejercicio) => ({
-          ...ejercicio,
-          peso: parseFloat(ejercicio.peso) || 0,
-          repeticiones: parseInt(ejercicio.repeticiones) || 0,
-          series: parseInt(ejercicio.series) || 0,
-          descanso: parseInt(ejercicio.descanso) || 0,
-          orden: parseInt(ejercicio.orden) || 0
-        }))
-      }));
-    }
-
     try {
+      // 🧠 Aseguramos que los datos de los días estén bien formateados
+      if (Array.isArray(data.dias)) {
+        data.dias = data.dias.map((dia) => ({
+          ...dia,
+          elementos: Array.isArray(dia.elementos)
+            ? dia.elementos.map((el) => {
+                // Estructura base
+                const base = {
+                  ...el,
+                  orden: parseInt(el.orden) || 0
+                };
+
+                // 🏋️‍♂️ Si el elemento es un ejercicio individual
+                if (el.tipo === "ejercicio" && el.ejercicio) {
+                  return {
+                    ...base,
+                    ejercicio: {
+                      ...el.ejercicio,
+                      ejercicioId: parseInt(el.ejercicio.ejercicioId) || 0,
+                      series: parseInt(el.ejercicio.series) || 0,
+                      repeticiones: parseInt(el.ejercicio.repeticiones) || 0,
+                      peso: parseFloat(el.ejercicio.peso) || 0,
+                      descanso: parseInt(el.ejercicio.descanso) || 0
+                    }
+                  };
+                }
+
+                // 🔁 Si el elemento es un circuito
+                if (el.tipo === "circuito" && el.circuito) {
+                  return {
+                    ...base,
+                    circuito: {
+                      ...el.circuito,
+                      rondas: parseInt(el.circuito.rondas) || 0,
+                      descansoEntre: parseInt(el.circuito.descansoEntre) || 0,
+                      tiempoEntre: parseInt(el.circuito.tiempoEntre) || 0,
+                      ejercicios: Array.isArray(el.circuito.ejercicios)
+                        ? el.circuito.ejercicios.map((e) => ({
+                            ejercicioId: parseInt(e.ejercicioId) || 0,
+                            repeticiones: parseInt(e.repeticiones) || 0,
+                            peso: parseFloat(e.peso) || 0,
+                            orden: parseInt(e.orden) || 0
+                          }))
+                        : []
+                    }
+                  };
+                }
+
+                // 🏃 Si el elemento es una carrera
+                if (el.tipo === "carrera" && el.carrera) {
+                  return {
+                    ...base,
+                    carrera: {
+                      ...el.carrera,
+                      distancia: parseFloat(el.carrera.distancia) || 0,
+                      duracion: parseInt(el.carrera.duracion) || 0,
+                      ritmo: el.carrera.ritmo ? parseFloat(el.carrera.ritmo) : ""
+                    }
+                  };
+                }
+
+                // 📝 Si el elemento es una nota
+                if (el.tipo === "nota" && el.nota) {
+                  return {
+                    ...base,
+                    nota: {
+                      ...el.nota,
+                      nota: el.nota.nota || ""
+                    }
+                  };
+                }
+
+                // En caso de que no tenga tipo válido
+                return base;
+              })
+            : []
+        }));
+      }
+
+      // 🧩 Llamada al modelo
       const planActualizado = await PlanEntrenamientoModel.update({
         planId: parseInt(planId),
         userId: parseInt(userId),
-        data: data
+        data
       });
+
       res.json({ message: "Plan actualizado con éxito", plan: planActualizado });
     } catch (error) {
-      console.error(error);
+      console.error("❌ Error al actualizar el plan:", error);
       res.status(500).json({ error: "Error al actualizar el plan" });
     }
   }

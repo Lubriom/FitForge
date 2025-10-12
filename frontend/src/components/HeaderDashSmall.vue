@@ -6,11 +6,13 @@
     >
       <MenuIcon class="h-9 w-9 text-white" />
     </button>
-    <div v-if="expanded" class="w-full h-full bg-black/80 z-50 absolute top-0 left-0" data-aos="fade" data-aos-delay="300"></div>
+    <transition :name="`fade-in`">
+      <div v-show="expanded" class="w-full h-full bg-black/80 z-50 absolute top-0 left-0"></div>
+    </transition>
     <transition :name="`fade-slide-${direction}`">
       <div
         class="sm:w-[calc(100%-80px)] w-[calc(100%-40px)] h-full bg-gray-300 flex flex-col gap-2 z-51 absolute top-0 left-0"
-        v-if="expanded"
+        v-show="expanded"
       >
         <div class="flex flex-row justify-between items-center p-2 px-3 bg-gray-100 shadow-md">
           <router-link :to="{ name: 'Home' }">
@@ -34,7 +36,7 @@
               >
                 <span><LayoutDashboard /></span>
                 <transition name="fade-slide">
-                  <span v-if="expanded">Dashboard</span>
+                  <span>Dashboard</span>
                 </transition>
               </router-link>
             </li>
@@ -48,7 +50,7 @@
 
                 <!-- Texto cuando está expandido (sidebar normal) -->
                 <transition name="fade-slide">
-                  <span v-if="expanded">Rutinas</span>
+                  <span>Rutinas</span>
                 </transition>
               </router-link>
             </li>
@@ -60,7 +62,7 @@
               >
                 <span><BicepsFlexed /></span>
                 <transition name="fade-slide">
-                  <span v-if="expanded">Ejercicios</span>
+                  <span>Ejercicios</span>
                 </transition>
               </router-link>
             </li>
@@ -72,7 +74,7 @@
               >
                 <span><ChartNoAxesCombined /></span>
                 <transition name="fade-slide">
-                  <span v-if="expanded">Estadisticas</span>
+                  <span>Estadisticas</span>
                 </transition>
               </router-link>
             </li>
@@ -85,7 +87,7 @@
               >
                 <span><Shield /></span>
                 <transition name="fade-slide">
-                  <span v-if="expanded">Administración</span>
+                  <span>Administración</span>
                 </transition>
               </router-link>
             </li>
@@ -155,5 +157,14 @@ imageURL.value = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_POR
 }
 .fade-slide-left-leave-to {
   transform: translateX(-774px); /* sale hacia la izquierda */
+}
+
+.fade-in-enter-active,
+.fade-in-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-in-enter-from,
+.fade-in-leave-to {
+  opacity: 0;
 }
 </style>

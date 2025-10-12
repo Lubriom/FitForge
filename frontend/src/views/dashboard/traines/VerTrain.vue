@@ -59,7 +59,7 @@
               <span class="hidden md:inline min-w-[100px]">Exportar PDF</span> <FileDown />
             </button>
             <button
-              class="flex gap-1 font-semibold items-center px-3 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 active:bg-gray-400 roudned-2xl cursor-pointer text-orange-600"
+              class="flex gap-1 font-semibold items-center p-1.5 rounded-xl bg-gray-200 hover:bg-gray-300 active:bg-gray-500 roudned-3xl cursor-pointer text-orange-600 hover:text-orange-800 inset-shadow-sm inset-shadow-black/40 transition-colors"
               title="Opciones"
               @click="mostrarOpciones = !mostrarOpciones"
               ref="mostrarOpcionesButton"
@@ -71,7 +71,7 @@
             <Transition name="fade-slide">
               <div
                 class="z-10 absolute top-38 sm:top-38 md:top-36 right-8 bg-gray-200 p-3 rounded-2xl shadow-lg shadow-black/50 flex gap-2 flex-col w-[280px] border-1 border-gray-300"
-                v-if="mostrarOpciones"
+                v-show="mostrarOpciones"
                 ref="mostrarOpcionesMenu"
               >
                 <div
@@ -180,8 +180,8 @@
               v-if="semanaActual && semanaActual.length > 0"
               v-for="(dia, index) in semanaActual"
               :disabled="
-                new Date(dia.fecha).setHours(0, 0, 0, 0) < new Date(plan.fechaInicio).setHours(24, 0, 0, 0) ||
-                new Date(dia.fecha).setHours(0, 0, 0, 0) > new Date(plan.fechaFin).setHours(24, 0, 0, 0)
+                new Date(dia.fecha).setHours(0, 0, 0, 0) < new Date(plan.fechaInicio).setHours(0, 0, 0, 0) ||
+                new Date(dia.fecha).setHours(0, 0, 0, 0) > new Date(plan.fechaFin).setHours(0, 0, 0, 0)
               "
               @click="seleccionarDia(index)"
               :key="dia.id"
@@ -201,7 +201,9 @@
                 >{{ capitalizar(dia.grupoMuscular) || "Descanso" }}</span
               >
             </button>
-            <p v-else class="text-center bg-gray-200 w-full text-black text-lg mx-auto py-3.5 rounded-2xl">No hay ningún dia en el plan</p>
+            <p v-else class="text-center bg-gray-200 w-full text-black text-lg mx-auto py-3.5 rounded-2xl">
+              No hay ningún dia en el plan
+            </p>
           </div>
         </div>
         <button
@@ -263,20 +265,20 @@
               </p>
               <span class="text-xs">{{ capitalizar(diaSeleccionado.grupoMuscular) || "Descanso" }}</span>
               <button
-                class="absolute right-2 top-2.5 bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center p-1.5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300"
+                class="absolute right-2 top-2.5 bg-tertiary-500 hover:bg-tertiary-600 flex gap-1 text-white font-semibold items-center p-1.5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-300 pointer-events-none"
                 ref="mostrarDiasButton"
                 title="Ver más días"
-                >
-                <ChevronUp v-if="mostrarDias" />
-                <ChevronDown v-else />
+              >
+                <ChevronUp v-show="mostrarDias" />
+                <ChevronDown v-show="!mostrarDias" />
               </button>
 
               <!-- Mostrar dias -->
 
               <div
-                v-if="mostrarDias"
+                v-show="mostrarDias"
                 ref="mostrarDiasMenu"
-                class="absolute top-16 border-1 flex flex-col border-gray-300 rounded-2xl w-[280px] h-[400px] z-10 bg-gray-200 p-2 shadow-lg shadow-black/50"
+                class="absolute top-16 border-1 flex flex-col border-gray-300 rounded-2xl w-[280px] h-fit max-h-[400px] z-10 bg-gray-200 p-2 shadow-lg shadow-black/50"
               >
                 <div class="overflow-y-scroll">
                   <div class="flex flex-col gap-2 mr-2">
@@ -303,7 +305,12 @@
           </div>
         </div>
 
-        <p v-else class="w-full bg-gray-200 text-black text-md p-2 mx-auto py-5 rounded-2xl items-center text-center align-middle">No hay ningún día en el plan</p>
+        <p
+          v-else
+          class="w-full bg-gray-200 text-black text-md p-2 mx-auto py-5 rounded-2xl items-center text-center align-middle"
+        >
+          No hay ningún día en el plan
+        </p>
 
         <div class="flex h-full flex-col sm:flex-row gap-2">
           <button
@@ -329,7 +336,7 @@
         class="bg-gray-100 p-4 rounded-xl inset-shadow-sm inset-shadow-gray-400 flex flex-col overflow-y-auto max-h-full gap-2 h-full"
       >
         <!-- Ejercicios del dia seleccionado -->
-        <template v-if="diaSeleccionado && diaSeleccionado.ejercicios.length > 0">
+        <template v-if="diaSeleccionado && diaSeleccionado.elementos.length > 0">
           <div class="font-semibold px-2 flex w-full justify-between items-center">
             <p class="md:text-md text-sm">
               {{ capitalizar(obtenerFechaDelDia(diaSeleccionado.diaNumero)) }}
@@ -342,50 +349,163 @@
             </p>
           </div>
 
-          <div class="grid lg:grid-cols-2 gap-2">
+          <div class="columns-1 md:columns-2 gap-4 space-y-4">
             <div
-              v-for="ej in diaSeleccionado.ejercicios"
-              :key="ej.id"
-              class="bg-white rounded-2xl p-3 px-4 flex justify-between items-center shadow-lg"
+              v-for="el in [...diaSeleccionado.elementos].sort((a, b) => a.orden - b.orden)"
+              :key="el.id"
+              class="break-inside-avoid bg-white rounded-3xl p-3 px-4 shadow-md shadow-black/20 border border-gray-200 flex flex-row items-center justify-between"
             >
-              <div class="flex flex-row gap-3 items-center">
-                <div
-                  class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
-                >
-                  {{ ej.orden }}
-                </div>
-                <div>
-                  <p class="font-medium text-gray-900">{{ ej.ejercicio.nombre }}</p>
-                  <div class="hidden md:inline text-black text-sm">
-                    <span class="font-semibold text-orange-700">Series:</span>
-                    <span class="px-1"> {{ ej.series }} </span>
-                    <span class="font-semibold text-orange-700">Repeticiones:</span>
-                    <span class="px-1"> {{ ej.repeticiones }} </span>
-                    <span class="font-semibold text-orange-700">Descanso:</span>
-                    <span class="px-1"> {{ ej.descanso }} seg</span>
+              <template v-if="el.tipo === 'ejercicio'">
+                <div class="flex flex-row gap-3 items-center">
+                  <div
+                    class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
+                  >
+                    {{ el.orden }}
                   </div>
-                  <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
-                    <span>Series: {{ ej.series }}</span>
-                    <span>Repeticiones: {{ ej.repeticiones }}</span>
-                    <span>Descanso: {{ ej.descanso }} sg</span>
-                  </p>
+                  <div>
+                    <p class="font-medium text-gray-900">{{ el.ejercicio.ejercicio.nombre }}</p>
+                    <div class="hidden md:inline text-black text-sm">
+                      <span class="font-semibold text-orange-700">Series:</span>
+                      <span class="px-1"> {{ el.ejercicio.series }} </span>
+                      <span class="font-semibold text-orange-700">Repeticiones:</span>
+                      <span class="px-1"> {{ el.ejercicio.repeticiones }} </span>
+                      <span class="font-semibold text-orange-700">Descanso:</span>
+                      <span class="px-1"> {{ el.ejercicio.descanso }} seg</span>
+                    </div>
+                    <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                      <span>Series: {{ el.ejercicio.series }}</span>
+                      <span>Repeticiones: {{ el.ejercicio.repeticiones }}</span>
+                      <span>Descanso: {{ el.ejercicio.descanso }} sg</span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div v-if="ej.peso > 0" class="text-tertiary-500 font-semibold">{{ ej.peso }} kg</div>
-              <div v-else class="text-tertiary-500 font-semibold">Sin peso</div>
+                <div v-if="el.ejercicio.peso > 0" class="text-tertiary-500 font-semibold">
+                  {{ el.ejercicio.peso }} kg
+                </div>
+                <div v-else class="text-tertiary-500 font-semibold">Sin peso</div>
+              </template>
+
+              <!-- Si es un circuito -->
+              <template v-else-if="el.tipo === 'circuito'">
+                <div class="flex flex-col gap-3 w-full">
+                  <div class="flex flex-row gap-3 items-center">
+                    <div
+                      class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
+                    >
+                      {{ el.orden }}
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900">Circuito</p>
+                      <div class="hidden md:inline text-black text-sm">
+                        <span class="font-semibold text-orange-700">Rondas:</span>
+                        <span class="px-1"> {{ el.circuito.rondas }} </span>
+                        <span class="font-semibold text-orange-700">Tiempo entre series:</span>
+                        <span class="px-1"> {{ el.circuito.tiempoEntre }} sg</span>
+                        <span class="font-semibold text-orange-700">Descanso entre series:</span>
+                        <span class="px-1"> {{ el.circuito.descansoEntre }} sg</span>
+                      </div>
+                      <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                        <span>Series: {{ el.circuito.rondas }}</span>
+                        <span>Repeticiones: {{ el.circuito.tiempoEntre }} sg</span>
+                        <span>Descanso: {{ el.circuito.descansoEntre }} sg</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    class="bg-zinc-300 rounded-2xl p-2 w-full flex flex-col gap-2 inset-shadow-sm inset-shadow-gray-500 h-[155px] overflow-y-auto"
+                  >
+                    <div
+                      v-for="circuitoEjercicio in el.circuito.ejercicios"
+                      :key="circuitoEjercicio.id"
+                      class="flex gap-2 bg-white border-gray-200 shadow-sm shadow-gray-400 border-1 p-2 rounded-xl items-center justify-between pr-2.5 transition-all duration-200 ease-in-out"
+                    >
+                      <div class="flex flex-row gap-3 items-center">
+                        <div
+                          class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
+                        >
+                          {{ circuitoEjercicio.orden }}
+                        </div>
+                        <div>
+                          <p class="font-medium text-gray-900">{{ circuitoEjercicio.ejercicio.nombre }}</p>
+                          <div class="hidden md:inline text-black text-sm">
+                            <span class="font-semibold text-orange-700">Repeticiones:</span>
+                            <span class="px-1"> {{ circuitoEjercicio.repeticiones }} </span>
+                          </div>
+                          <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                            <span>Repeticiones: {{ circuitoEjercicio.repeticiones }}</span>
+                          </p>
+                        </div>
+                      </div>
+                      <div v-if="circuitoEjercicio.peso > 0" class="text-tertiary-500 font-semibold">
+                        {{ circuitoEjercicio.peso }} kg
+                      </div>
+                      <div v-else class="text-tertiary-500 font-semibold">Sin peso</div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- Si es una carrera -->
+              <template v-if="el.tipo === 'carrera'">
+                <div class="flex flex-row gap-3 items-center">
+                  <div
+                    class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
+                  >
+                    {{ el.orden }}
+                  </div>
+                  <div>
+                    <p class="font-medium text-gray-900">Carrera</p>
+                    <div class="hidden md:inline text-black text-sm">
+                      <span class="font-semibold text-orange-700">Duracion:</span>
+                      <span class="px-1"> {{ el.carrera.duracion }} min</span>
+                      <span class="font-semibold text-orange-700">Ritmo:</span>
+                      <span class="px-1"> {{ el.carrera.ritmo }} </span>
+                    </div>
+                    <p class="md:hidden text-gray-600 text-sm flex flex-col gap-0.5">
+                      <span>Series: {{ el.carrera.duracion }} min</span>
+                      <span>Repeticiones: {{ el.carrera.ritmo }}</span>
+                    </p>
+                  </div>
+                </div>
+                <div v-if="el.carrera.distancia > 0" class="text-tertiary-500 font-semibold">
+                  {{ el.carrera.distancia }} km
+                </div>
+                <div v-else class="text-tertiary-500 font-semibold">N/A</div>
+              </template>
+
+              <!-- Si es una nota -->
+              <template v-else-if="el.tipo === 'nota'">
+                <div class="flex flex-col gap-3 w-full">
+                  <div class="flex flex-row gap-3 items-center">
+                    <div
+                      class="bg-gray-200 rounded-xl w-8 h-8 flex items-center justify-center font-mono inset-shadow-sm inset-shadow-black/50"
+                    >
+                      {{ el.orden }}
+                    </div>
+                    <div>
+                      <p class="font-medium text-gray-900">Nota</p>
+                    </div>
+                  </div>
+                  <div
+                    class="bg-zinc-300 rounded-2xl p-2 px-3 w-full flex flex-col gap-2 inset-shadow-sm inset-shadow-gray-500"
+                  >
+                    <p>{{ el.nota.nota }}</p>
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </template>
 
         <!-- Si el dia seleccionado no tiene grupo muscular -->
         <template
-          v-else-if="diaSeleccionado && diaSeleccionado.ejercicios.length === 0 && !diaSeleccionado.grupoMuscular"
+          v-else-if="diaSeleccionado && diaSeleccionado.elementos.length === 0 && !diaSeleccionado.grupoMuscular"
         >
           <p class="text-center text-gray-500 text-lg my-auto">Este día puedes descansar 😌</p>
         </template>
 
         <!-- Si el dia seleccionado no tiene ejercicios -->
-        <template v-else-if="diaSeleccionado && diaSeleccionado.ejercicios.length === 0">
+        <template v-else-if="diaSeleccionado && diaSeleccionado.elementos.length === 0">
           <div class="my-auto gap-1">
             <p class="text-center text-gray-500 text-lg mb-1">Este dia no tiene ningún ejercicio asignado</p>
             <p class="text-center text-gray-400 text-sm italic">
@@ -408,7 +528,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import axios from "axios";
 import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
@@ -463,10 +583,11 @@ const mostrarDiasMenu = ref(null);
 const totalsemanas = ref(0);
 
 function handleClickOutside(event) {
-
-  const hola = !mostrarOpcionesMenu.value?.con
-  const clickedOutsideOpciones = !mostrarOpcionesMenu.value?.contains(event.target) && !mostrarOpcionesButton.value?.contains(event.target);
-  const clickedOutsideDias = !mostrarDiasMenu.value?.contains(event.target) && !mostrarDiasButton.value?.contains(event.target);
+  const hola = !mostrarOpcionesMenu.value?.con;
+  const clickedOutsideOpciones =
+    !mostrarOpcionesMenu.value?.contains(event.target) && !mostrarOpcionesButton.value?.contains(event.target);
+  const clickedOutsideDias =
+    !mostrarDiasMenu.value?.contains(event.target) && !mostrarDiasButton.value?.contains(event.target);
 
   if (clickedOutsideOpciones) {
     mostrarOpciones.value = false;
@@ -477,6 +598,10 @@ function handleClickOutside(event) {
   }
 }
 
+watch(diaSeleccionado, () => {
+  console.log("diaSeleccionado.value", diaSeleccionado.value);
+});
+
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
 });
@@ -484,7 +609,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.removeEventListener("click", handleClickOutside);
 });
-
 
 const eliminarRutina = async (rutinaId) => {
   try {
@@ -530,7 +654,7 @@ function cargarSemanas(dias) {
         id: Math.random().toString(36).substring(2, 9),
         diaNumero: 0,
         grupoMuscular: "",
-        ejercicios: [],
+        elementos: [],
         fecha: new Date(fechaDiaSemana)
       });
     }
@@ -587,12 +711,24 @@ async function fetchPlan() {
     );
 
     plan.value = res.data;
+
+    // Ajustamos el orden antes de mostrarlo
     plan.value.dias.forEach((dia) => {
-      const fecha = new Date(dia.fecha);
-      fecha.setHours(24, 0, 0, 0); // medianoche local
-      dia.fecha = fecha; // guardamos como Date limpio
-      dia.ejercicios.sort((a, b) => a.orden - b.orden);
+      dia.elementos.sort((a, b) => a.orden - b.orden);
+      if (
+        dia.elementos.forEach((elemento) => {
+          if (elemento.tipo === "circuito") {
+            elemento.circuito.ejercicios.sort((a, b) => a.orden - b.orden);
+          }
+        })
+      );
     });
+    // plan.value.dias.forEach((dia) => {
+    //   const fecha = new Date(dia.fecha);
+    //   fecha.setHours(24, 0, 0, 0); // medianoche local
+    //   dia.fecha = fecha; // guardamos como Date limpio
+    //   dia.elementos.sort((a, b) => a.orden - b.orden);
+    // });
 
     semanas.value = cargarSemanas(plan.value.dias);
 

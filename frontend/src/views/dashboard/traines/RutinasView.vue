@@ -63,7 +63,7 @@
                   <div
                     :style="{ top: posicionOpciones.top + 5 + 'px', left: posicionOpciones.left - 240 + 'px' }"
                     class="z-20 fixed bg-gray-200 p-3 rounded-2xl shadow-lg shadow-black/50 flex gap-2 flex-col w-[280px] border-1 border-gray-300"
-                    v-if="mostrarOpcionesId == rutina.id"
+                    v-show="mostrarOpcionesId == rutina.id"
                     ref="mostrarOpcionesMenu"
                   >
                     <div

@@ -149,7 +149,7 @@
                 <div
                   :style="{ top: posicionOpciones.top + 5 + 'px', left: posicionOpciones.left - 240 + 'px' }"
                   class="z-20 fixed bg-gray-200 p-3 rounded-2xl shadow-lg shadow-black/50 flex gap-2 flex-col w-[280px] border-1 border-gray-300"
-                  v-if="mostrarOpcionesId == exercise.id"
+                  v-show="mostrarOpcionesId == exercise.id"
                   ref="mostrarOpcionesMenu"
                 >
                   <router-link
@@ -179,6 +179,7 @@
       <!-- Popup del ejercicio seleccionado -->
       <Transition name="slide-up">
         <div
+          v-show="selectExercise"
           v-if="selectExercise"
           class="absolute top-0 left-0 w-full h-full bg-black/70 flex justify-end items-end md:justify-center md:items-center z-30"
         >

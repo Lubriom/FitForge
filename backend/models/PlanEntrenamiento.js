@@ -21,9 +21,24 @@ export class PlanEntrenamientoModel {
         include: {
           dias: {
             include: {
-              ejercicios: {
+              elementos: {
                 include: {
-                  ejercicio: true
+                  ejercicio: {
+                    include: {
+                      ejercicio: true
+                    }
+                  },
+                  circuito: {
+                    include: {
+                      ejercicios: {
+                        include: {
+                          ejercicio: true
+                        }
+                      }
+                    }
+                  },
+                  carrera: true,
+                  nota: true,
                 }
               }
             }
@@ -42,9 +57,16 @@ export class PlanEntrenamientoModel {
       include: {
         dias: {
           include: {
-            ejercicios: {
+            elementos: {
               include: {
-                ejercicio: true
+                ejercicio: true,
+                circuito: {
+                  include: {
+                    ejercicios: true
+                  }
+                },
+                carrera: true,
+                nota: true,
               }
             }
           }
@@ -58,23 +80,19 @@ export class PlanEntrenamientoModel {
     const { nombre, descripcion, nivel, activo, objetivo, fechaInicio, fechaFin, dias } = data;
 
     return await prisma.$transaction(async (tx) => {
-      // Primero borrar ejercicios asociados a días del plan
-      await tx.ejerciciosDia.deleteMany({
+      // 🔹 1. Eliminar los elementos asociados a los días del plan
+      await tx.elementoDia.deleteMany({
         where: {
-          dia: {
-            planId: planId
-          }
+          dia: { planId: planId }
         }
       });
 
-      // Borrar días antiguos
+      // 🔹 2. Eliminar días antiguos
       await tx.diaEntrenamiento.deleteMany({
-        where: {
-          planId: planId
-        }
+        where: { planId: planId }
       });
 
-      // Actualizar plan y crear días y ejercicios nuevos
+      // 🔹 3. Actualizar el plan con sus nuevos días y elementos
       return await tx.planEntrenamiento.update({
         where: { id: planId },
         data: {
@@ -86,21 +104,86 @@ export class PlanEntrenamientoModel {
           usuarioId: userId,
           fechaInicio: new Date(fechaInicio),
           fechaFin: new Date(fechaFin),
+
           dias: {
             create: dias.map((dia) => ({
               diaNumero: dia.diaNumero,
               grupoMuscular: dia.grupoMuscular,
               finalizado: dia.finalizado,
               fecha: new Date(dia.fecha),
-              ejercicios: {
-                create: dia.ejercicios.map((ej) => ({
-                  ejercicio: { connect: { id: ej.ejercicioId } },
-                  descanso: ej.descanso,
-                  series: ej.series,
-                  repeticiones: ej.repeticiones,
-                  peso: ej.peso,
-                  orden: ej.orden
-                }))
+
+              elementos: {
+                create: dia.elementos.map((el) => {
+                  const base = {
+                    tipo: el.tipo,
+                    orden: el.orden
+                  };
+
+                  // 🏋️ Ejercicio individual
+                  if (el.tipo === "ejercicio") {
+                    return {
+                      ...base,
+                      ejercicio: {
+                        create: {
+                          ejercicio: { connect: { id: el.ejercicio.ejercicioId } },
+                          series: el.ejercicio.series,
+                          repeticiones: el.ejercicio.repeticiones,
+                          peso: el.ejercicio.peso,
+                          descanso: el.ejercicio.descanso
+                        }
+                      }
+                    };
+                  }
+
+                  // 🔁 Circuito con ejercicios
+                  if (el.tipo === "circuito") {
+                    return {
+                      ...base,
+                      circuito: {
+                        create: {
+                          rondas: el.circuito.rondas,
+                          descansoEntre: el.circuito.descansoEntre,
+                          tiempoEntre: el.circuito.tiempoEntre,
+                          ejercicios: {
+                            create: el.circuito.ejercicios.map((ej) => ({
+                              ejercicio: { connect: { id: ej.ejercicioId } },
+                              repeticiones: ej.repeticiones,
+                              peso: ej.peso,
+                              orden: ej.orden
+                            }))
+                          }
+                        }
+                      }
+                    };
+                  }
+
+                  // 🏃 Carrera
+                  if (el.tipo === "carrera") {
+                    return {
+                      ...base,
+                      carrera: {
+                        create: {
+                          distancia: el.carrera.distancia,
+                          duracion: el.carrera.duracion,
+                          ritmo: el.carrera.ritmo
+                        }
+                      }
+                    };
+                  }
+
+                  if (el.tipo === "nota") {
+                    return {
+                      ...base,
+                      nota: {
+                        create: {
+                          nota: el.nota.nota
+                        }
+                      }
+                    };
+                  }
+
+                  return base;
+                })
               }
             }))
           }
@@ -108,8 +191,13 @@ export class PlanEntrenamientoModel {
         include: {
           dias: {
             include: {
-              ejercicios: {
-                include: { ejercicio: true }
+              elementos: {
+                include: {
+                  ejercicio: { include: { ejercicio: true } },
+                  circuito: { include: { ejercicios: { include: { ejercicio: true } } } },
+                  carrera: true,
+                  nota: true,
+                }
               }
             }
           }

@@ -23,8 +23,8 @@
               class="text-white flex bg-tertiary-500 p-1 rounded-full inset-shadow-sm inset-shadow-orange-300 shadow-md shadow-black/20 cursor-pointer"
             >
               <div class="justify-center items-center pr-2 pl-3 hidden md:flex">
-                <MenuIcon v-if="!dropdownOpen" class="w-9 h-9" data-aos="fade-out" />
-                <X v-if="dropdownOpen" class="w-9 h-9" data-aos="fade-out" />
+                <MenuIcon v-show="!dropdownOpen" class="w-9 h-9" data-aos="fade-out" />
+                <X v-show="dropdownOpen" class="w-9 h-9" data-aos="fade-out" />
               </div>
 
               <div class="relative">
@@ -37,7 +37,7 @@
             </div>
             <transition name="fade-slide">
               <div
-                v-if="dropdownOpen"
+                v-show="dropdownOpen"
                 ref="dropdownMenu"
                 class="absolute right-5 top-17 mt-2 w-64 px-2 bg-white border border-gray-200 rounded-3xl shadow-lg z-20"
               >

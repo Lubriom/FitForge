@@ -52,20 +52,6 @@ model InfoPatologias {
   usuario     Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
-model Ejercicio {
-  id            Int              @id @default(autoincrement())
-  nombre        String           @unique @db.VarChar(100)
-  tipo          String?          @db.VarChar(100)
-  categoria     String?          @db.VarChar(100)
-  descanso      Int?             @db.Integer() @default(60)
-  series        Int?             @db.Integer()
-  repeticiones  Int?             @db.Integer()
-  peso          Float?           @db.DoublePrecision() @default(0)
-
-  // Relacion 1 a N
-  ejerciciosDia EjerciciosDia[]  // Relación con días de entrenamiento
-}
-
 model PlanEntrenamiento {
   id           Int               @id @default(autoincrement())
   nombre       String            @db.VarChar(100)
@@ -96,24 +82,100 @@ model DiaEntrenamiento {
   plan          PlanEntrenamiento @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   // Relación 1 a N con EjerciciosDia
-  ejercicios    EjerciciosDia[]
+  elementos    ElementoDia[]
 }
 
-model EjerciciosDia {
-  id            Int               @id @default(autoincrement())
-  diaId         Int
-  ejercicioId   Int
-  orden         Int?              @db.Integer() @default(0)
-  descanso      Int?              @db.Integer()
-  series        Int?              @db.Integer()
-  repeticiones  Int?              @db.Integer()
-  peso          Float?            @db.DoublePrecision()
+model ElementoDia {
+  id       Int    @id @default(autoincrement())
+  diaId    Int
+  orden    Int    @default(0)
+  tipo     String // "ejercicio" | "circuito" | "carrera" ...
+
+  dia      DiaEntrenamiento @relation(fields: [diaId], references: [id], onDelete: Cascade)
+
+  ejercicioId Int?
+  ejercicio   EjercicioDia? @relation(fields: [ejercicioId], references: [id])
+
+  circuitoId  Int?
+  circuito    Circuito?     @relation(fields: [circuitoId], references: [id])
+
+  carreraId   Int?
+  carrera     Carrera?      @relation(fields: [carreraId], references: [id])
+
+  notaId      Int?
+  nota        NotaPlan?     @relation(fields: [notaId], references: [id])
+}
+
+model Ejercicio {
+  id            Int              @id @default(autoincrement())
+  nombre        String           @unique @db.VarChar(100)
+  tipo          String?          @db.VarChar(100)
+  categoria     String?          @db.VarChar(100)
+  descanso      Int?             @db.Integer() @default(60)
+  series        Int?             @db.Integer()
+  repeticiones  Int?             @db.Integer()
+  peso          Float?           @db.DoublePrecision() @default(0)
+
+  // Relacion 1 a N
+  ejerciciosDia EjercicioDia[]  // Relación con días de entrenamiento 1 a N
+  ejerciciosCircuito EjercicioCircuito[]
+}
+
+model EjercicioDia {
+  id           Int       @id @default(autoincrement())
+  ejercicioId  Int
+  series       Int?
+  repeticiones Int?
+  peso         Float? @default(0)
+  descanso     Int?   @default(60)
+
+  ejercicio    Ejercicio @relation(fields: [ejercicioId], references: [id])
+  elementosDia ElementoDia[]
+}
+
+model Circuito {
+  id            Int              @id @default(autoincrement())
+  rondas        Int              @default(1)
+  descansoEntre Int?             // descanso entre rondas
+  tiempoEntre   Int?             // descanso entre ejercicios dentro del circuito
 
   // Relaciones N a 1
-  dia           DiaEntrenamiento  @relation(fields: [diaId], references: [id], onDelete: Cascade)
-  ejercicio     Ejercicio         @relation(fields: [ejercicioId], references: [id])
+  ejercicios    EjercicioCircuito[]
+
+  // Relaciones 1 a N
+  elementosDia  ElementoDia[]
 }
 
+model EjercicioCircuito {
+  id          Int       @id @default(autoincrement())
+  circuitoId  Int
+  ejercicioId Int
+  orden       Int?      @default(0)
+  // series      Int?
+  repeticiones Int?
+  // descanso    Int?      // si es ejercicio por tiempo (ej: plancha 30s)
+  peso        Float?
+
+  // Relaciones N a 1
+  circuito    Circuito  @relation(fields: [circuitoId], references: [id], onDelete: Cascade)
+  ejercicio   Ejercicio @relation(fields: [ejercicioId], references: [id])
+}
+
+model Carrera {
+  id        Int    @id @default(autoincrement())
+  distancia Float?   // km
+  duracion  Int?     // minutos
+  ritmo     Float?   // min/km
+
+  elementosDia ElementoDia[]
+}
+
+model NotaPlan {
+  id        Int    @id @default(autoincrement())
+  nota      String?
+
+  elementosDia ElementoDia[]
+}
 
 // npx prisma generate
 // npx prisma migrate reset
