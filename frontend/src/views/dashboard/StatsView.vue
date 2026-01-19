@@ -178,7 +178,7 @@
       <div class="bg-white p-8 gap-4 flex rounded-2xl w-full h-full flex-col justify-center">
         <router-link
           :to="{ name: 'DashboardRegStats' }"
-          class="flex items-center gap-2 p-4 bg-tertiary-500 rounded-2xl hover:bg-orange-600 hover:scale-102 transition-all"
+        class=" bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-tertiary-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200 shadow-md shadow-black/20 text-center"
         >
           <p class="text-2xl font-semibold text-white">Registrar Información</p>
         </router-link>

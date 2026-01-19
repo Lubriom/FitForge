@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col w-full h-full gap-3 justify-center items-center">
-    <div class="flex flex-row h-fit gap-3 p-6 pr-2 shadow-md bg-white rounded-2xl min-w-[360px] w-fit lg:w-1/2 mx-auto">
-      <form @submit.prevent="crearEjercicio" class="space-y-4 pr-2  w-full  h-[450px] sm:h-fit overflow-y-auto">
-        <h2 class="text-2xl font-semibold text-center text-tertiary-600">Crear Nuevo Ejercicio</h2>
+    <div class="flex flex-row h-fit gap-3 p-6 px-4 shadow-md bg-white rounded-xl w-full md:w-fit lg:w-1/2 mx-auto">
+      <form @submit.prevent="crearEjercicio" class="space-y-4 px-2  w-full  h-[450px] sm:h-fit overflow-y-auto">
+        <h2 class="text-xl font-semibold text-center text-tertiary-600">Crear Nuevo Ejercicio</h2>
 
         <div class="flex flex-col">
           <label for="nombre" class="font-medium">Nombre</label>
@@ -46,7 +46,7 @@
               <option value="piernas">Pierna</option>
               <option value="pecho">Pecho</option>
               <option value="espalda">Espalda</option>
-              <option value="hombro">Hombro</option>
+              <option value="hombros">Hombros</option>
               <option value="brazos">Brazos</option>
               <option value="abdomen">Abdomen</option>
               <option value="full body">Full Body</option>
@@ -109,9 +109,9 @@
 
         <span class="text-red-500 text-center block">{{ errors.serverError }}</span>
 
-        <button type="submit" class="bg-tertiary-500 hover:bg-orange-700 text-white py-2 px-4 rounded-lg w-full cursor-pointer">
+        <PrimaryButton type="submit" label="Crear Ejercicio">
           Crear Ejercicio
-        </button>
+        </PrimaryButton>
       </form>
     </div>
   </div>
@@ -123,6 +123,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 import { z } from "zod";
 import { useAuthStore } from "@/utils/Auth";
+import PrimaryButton from "@/components/basics/PrimaryButton.vue";
 
 const emit = defineEmits(["loading-start", "loading-end"]);
 

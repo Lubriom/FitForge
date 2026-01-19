@@ -62,7 +62,7 @@ export class AuthController {
         role: user.role
       };
 
-      const token = jwt.sign(data, SECRET, { expiresIn: "2h" });
+      const token = jwt.sign(data, SECRET, { expiresIn: "30d" });
 
       res.json({ message: "Login exitoso", token });
     } catch (error) {

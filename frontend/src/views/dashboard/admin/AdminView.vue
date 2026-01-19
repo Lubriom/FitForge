@@ -56,7 +56,7 @@
         <!-- Botón Filtrar -->
         <button
           type="submit"
-          class="bg-tertiary-500 text-white py-2 px-4 rounded-lg hover:bg-orange-700 cursor-pointer"
+          class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-orange-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200 shadow-md shadow-black/20"
         >
           <span class="flex items-center gap-1"><Funnel /> Filtrar</span>
         </button>
@@ -65,7 +65,7 @@
         <button
           type="button"
           @click="resetFiltros"
-          class="bg-gray-300 text-black py-2 px-2 rounded-lg hover:bg-gray-400 cursor-pointer rotate"
+          class="bg-gray-500 h-full flex text-white font-medium px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-gray-700 active:text-gray-200 hover:bg-gray-600 hover:inset-shadow-gray-400 active:inset-shadow-gray-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-gray-200 shadow-md shadow-black/20 rotate"
         >
           <RotateCcw />
         </button>
@@ -90,7 +90,7 @@
               <button @click="sortBy('role')">Rol</button>
             </th>
             <th class="p-3 w-1/6 hidden lg:table-cell">
-              <button @click="sortBy('activo')">Activo</button>
+              <button @click="sortBy('activo')">Estado</button>
             </th>
             <th class="p-3 w-1/3 sm:1/2">Acciones</th>
           </tr>
@@ -112,10 +112,11 @@
             <td class="p-3 hidden md:table-cell">{{ capitalizar(user.role) }}</td>
             <td class="p-3 hidden lg:table-cell">
               <div class="flex justify-center items-center h-full">
-                <span v-if="user.activo == 1" class="text-green-500 bg-green-300/50 rounded-2xl px-3 py-1">
+                <span v-if="user.activo == 1" class="text-green-500 bg-green-300/50 border-green-500/50 border-2 rounded-2xl px-3 py-1 flex flex-row gap-1 font-semibold items-center shadow-green-400/50 shadow-xs">
+                  <Check />
                   Activo
                 </span>
-                <span v-else class="text-red-500 bg-red-300/50 rounded-2xl px-3 py-1"> Inactivo </span>
+                <span v-else class="text-red-500 bg-red-300/50 border-red-500/50 border-2 rounded-2xl px-3 py-1 flex flex-row gap-1 font-semibold items-center shadow-red-400/50 shadow-xs"><X /> Inactivo </span>
               </div>
             </td>
 
@@ -123,28 +124,32 @@
               <div class="flex justify-center items-center gap-1.5 h-full">
                 <router-link
                   :to="{ name: 'DashboardSeeProfile', params: { id: user.id } }"
-                  class="bg-tertiary-500 hover:bg-orange-700 text-white rounded-md p-2"
+                  title="Ver perfil"
+                  class="bg-tertiary-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-orange-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200 shadow-md shadow-black/20"
                 >
                   <ContactRound />
                 </router-link>
                 <router-link
                   v-if="auth.isAdmin()"
                   :to="{ name: 'DashboardAdminEdit', params: { id: user.id } }"
-                  class="bg-green-500 hover:bg-green-800 text-white rounded-md p-2"
+                  title="Editar usuario"
+                  class="bg-green-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-green-700 active:text-green-200 hover:bg-green-600 hover:inset-shadow-green-400 active:inset-shadow-green-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-green-200 shadow-md shadow-black/20"
                 >
                   <UserPen />
                 </router-link>
                 <button
                   v-if="user.activo == 1 && auth.isAdmin()"
                   @click="deleteUser(user.id)"
-                  class="bg-red-500 hover:bg-red-800 text-white rounded-md p-2 cursor-pointer"
+                  title="Desactivar usuario"
+                  class="bg-red-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-red-700 active:text-red-200 hover:bg-red-600 hover:inset-shadow-red-400 active:inset-shadow-red-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-red-200 shadow-md shadow-black/20"
                 >
                   <Trash2 />
                 </button>
                 <button
                   v-if="user.activo == 0 && auth.isAdmin()"
                   @click="activateUser(user.id)"
-                  class="bg-blue-500 hover:bg-blue-800 text-white rounded-md p-2 cursor-pointer"
+                  title="Activar usuario"
+                  class="bg-blue-500 h-full flex text-white font-medium p-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-blue-700 active:text-blue-200 hover:bg-blue-600 hover:inset-shadow-blue-400 active:inset-shadow-blue-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-blue-200 shadow-md shadow-black/20"
                 >
                   <UserPlus />
                 </button>
@@ -159,7 +164,8 @@
       <button
         @click="prevPage"
         :disabled="page <= 1"
-        class="px-3 py-1 bg-tertiary-500 hover:bg-orange-700 text-white rounded-xl cursor-pointer"
+        title="Página anterior"
+        class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-orange-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200 shadow-md shadow-black/20"
       >
         Anterior
       </button>
@@ -167,7 +173,8 @@
       <button
         @click="nextPage"
         :disabled="page >= totalPages"
-        class="px-3 py-1 bg-tertiary-500 hover:bg-orange-700 text-white rounded-xl cursor-pointer"
+        title="Página siguiente"
+        class="bg-tertiary-500 hover:bg-tertiary-600 h-full flex text-white font-medium px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed active:bg-orange-700 active:text-orange-200 hover:bg-orange-600 hover:inset-shadow-orange-400 active:inset-shadow-orange-950 transition-colores duration-200 cursor-pointer inset-shadow-sm inset-shadow-orange-200 shadow-md shadow-black/20"
       >
         Siguiente
       </button>
@@ -178,7 +185,7 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
-import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel } from "lucide-vue-next";
+import { RotateCcw, Trash2, UserPen, ContactRound, UserPlus, Funnel, Check, X } from "lucide-vue-next";
 import { useAuthStore } from "@/utils/Auth";
 import { useLayoutStore } from "@/stores/layoutStore";
 import { useToast } from "vue-toastification";
@@ -189,7 +196,7 @@ const emit = defineEmits(["loading-start", "loading-end"]);
 const imagenUrl = `${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}`;
 // Stores
 const layoutStore = useLayoutStore();
-layoutStore.setTitle("Lista de Usuarios");
+layoutStore.setTitle("Administración");
 
 const auth = useAuthStore();
 
